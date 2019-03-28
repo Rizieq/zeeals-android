@@ -1,0 +1,39 @@
+<resources>
+    <string name="app_name">Zeeals</string>
+    <string name="action_settings">Settings</string>
+
+    <!-- Strings related to login -->
+    <string name="prompt_email">Email / No. Handphone</string>
+    <string name="prompt_password">Password </string>
+    <string name="action_sign_in">Sign in or register</string>
+    <string name="action_sign_in_short">Sign in</string>
+    <string name="error_invalid_email">This email address is invalid</string>
+    <string name="error_invalid_password">This password is too short</string>
+    <string name="error_incorrect_password">This password is incorrect</string>
+    <string name="error_field_required">This field is required</string>
+    <string name="permission_rationale">"Contacts permissions are needed for providing email
+        completions."
+    </string>
+    <string name="zeeals">Z E E A L S</string>
+    <string name="login">LOGIN. </string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="masuk">Masuk →</string>
+    <string name="lupapass">LUPA PASSWORD?</string>
+    <string name="belumpunyaakun">Anda belum mempunyai akun?</string>
+    <string name="Ayodaftar">Ayo daftar sekarang.</string>
+
+    <!--Strings related to Daftar-->
+    <string name="daftar">DAFTAR. </string>
+    <string name="daftarbtn"> Daftar →</string>
+    <string name="confirm">Konfirmasi Password</string>
+    <string name="punyaakun">Sudah punya akun? </string>
+
+    <!--Strings related to Lupa Password-->
+    <string name="lupaPassword0">RESET </string>
+    <string name="lupaPassword1">PASSWORD.</string>
+    <string name="Reset">Reset Password</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+</resources>
