@@ -8,14 +8,13 @@
 
     <ProgressBar
         android:id="@+id/login_progress"
-        style="?android:attr/progressBarStyleLarge"
+        style="@style/Widget.AppCompat.ProgressBar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:visibility="visible"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="@+id/btnMasuk" />
 
     <LinearLayout
         android:id="@+id/linearLayoutLogin1"
@@ -59,7 +58,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.504"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/linearLayoutLogin1"
+        app:layout_constraintTop_toTopOf="@id/linearLayoutLogin1"
         app:layout_constraintVertical_bias="0.317">
 
         <AutoCompleteTextView
@@ -67,12 +66,13 @@
             android:layout_width="300dp"
             android:layout_height="60dp"
             android:autofillHints=""
+            android:drawableRight="@drawable/ic_email_et"
+            android:fontFamily="@font/poppinsregular"
             android:hint="@string/email"
             android:inputType="textEmailAddress"
             android:selectAllOnFocus="true"
             android:singleLine="true"
-            tools:targetApi="o"
-            />
+            tools:targetApi="o" />
 
     </android.support.design.widget.TextInputLayout>
 
@@ -90,6 +90,8 @@
             android:layout_width="300dp"
             android:layout_height="60dp"
             android:autofillHints=""
+            android:drawableRight="@drawable/ic_password_et"
+            android:fontFamily="@font/poppinsregular"
             android:hint="@string/password"
             android:inputType="textPassword"
             android:selectAllOnFocus="true"
@@ -101,12 +103,13 @@
 
     <Button
         android:id="@+id/btnMasuk"
-        style="@style/Widget.AppCompat.Button.Colored"
         android:layout_width="300dp"
         android:layout_height="50dp"
         android:layout_marginTop="20dp"
-        android:background="@drawable/gradientbutton"
+        android:background="@drawable/button_gradient"
+        android:fontFamily="@font/poppinsbold"
         android:text="@string/masuk"
+        android:textColor="@color/text_color"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/ETpassword"
@@ -117,31 +120,39 @@
         android:id="@+id/textLupaPassword"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="10dp"
+        android:fontFamily="@font/poppinsregular"
         android:text="@string/lupapass"
         android:textColor="@color/colorSecondary"
+        android:textSize="14dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/btnMasuk"
-        android:textSize="13dp"/>
+        tools:layout_editor_absoluteX="141dp" />
 
-    <Button
+
+    <com.facebook.login.widget.LoginButton
         android:id="@+id/btnFacebookLogin"
-        style="@style/Widget.AppCompat.Button.Colored"
+        style="@style/FacebookLoginButton"
         android:layout_width="300dp"
-        android:layout_height="50dp"
+        android:layout_height="100dp"
+        android:layout_gravity="center_horizontal"
         android:layout_marginTop="40dp"
-        android:text="EX: LOGIN WITH FACEBOOK"
+        android:background="@drawable/fb_button"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textLupaPassword" />
+        app:layout_constraintTop_toBottomOf="@id/textLupaPassword" />
 
     <TextView
         android:id="@+id/textbelumpunyaakun"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
+        android:fontFamily="@font/poppinsregular"
         android:text="@string/belumpunyaakun"
+        android:textSize="13dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/btnFacebookLogin" />
@@ -152,9 +163,11 @@
         android:layout_height="wrap_content"
         android:clickable="true"
         android:focusable="true"
+        android:fontFamily="@font/poppinsregular"
         android:text="@string/Ayodaftar"
-        app:layout_constraintStart_toStartOf="parent"
+        android:textSize="13dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textbelumpunyaakun"/>
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textbelumpunyaakun" />
 
 </android.support.constraint.ConstraintLayout>

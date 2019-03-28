@@ -16,14 +16,17 @@
         android:layout_weight="0.1"
         tools:src="@drawable/ic_banjo" />
 
-    <TextView
+    <EditText
+        android:background="@android:color/transparent"
         android:id="@+id/list_item_group_name"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_weight="0.8"
-        android:clickable="false"
+        android:clickable="true"
+        android:inputType="text"
         android:paddingLeft="10dp"
-        android:paddingRight="10dp" />
+        android:paddingRight="10dp"
+        android:imeOptions="actionDone"/>
 
     <ImageView
         android:id="@+id/list_item_group_arrow"

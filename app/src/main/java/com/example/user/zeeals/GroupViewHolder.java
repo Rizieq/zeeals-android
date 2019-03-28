@@ -18,7 +18,7 @@ import static android.view.animation.Animation.RELATIVE_TO_SELF;
 
 public class GroupViewHolder extends com.thoughtbot.expandablerecyclerview.viewholders.GroupViewHolder implements editGroupFragment.OnFragmentInteractionListener{
 
-    private TextView groupName;
+    private EditText groupName;
     private ImageView arrow;
     private ImageView icon;
 
@@ -33,7 +33,7 @@ public class GroupViewHolder extends com.thoughtbot.expandablerecyclerview.viewh
         groupName.setText(group);
     }
 
-    public TextView getGroupName() {
+    public EditText getGroupName() {
         return groupName;
     }
 

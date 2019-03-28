@@ -1,6 +1,8 @@
 package com.example.user.zeeals;
 
 import android.content.Intent;
+import android.os.Build;
+import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -22,6 +24,7 @@ public class AddNewGroup extends AppCompatActivity {
     EditText groupName;
     int groupSize;
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -31,9 +34,12 @@ public class AddNewGroup extends AppCompatActivity {
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         adapter = new addNewGroupAdapter(1);
         groupName = findViewById(R.id.editText_groupName_add_new_group);
+
         Intent intent = getIntent();
         groupSize = intent.getIntExtra("GROUPSIZE",0);
-        Log.d(TAG, "onCreate: groupSize: "+groupSize);
+
+
+
         adapter.setOnTextSaved(new addNewGroupAdapter.onTextSavedListener() {
             @Override
             public void onTextSaved(Source source) {

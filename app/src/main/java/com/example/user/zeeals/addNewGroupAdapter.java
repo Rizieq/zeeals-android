@@ -4,10 +4,13 @@ import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import static android.content.ContentValues.TAG;
 
@@ -51,33 +54,19 @@ public class addNewGroupAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
     @Override
     public void onBindViewHolder(final RecyclerView.ViewHolder viewHolder, int i) {
-
-        sourceName=et_sourceName.getText().toString();
-        sourceLink=et_sourceLink.getText().toString();
-
-
-        et_sourceName.addTextChangedListener(sourceWatch);
-        et_sourceLink.addTextChangedListener(sourceWatch);
-
-        et_sourceName.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                if(!hasFocus){
-                    sourceName=et_sourceName.getText().toString();
+            et_sourceLink.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+                @Override
+                public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                    boolean handled = false;
+                    if (actionId == EditorInfo.IME_ACTION_DONE) {
+                        sourceName=et_sourceName.getText().toString();
+                        sourceLink=et_sourceLink.getText().toString();
+                        onTextSavedListener.onTextSaved(new Source(sourceName,sourceLink));
+                        handled = true;
+                    }
+                    return handled;
                 }
-            }
-        });
-        et_sourceLink.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                if(!hasFocus){
-                    sourceLink=et_sourceLink.getText().toString();
-                    onTextSavedListener.onTextSaved(new Source(sourceName,sourceLink));
-                }
-            }
-        });
-
-
+            });
 
 
     }
@@ -87,26 +76,5 @@ public class addNewGroupAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         return adapterCount;
     }
 
-    private TextWatcher sourceWatch = new TextWatcher() {
-        @Override
-        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-        }
-
-        @Override
-        public void onTextChanged(CharSequence s, int start, int before, int count) {
-            sourceName=et_sourceName.getText().toString();
-            sourceLink=et_sourceLink.getText().toString();
-
-            Log.d(TAG, "onBindViewHolder: Name"+sourceName);
-            Log.d(TAG, "onBindViewHolder: Link"+sourceLink);
-        }
-
-        @Override
-        public void afterTextChanged(Editable s) {
-
-        }
-
-    };
 
 }

@@ -3,14 +3,18 @@ package com.example.user.zeeals;
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import com.thoughtbot.expandablerecyclerview.ExpandableListUtils;
 import com.thoughtbot.expandablerecyclerview.models.ExpandableGroup;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class groupAdapter extends ExpandableListUtils<GroupViewHolder,SourceViewHolder> {
@@ -76,16 +80,23 @@ public class groupAdapter extends ExpandableListUtils<GroupViewHolder,SourceView
         final Source source = ((Group) group).getItems().get(0);
         holder.setGroupName(source.getGroupName());
         final int position = holder.getAdapterPosition();
-        final TextView groupName = holder.getGroupName();
-        groupName.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.d(TAG, "onClick: Adapter position: "+position);
-                Log.d(TAG, "onClick: flatPosition: "+flatPosition);
-                CharSequence text = groupName.getText();
-                onItemClickListener.OnItemClick(position,text);
-            }
-        });
+        final EditText groupName = holder.getGroupName();
+
+            groupName.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+                @Override
+                public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                    boolean handled = false;
+                    if (actionId == EditorInfo.IME_ACTION_DONE) {
+                        String text = groupName.getText().toString();
+                        onItemClickListener.OnItemClick(position,text);
+                        groupName.clearFocus();
+                        handled = true;
+                    }
+                    return handled;
+                }
+            });
+        
+
 
 
     }

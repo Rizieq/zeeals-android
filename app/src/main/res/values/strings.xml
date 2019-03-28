@@ -18,13 +18,16 @@
     <string name="login">LOGIN. </string>
     <string name="email">Email</string>
     <string name="password">Password</string>
-    <string name="masuk">Masuk →</string>
+    <string name="masuk">MASUK</string>
     <string name="lupapass">LUPA PASSWORD?</string>
     <string name="belumpunyaakun">Anda belum mempunyai akun?</string>
     <string name="Ayodaftar">Ayo daftar sekarang.</string>
 
+    <string name="facebook_app_id">373136499948696</string>
+    <string name="fb_login_protocol_scheme">fb373136499948696</string>
+
     <!--Strings related to Daftar-->
-    <string name="daftar">DAFTAR. </string>
+    <string name="daftar">DAFTAR </string>
     <string name="daftarbtn"> Daftar →</string>
     <string name="confirm">Konfirmasi Password</string>
     <string name="punyaakun">Sudah punya akun? </string>
@@ -33,7 +36,12 @@
     <string name="lupaPassword0">RESET </string>
     <string name="lupaPassword1">PASSWORD.</string>
     <string name="Reset">Reset Password</string>
-
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="konfirmasipasswod">Confirm Password</string>
+    <string name="sudahpunyaakun">Anda sudah mempunyai akun?</string>
+    <string name="Ayomasuk">Ayo masuk sekarang.</string>
+    <string name="incorrect_email_or_password">Email / Password Salah</string>
+    <string name="incorrect_please_try_again">Email atau password yang dimasukkan tidak sesuai. Silahkan coba lagi.</string>
+    <string name="coba_lagi">Coba lagi</string>
+    <string name="pesan_registrasi_berhasil">Registrasi telah berhasil dilakukan. Silahkan lakukan verifikasi email melalui email yang telah didaftarkan.</string>
+    <string name="registrasi_gagal">Registrasi yang dilakukan gagal. Email yang didaftarkan telah terdaftarkan sebelumnya. Silahkan gunakan fitur lupa password</string>
 </resources>

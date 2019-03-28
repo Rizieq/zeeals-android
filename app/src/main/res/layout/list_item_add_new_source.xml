@@ -11,14 +11,20 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingLeft="10dp"
-        android:hint="Source Name"/>
+        android:hint="Source Name"
+        android:inputType="text"
+        android:imeOptions="actionNext"
+        android:maxLines="1"/>
 
     <EditText
         android:id="@+id/edit_save_add_new_source_link"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingLeft="10dp"
-        android:hint="Source Link"/>
+        android:hint="Source Link"
+        android:inputType="text"
+        android:maxLines="1"
+        android:imeOptions="actionDone"/>
 
     <View
         android:layout_width="match_parent"
