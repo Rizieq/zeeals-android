@@ -102,7 +102,7 @@ public class MainActivity extends AppCompatActivity implements editGroupFragment
             @Override
             public void OnItemClick(int position,CharSequence text) {
                 fab.hide();
-                groupList.get(posisi).getItems().get(0).setGroupName(text.toString());
+                groupList.get(position).getItems().get(0).setGroupName(text.toString());
                 Log.d(TAG, "OnItemClick: "+ groupList.get(posisi).getItems().get(0).getGroupName());
                 posisi = position;
             }
@@ -161,9 +161,6 @@ public class MainActivity extends AppCompatActivity implements editGroupFragment
 
         picChangePopUp = new Dialog(this);
 
-
-
-
     }
 
     @Override
@@ -177,6 +174,11 @@ public class MainActivity extends AppCompatActivity implements editGroupFragment
             if(resultCode==RESULT_OK){
                 ExpandableGroup groupParcel = data.getParcelableExtra("GROUP");
                 Group group = new Group(groupParcel.getTitle(),groupParcel.getItems());
+
+                for (int i = 0 ; i < group.getItems().size();i++){
+                    group.getItems().get(i).setGroupPosition(groupList.size());
+                }
+
                 groupList.add(group);
 
                 adapter.addAll(groupList);

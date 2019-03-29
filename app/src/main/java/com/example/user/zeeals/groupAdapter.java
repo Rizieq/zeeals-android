@@ -68,7 +68,6 @@ public class groupAdapter extends ExpandableListUtils<GroupViewHolder,SourceView
                 CharSequence text = source.getSourceName();
                 CharSequence link = source.getSourceLink();
                 onChildClickListener.OnChildClick(childIndex,text,link,source.getGroupPosition());
-                Log.d(TAG, "onClick: PosisiGroup: "+source.getGroupPosition());
             }
         });
 
@@ -89,6 +88,7 @@ public class groupAdapter extends ExpandableListUtils<GroupViewHolder,SourceView
                     if (actionId == EditorInfo.IME_ACTION_DONE) {
                         String text = groupName.getText().toString();
                         onItemClickListener.OnItemClick(position,text);
+                        Log.d(TAG, "onEditorAction: "+position);
                         groupName.clearFocus();
                         handled = true;
                     }

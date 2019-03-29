@@ -26,7 +26,7 @@ public class addNewGroupAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     }
 
     public void addCount(){
-        this.adapterCount+=1;
+        this.adapterCount++;
     }
 
     interface onTextSavedListener{
@@ -73,6 +73,10 @@ public class addNewGroupAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
     @Override
     public int getItemCount() {
+        return adapterCount;
+    }
+
+    public int getAdapterCount(){
         return adapterCount;
     }
 

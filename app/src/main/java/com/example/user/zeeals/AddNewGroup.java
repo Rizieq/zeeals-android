@@ -52,7 +52,7 @@ public class AddNewGroup extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 adapter.addCount();
-                adapter.notifyDataSetChanged();
+                adapter.notifyItemInserted(adapter.getAdapterCount());
             }
         });
         recyclerView.setLayoutManager(layoutManager);
@@ -61,7 +61,10 @@ public class AddNewGroup extends AppCompatActivity {
         adapter.setOnTextSaved(new addNewGroupAdapter.onTextSavedListener() {
             @Override
             public void onTextSaved(Source source) {
+                source.setGroupPosition(groupSize);
                 listSource.add(source);
+                Log.d(TAG, "onTextSaved: "+source.getSourceName());
+                Log.d(TAG, "onTextSaved: "+source.getSourceLink());
             }
         });
 
@@ -71,10 +74,11 @@ public class AddNewGroup extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                listSource.get(0).setGroupName(groupName.getText().toString());
                 for(int i =0;i<listSource.size();i++){
                     listSource.get(i).setGroupPosition(groupSize);
+                    listSource.get(0).setGroupName(groupName.getText().toString());
                 }
+                groupSize++;
 
                 Group group = new Group(groupName.getText().toString(),listSource);
                 Intent intent= new Intent();
