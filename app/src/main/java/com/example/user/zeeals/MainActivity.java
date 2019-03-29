@@ -1,6 +1,7 @@
 package com.example.user.zeeals;
 
 import android.app.Dialog;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
@@ -101,9 +102,7 @@ public class MainActivity extends AppCompatActivity implements editGroupFragment
         adapter.setOnItemClickListener(new groupAdapter.OnItemClickListener() {
             @Override
             public void OnItemClick(int position,CharSequence text) {
-                fab.hide();
                 groupList.get(position).getItems().get(0).setGroupName(text.toString());
-                Log.d(TAG, "OnItemClick: "+ groupList.get(posisi).getItems().get(0).getGroupName());
                 posisi = position;
             }
         });
@@ -111,8 +110,6 @@ public class MainActivity extends AppCompatActivity implements editGroupFragment
         adapter.setOnChildClickListener(new groupAdapter.OnChildClickListener() {
             @Override
             public void OnChildClick(int childPosition, CharSequence newSourceName, CharSequence newSourceLink,int groupPosition) {
-                Log.d(TAG, "OnChildClick: Pressed : "+childPosition);
-                Log.d(TAG, "OnChildClick: Group: "+groupPosition);
                 fab.hide();
 
                 String sourceName = groupList.get(groupPosition).getItems().get(childPosition).getSourceName();
@@ -136,7 +133,8 @@ public class MainActivity extends AppCompatActivity implements editGroupFragment
         imgBannerProfPic = findViewById(R.id.profileBanner);
         profileName.setTypeface(poppinsBold);
         profileDesc.setTypeface(poppinsRegular);
-
+        profileName.clearFocus();
+        profileDesc.clearFocus();
 
         profileName.addTextChangedListener(new TextWatcher() {
             @Override
@@ -161,14 +159,13 @@ public class MainActivity extends AppCompatActivity implements editGroupFragment
 
         picChangePopUp = new Dialog(this);
 
+
+
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-
-        Log.d(TAG, "onActivityResult: Result Code: "+resultCode);
-        Log.d(TAG, "onActivityResult: Request Code: "+requestCode);
 
         if(requestCode==1){
             if(resultCode==RESULT_OK){
@@ -184,9 +181,6 @@ public class MainActivity extends AppCompatActivity implements editGroupFragment
                 adapter.addAll(groupList);
                 adapter.notifyGroupDataChanged();
                 adapter.notifyItemInserted(groupList.size()-1);
-            }
-            if(requestCode==RESULT_CANCELED){
-                Log.d(TAG, "onActivityResult: CANCELED");
             }
         }
         else if (resultCode == RESULT_OK && requestCode == PICK_IMAGE_PROF_PIC){
@@ -228,20 +222,6 @@ public class MainActivity extends AppCompatActivity implements editGroupFragment
 
     }
 
-
-    public void openFragment(String text) {
-
-        fragment = editGroupFragment.newInstance(text);
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        transaction = fragmentManager.beginTransaction();
-//        transaction.setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_right, R.anim.enter_from_right, R.anim.exit_to_right);
-        transaction.addToBackStack(null);
-        transaction.add(R.id.fragment_editGroup_container, fragment, "BLANK_FRAGMENT").commit();
-        Log.d(TAG, "openFragment: Pressed "+ text);
-
-
-    }
-
     @Override
     public void onFragmentInteraction(String sendBackText) {
         InputMethodManager imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
@@ -280,10 +260,10 @@ public class MainActivity extends AppCompatActivity implements editGroupFragment
         EditText imgUrl;
         ImageView profPic;
         picChangePopUp.setContentView(R.layout.popupchangepicture);
-        chagePhoto = (Button) picChangePopUp.findViewById(R.id.btnChangePhotoPopUpProfPic);
-        close = (Button) picChangePopUp.findViewById(R.id.btnClosePopUpProfPic);
-        imgUrl = (EditText) picChangePopUp.findViewById(R.id.insertUrlPopUpProfPic);
-        profPic = (ImageView) picChangePopUp.findViewById(R.id.imageViewPopUpProfPic);
+        chagePhoto =  picChangePopUp.findViewById(R.id.btnChangePhotoPopUpProfPic);
+        close =  picChangePopUp.findViewById(R.id.btnClosePopUpProfPic);
+        imgUrl = picChangePopUp.findViewById(R.id.insertUrlPopUpProfPic);
+        profPic =  picChangePopUp.findViewById(R.id.imageViewPopUpProfPic);
         profPic.setImageBitmap(convertImageViewToBitmap(imgProfpic));
 
         chagePhoto.setOnClickListener(new View.OnClickListener() {
@@ -313,10 +293,10 @@ public class MainActivity extends AppCompatActivity implements editGroupFragment
 
         picChangePopUp.setContentView(R.layout.popupchangepicture);
 
-        chagePhoto = (Button) picChangePopUp.findViewById(R.id.btnChangePhotoPopUpProfPic);
-        close = (Button) picChangePopUp.findViewById(R.id.btnClosePopUpProfPic);
-        imgUrl = (EditText) picChangePopUp.findViewById(R.id.insertUrlPopUpProfPic);
-        profPic = (ImageView) picChangePopUp.findViewById(R.id.imageViewPopUpProfPic);
+        chagePhoto = picChangePopUp.findViewById(R.id.btnChangePhotoPopUpProfPic);
+        close =  picChangePopUp.findViewById(R.id.btnClosePopUpProfPic);
+        imgUrl = picChangePopUp.findViewById(R.id.insertUrlPopUpProfPic);
+        profPic = picChangePopUp.findViewById(R.id.imageViewPopUpProfPic);
         profPic.setImageBitmap(convertImageViewToBitmap(imgBannerProfPic));
 
         chagePhoto.setTypeface(poppinsRegular);

@@ -1,8 +1,6 @@
 package com.example.user.zeeals;
 
 import android.support.v7.widget.RecyclerView;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -54,19 +52,43 @@ public class addNewGroupAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
     @Override
     public void onBindViewHolder(final RecyclerView.ViewHolder viewHolder, int i) {
-            et_sourceLink.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-                @Override
-                public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                    boolean handled = false;
-                    if (actionId == EditorInfo.IME_ACTION_DONE) {
-                        sourceName=et_sourceName.getText().toString();
-                        sourceLink=et_sourceLink.getText().toString();
-                        onTextSavedListener.onTextSaved(new Source(sourceName,sourceLink));
-                        handled = true;
+                et_sourceName.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+                    @Override
+                    public void onFocusChange(View v, boolean hasFocus) {
+                        if(!hasFocus){
+                            sourceName = et_sourceName.getText().toString();
+                        }
+                        
                     }
-                    return handled;
-                }
-            });
+                });
+
+                et_sourceLink.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+                    @Override
+                    public void onFocusChange(View v, boolean hasFocus) {
+                        if(!hasFocus){
+                            sourceLink = et_sourceLink.getText().toString();
+                            onTextSavedListener.onTextSaved(new Source(sourceName,sourceLink));
+                            Log.d(TAG, "onFocusChange: LOST FOCUS");
+                        }else{
+                            Log.d(TAG, "onFocusChange: Has Ofcus TRU");
+                        }
+                    }
+                });
+
+                et_sourceLink.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+                    @Override
+                    public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                        boolean handled = false;
+                        if (actionId == EditorInfo.IME_ACTION_DONE) {
+                            Log.d(TAG, "onEditorAction: FOCUS LOST");
+                            et_sourceLink.clearFocus();
+                            handled = true;
+                        }
+                        return handled;
+                    }
+                });
+            
+
 
 
     }

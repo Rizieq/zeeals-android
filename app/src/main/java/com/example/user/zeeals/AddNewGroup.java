@@ -61,6 +61,7 @@ public class AddNewGroup extends AppCompatActivity {
         adapter.setOnTextSaved(new addNewGroupAdapter.onTextSavedListener() {
             @Override
             public void onTextSaved(Source source) {
+
                 source.setGroupPosition(groupSize);
                 listSource.add(source);
                 Log.d(TAG, "onTextSaved: "+source.getSourceName());
