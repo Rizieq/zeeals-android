@@ -15,7 +15,6 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
@@ -35,19 +34,17 @@ import android.widget.TextView;
 import com.example.user.zeeals.R;
 import com.example.user.zeeals.fragment.editSourceFragment;
 import com.example.user.zeeals.model.Group;
-import com.example.user.zeeals.model.Source;
 import com.example.user.zeeals.model.Zlink;
 import com.example.user.zeeals.model.zGroup;
 import com.example.user.zeeals.model.zSource;
-import com.thoughtbot.expandablerecyclerview.models.ExpandableGroup;
 //import com.thoughtbot.expandablerecyclerview.models.ExpandableGroup;
 
 import java.util.ArrayList;
 import java.util.List;
 
 //editGroupFragment.OnFragmentInteractionListener,
-//
-public class MainActivity extends AppCompatActivity implements editSourceFragment.OnFragmentInteractionListener{
+// implements editSourceFragment.OnFragmentInteractionListener
+public class MainActivity extends AppCompatActivity {
 
     private EditText profileName, profileDesc;
     Dialog picChangePopUp;
@@ -58,16 +55,10 @@ public class MainActivity extends AppCompatActivity implements editSourceFragmen
     private static final int PICK_IMAGE_PROF_BANNER =101;
 
     FloatingActionButton fab;
-    groupAdapter adapter;
     RecyclerView recyclerViewTes;
-    List <Group> groupList = new ArrayList<>();
-    int posisi,childPosisi,groupPosisi;
-    private RelativeLayout main_layout;
-    RecyclerView recyclerView;
     FragmentTransaction transaction;
 //    editGroupFragment fragment;
     editSourceFragment editSource_Fragment;
-
     RecyclerAdapterTest adapterTest;
     List<Zlink> zLink;
 
@@ -78,35 +69,8 @@ public class MainActivity extends AppCompatActivity implements editSourceFragmen
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        main_layout = findViewById(R.id.main_activity_layou);
-
-//        recyclerView = findViewById(R.id.recycler_view);
         recyclerViewTes = findViewById(R.id.recycler_view);
 
-
-
-//        RecyclerView.ItemAnimator animator = recyclerView.getItemAnimator();
-//        if (animator instanceof DefaultItemAnimator) {
-//            ((DefaultItemAnimator) animator).setSupportsChangeAnimations(false);
-//        }
-
-
-
-        List <Source> sourceList1 = new ArrayList<>();
-        Source s1 = new Source("Instagram","http://instagram.com/eldirohmanur","Social Media",0);
-        Source s2 = new Source("Facebook","http://facebook.com/eldirohmanur","Social Media",0);
-        sourceList1.add(s1);
-        sourceList1.add(s2);
-        Group g1 = new Group("Social Media",sourceList1);
-
-        List <Source> sourceList2 = new ArrayList<>();
-        Source ss1 = new Source("Telkom","http://telyu.com/eldirohmanur","Career",1);
-        Source ss2 = new Source("KONGS","http://kong.com/eldirohmanur","Career",1);
-        sourceList2.add(ss1);
-        sourceList2.add(ss2);
-        Group g2 = new Group("Career",sourceList2);
-        groupList.add(g1);
-        groupList.add(g2);
 
 
 //        Z-VERSION
@@ -116,8 +80,10 @@ public class MainActivity extends AppCompatActivity implements editSourceFragmen
         zSource zSource4 = new zSource(1,"KONG","kongs.com/eldirohmanur",1);
         zSource zSource5 = new zSource(2,"HohoHehe","HohoHehe.com/eldirohmanur",1);
 
-        zSource[] zSourceList1 = {zSource1,zSource2};
-        zSource[] zSourceList2 = {zSource3,zSource4,zSource5};
+        ArrayList<zSource> zSourceList1 = new ArrayList<>();
+        zSourceList1.add(zSource1); zSourceList1.add(zSource2);
+        ArrayList<zSource> zSourceList2 = new ArrayList<>();
+        zSourceList2.add(zSource3); zSourceList2.add(zSource4); zSourceList2.add(zSource5);
 
         zGroup zGroup1 = new zGroup(0,zSourceList1,"Social");
         zGroup zGroup2 = new zGroup(1,zSourceList2,"Work");
@@ -127,7 +93,7 @@ public class MainActivity extends AppCompatActivity implements editSourceFragmen
         zLink.add(zGroup2);
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
-        adapterTest = new RecyclerAdapterTest(recyclerViewTes,zLink);
+        adapterTest = new RecyclerAdapterTest(recyclerViewTes,zLink,this.findViewById(R.id.snackbar_container));
         recyclerViewTes.setAdapter(adapterTest);
         recyclerViewTes.setLayoutManager(layoutManager);
 
@@ -142,46 +108,11 @@ public class MainActivity extends AppCompatActivity implements editSourceFragmen
         });
 
 
-//        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(new SwipeToDeleteCallback(0,adapterTest));
-//        itemTouchHelper.attachToRecyclerView(recyclerView);
+        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(new SwipeToDeleteCallback(adapterTest));
+        itemTouchHelper.attachToRecyclerView(recyclerViewTes);
 
 
 //        Z-VERSION  END ---------------------------
-
-
-
-//        adapter = new groupAdapter(groupList);
-//
-//        adapter.setOnItemClickListener(new groupAdapter.OnItemClickListener() {
-//            @Override
-//            public void OnItemClick(int position,CharSequence text) {
-//                groupList.get(position).getItems().get(0).setGroupName(text.toString());
-//                posisi = position;
-//            }
-//        });
-//
-//        adapter.setOnChildClickListener(new groupAdapter.OnChildClickListener() {
-//            @Override
-//            public void OnChildClick(int childPosition, CharSequence newSourceName, CharSequence newSourceLink,int groupPosition) {
-//                fab.hide();
-//
-//                String sourceName = groupList.get(groupPosition).getItems().get(childPosition).getSourceName();
-//                String sourceLink = groupList.get(groupPosition).getItems().get(childPosition).getSourceLink();
-//
-//                openSourceEditFragment(sourceName,sourceLink);
-//                childPosisi = childPosition;
-//                groupPosisi= groupPosition;
-//
-//            }
-//        });
-//        recyclerView.setLayoutManager(layoutManager);
-//        recyclerView.setAdapter(adapter);
-
-
-
-
-
-
 
 
 
@@ -262,26 +193,17 @@ public class MainActivity extends AppCompatActivity implements editSourceFragmen
 
         if(requestCode==1){
             if(resultCode==RESULT_OK){
-                Parcelable[] sourceParcel = data.getParcelableArrayExtra("SOURCES");
+                ArrayList<Parcelable> sourceParcel = data.getParcelableArrayListExtra("SOURCES");
                 zGroup groupParcel = data.getParcelableExtra("GROUP");
 
 
-//                List<zSource> zSources_new = new ArrayList<>();
-//                for(int i = 0;i<sourceParcel.length;i++){
-//                    zSources_new.add((zSource)sourceParcel[i]);
-//                }
-
-                zSource[] arraySource = {(zSource)sourceParcel[0]};
+                ArrayList<zSource> arraySource = new ArrayList<>();
+                for(int i =0;i<sourceParcel.size();i++){
+                    arraySource.add((zSource) sourceParcel.get(i));
+                }
                 groupParcel.setzSource(arraySource);
 
                 zLink.add(groupParcel);
-//                Group group = new Group(groupParcel.getTitle(),groupParcel.getItems());
-//                for (int i = 0 ; i < group.getItems().size();i++){
-//                    group.getItems().get(i).setGroupPosition(groupList.size());
-//                }
-//                zGroup newGroup = new zGroup(zLink.size(),sourceParcel,groupParcel.getName());
-//                zLink.add(newGroup);
-//                adapter.notifyItemInserted(zLink.size()-1);
                 adapterTest.notifyItemInserted(zLink.size()-1);
             }
             if(requestCode==RESULT_CANCELED){
@@ -310,22 +232,25 @@ public class MainActivity extends AppCompatActivity implements editSourceFragmen
 
     }
 
-    @Override
-    public void onFragmentChildInteraction(String newName, String newLink) {
-        InputMethodManager imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
-        imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+//    CURRENTLY WAITING ACTIVITY LAYOUT FROM IKHDAR
+//    1/4/2019
 
-        groupList.get(groupPosisi).getItems().get(childPosisi).setSourceName(newName);
-        groupList.get(groupPosisi).getItems().get(childPosisi).setSourceLink(newLink);
-        Log.d(TAG, "onFragmentChildInteraction: GroupPosisi: "+groupPosisi);
-        adapter.addAll(groupList);
-        adapter.notifyGroupDataChanged();
-        adapter.notifyDataSetChanged();
-
-        onBackPressed();
-        fab.show();
-
-    }
+//    @Override
+//    public void onFragmentChildInteraction(String newName, String newLink) {
+//        InputMethodManager imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+//        imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+//
+//        groupList.get(groupPosisi).getItems().get(childPosisi).setSourceName(newName);
+//        groupList.get(groupPosisi).getItems().get(childPosisi).setSourceLink(newLink);
+//        Log.d(TAG, "onFragmentChildInteraction: GroupPosisi: "+groupPosisi);
+////        adapter.addAll(groupList);
+////        adapter.notifyGroupDataChanged();
+////        adapter.notifyDataSetChanged();
+//
+//        onBackPressed();
+//        fab.show();
+//
+//    }
 
 
 //    public void openFragment(String text) {

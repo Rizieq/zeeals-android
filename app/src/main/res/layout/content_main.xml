@@ -35,14 +35,5 @@
         android:background="@android:color/white"
         android:stateListAnimator="@null"/>
 
-    <LinearLayout
-        android:id="@+id/fragment_editGroup_container"
-        android:layout_width="match_parent"
-        android:layout_height="150dp"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentBottom="true"
-        android:layout_marginBottom="0dp"
-        android:orientation="vertical">
 
-    </LinearLayout>
 </RelativeLayout>

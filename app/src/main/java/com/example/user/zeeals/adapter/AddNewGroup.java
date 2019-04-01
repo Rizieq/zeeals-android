@@ -24,8 +24,7 @@ public class AddNewGroup extends AppCompatActivity {
 
     RecyclerView recyclerView;
     addNewGroupAdapter adapter;
-    ArrayList<Source> listSource;
-    zSource[] zSources;
+    ArrayList<zSource> zSources;
     int listSize;
     Button btn_newSourceElement,btn_add_save_new_group;
     private static final String TAG = "AddNewGroup";
@@ -38,7 +37,7 @@ public class AddNewGroup extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_new_group);
         recyclerView = findViewById(R.id.recycler_source);
-        listSource = new ArrayList<>();
+        zSources= new ArrayList<>();
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         adapter = new addNewGroupAdapter(1);
         groupName = findViewById(R.id.editText_groupName_add_new_group);
@@ -60,14 +59,8 @@ public class AddNewGroup extends AppCompatActivity {
             @Override
             public void onTextSaved(zSource source) {
 
-//                source.setGroupPosition(groupSize);
-//                listSource.add(source);
                 source.setParentID(groupSize);
-                if(zSources==null){
-                    zSources = new zSource[]{source};
-                }else{
-                    zSources[zSources.length]=source;
-                }
+                zSources.add(source);
 
             }
         });
@@ -78,15 +71,6 @@ public class AddNewGroup extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-//                for(int i =0;i<listSource.size();i++){
-//                    listSource.get(i).setGroupPosition(groupSize);
-//                    listSource.get(0).setGroupName(groupName.getText().toString());
-//                }
-//                groupSize++;
-
-
-
-//                Group group = new Group(groupName.getText().toString(),listSource);
                 zGroup group = new zGroup(groupSize,zSources,groupName.getText().toString());
                 Intent intent= new Intent();
                 intent.putExtra("GROUP",group);

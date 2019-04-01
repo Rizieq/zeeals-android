@@ -3,6 +3,8 @@ package com.example.user.zeeals.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import java.util.ArrayList;
+
 public class zGroup extends Zlink implements Parcelable {
 
     protected zGroup(Parcel in) {
@@ -29,7 +31,7 @@ public class zGroup extends Zlink implements Parcelable {
 
 
     private int id;
-    private zSource[] zSource;
+    private ArrayList<zSource> zSource;
     private boolean childrenVisible;
 
     public boolean isChildrenVisible() {
@@ -41,7 +43,7 @@ public class zGroup extends Zlink implements Parcelable {
     }
 
 
-    public zGroup(int id, com.example.user.zeeals.model.zSource[] zSource, String name) {
+    public zGroup(int id, ArrayList<zSource> zSource, String name) {
         this.id = id;
         this.zSource = zSource;
         this.name = name;
@@ -57,11 +59,11 @@ public class zGroup extends Zlink implements Parcelable {
         this.id = id;
     }
 
-    public zSource[] getzSource() {
+    public ArrayList<zSource> getzSource() {
         return zSource;
     }
 
-    public void setzSource(zSource[] zSource) {
+    public void setzSource(ArrayList<zSource> zSource) {
         this.zSource = zSource;
     }
 
