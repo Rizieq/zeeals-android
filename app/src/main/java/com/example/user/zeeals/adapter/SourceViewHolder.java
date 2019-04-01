@@ -1,8 +1,9 @@
-package com.example.user.zeeals;
+package com.example.user.zeeals.adapter;
 
 import android.view.View;
 import android.widget.TextView;
 
+import com.example.user.zeeals.R;
 import com.thoughtbot.expandablerecyclerview.viewholders.ChildViewHolder;
 
 public class SourceViewHolder extends ChildViewHolder {

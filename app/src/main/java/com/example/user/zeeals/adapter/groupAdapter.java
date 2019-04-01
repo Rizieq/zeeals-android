@@ -1,7 +1,6 @@
-package com.example.user.zeeals;
+package com.example.user.zeeals.adapter;
 
 import android.content.Context;
-import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -11,17 +10,22 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.example.user.zeeals.R;
+import com.example.user.zeeals.model.Group;
+import com.example.user.zeeals.model.Source;
 import com.thoughtbot.expandablerecyclerview.ExpandableListUtils;
 import com.thoughtbot.expandablerecyclerview.models.ExpandableGroup;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class groupAdapter extends ExpandableListUtils<GroupViewHolder,SourceViewHolder> {
     private static final String TAG = "groupAdapter";
+    private List<? extends ExpandableGroup> listGroup;
 
     public groupAdapter(List<? extends ExpandableGroup> groups) {
         super(groups);
+        this.listGroup = groups;
+
     }
 
     interface OnItemClickListener{
@@ -40,6 +44,14 @@ public class groupAdapter extends ExpandableListUtils<GroupViewHolder,SourceView
         this.onChildClickListener= onChildClickListener;
     }
 
+    interface getContextListener{
+        void gettingContext(Context context);
+    }
+    getContextListener gettingContext;
+    public void setGettingContext(getContextListener Context) {
+        this.gettingContext= Context;
+    }
+
     @Override
     public GroupViewHolder onCreateGroupViewHolder(ViewGroup parent, final int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item_group,parent,false);
@@ -50,7 +62,15 @@ public class groupAdapter extends ExpandableListUtils<GroupViewHolder,SourceView
     @Override
     public SourceViewHolder onCreateChildViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item_source,parent,false);
-        return new SourceViewHolder(view);
+
+        final View viewTumbal = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item_source,parent,false);
+        setGettingContext(new getContextListener() {
+            @Override
+            public void gettingContext(Context context) {
+                gettingContext.gettingContext(viewTumbal.getContext());
+            }
+        });
+        return new SourceViewHolder(viewTumbal);
     }
 
     @Override
@@ -95,10 +115,18 @@ public class groupAdapter extends ExpandableListUtils<GroupViewHolder,SourceView
                     return handled;
                 }
             });
-        
+
+    }
 
 
+    public void deleteChild(int position) {
+        listGroup.remove(position);
+        notifyGroupDataChanged();
+        notifyItemRemoved(position);
+    }
 
+    public void restoreChild(Source source, int parentPosition, int childPosition ){
+        listGroup.get(parentPosition).getItems().add(childPosition,source);
     }
 
     public void addAll(List<Group> groups) {

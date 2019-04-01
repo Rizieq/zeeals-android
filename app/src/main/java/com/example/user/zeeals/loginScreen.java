@@ -4,7 +4,6 @@ package com.example.user.zeeals;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
@@ -29,6 +28,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.user.zeeals.adapter.MainActivity;
 import com.example.user.zeeals.model.Login;
 import com.example.user.zeeals.model.User;
 import com.example.user.zeeals.service.UserClient;
@@ -44,15 +44,10 @@ import com.facebook.login.LoginBehavior;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.w3c.dom.Text;
 
-import java.lang.reflect.Type;
 import java.util.Arrays;
 
 import okhttp3.ResponseBody;

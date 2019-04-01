@@ -1,19 +1,13 @@
-package com.example.user.zeeals;
+package com.example.user.zeeals.adapter;
 
-import android.os.Bundle;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v7.view.menu.MenuView;
-import android.util.Log;
 import android.view.View;
 import android.view.animation.RotateAnimation;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.TextView;
 
-import com.thoughtbot.expandablerecyclerview.models.ExpandableGroup;
+import com.example.user.zeeals.R;
+import com.example.user.zeeals.fragment.editGroupFragment;
 
-import static android.content.ContentValues.TAG;
 import static android.view.animation.Animation.RELATIVE_TO_SELF;
 
 public class GroupViewHolder extends com.thoughtbot.expandablerecyclerview.viewholders.GroupViewHolder implements editGroupFragment.OnFragmentInteractionListener{

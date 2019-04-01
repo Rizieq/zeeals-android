@@ -1,4 +1,4 @@
-package com.example.user.zeeals;
+package com.example.user.zeeals.adapter;
 
 import android.content.Intent;
 import android.os.Build;
@@ -12,6 +12,12 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
+import com.example.user.zeeals.R;
+import com.example.user.zeeals.model.Group;
+import com.example.user.zeeals.model.Source;
+import com.example.user.zeeals.model.zGroup;
+import com.example.user.zeeals.model.zSource;
+
 import java.util.ArrayList;
 
 public class AddNewGroup extends AppCompatActivity {
@@ -19,6 +25,8 @@ public class AddNewGroup extends AppCompatActivity {
     RecyclerView recyclerView;
     addNewGroupAdapter adapter;
     ArrayList<Source> listSource;
+    zSource[] zSources;
+    int listSize;
     Button btn_newSourceElement,btn_add_save_new_group;
     private static final String TAG = "AddNewGroup";
     EditText groupName;
@@ -34,18 +42,8 @@ public class AddNewGroup extends AppCompatActivity {
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         adapter = new addNewGroupAdapter(1);
         groupName = findViewById(R.id.editText_groupName_add_new_group);
-
         Intent intent = getIntent();
         groupSize = intent.getIntExtra("GROUPSIZE",0);
-
-
-
-        adapter.setOnTextSaved(new addNewGroupAdapter.onTextSavedListener() {
-            @Override
-            public void onTextSaved(Source source) {
-                listSource.add(source);
-            }
-        });
 
         btn_newSourceElement = findViewById(R.id.btn_new_source_element);
         btn_newSourceElement.setOnClickListener(new View.OnClickListener() {
@@ -60,12 +58,17 @@ public class AddNewGroup extends AppCompatActivity {
 
         adapter.setOnTextSaved(new addNewGroupAdapter.onTextSavedListener() {
             @Override
-            public void onTextSaved(Source source) {
+            public void onTextSaved(zSource source) {
 
-                source.setGroupPosition(groupSize);
-                listSource.add(source);
-                Log.d(TAG, "onTextSaved: "+source.getSourceName());
-                Log.d(TAG, "onTextSaved: "+source.getSourceLink());
+//                source.setGroupPosition(groupSize);
+//                listSource.add(source);
+                source.setParentID(groupSize);
+                if(zSources==null){
+                    zSources = new zSource[]{source};
+                }else{
+                    zSources[zSources.length]=source;
+                }
+
             }
         });
 
@@ -75,15 +78,19 @@ public class AddNewGroup extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                for(int i =0;i<listSource.size();i++){
-                    listSource.get(i).setGroupPosition(groupSize);
-                    listSource.get(0).setGroupName(groupName.getText().toString());
-                }
-                groupSize++;
+//                for(int i =0;i<listSource.size();i++){
+//                    listSource.get(i).setGroupPosition(groupSize);
+//                    listSource.get(0).setGroupName(groupName.getText().toString());
+//                }
+//                groupSize++;
 
-                Group group = new Group(groupName.getText().toString(),listSource);
+
+
+//                Group group = new Group(groupName.getText().toString(),listSource);
+                zGroup group = new zGroup(groupSize,zSources,groupName.getText().toString());
                 Intent intent= new Intent();
                 intent.putExtra("GROUP",group);
+                intent.putExtra("SOURCES",zSources);
                 setResult(RESULT_OK,intent);
                 finish();
             }

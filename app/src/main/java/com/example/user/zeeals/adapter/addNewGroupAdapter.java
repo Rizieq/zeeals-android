@@ -1,4 +1,4 @@
-package com.example.user.zeeals;
+package com.example.user.zeeals.adapter;
 
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -9,6 +9,10 @@ import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.TextView;
+
+import com.example.user.zeeals.R;
+import com.example.user.zeeals.model.Source;
+import com.example.user.zeeals.model.zSource;
 
 import static android.content.ContentValues.TAG;
 
@@ -28,7 +32,7 @@ public class addNewGroupAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     }
 
     interface onTextSavedListener{
-        void onTextSaved(Source source);
+        void onTextSaved(zSource source);
     }
     onTextSavedListener onTextSavedListener;
     public void setOnTextSaved(onTextSavedListener onTextSavedListener) {
@@ -67,7 +71,7 @@ public class addNewGroupAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                     public void onFocusChange(View v, boolean hasFocus) {
                         if(!hasFocus){
                             sourceLink = et_sourceLink.getText().toString();
-                            onTextSavedListener.onTextSaved(new Source(sourceName,sourceLink));
+                            onTextSavedListener.onTextSaved(new zSource(sourceName,sourceLink));
                             Log.d(TAG, "onFocusChange: LOST FOCUS");
                         }else{
                             Log.d(TAG, "onFocusChange: Has Ofcus TRU");
@@ -87,10 +91,6 @@ public class addNewGroupAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                         return handled;
                     }
                 });
-            
-
-
-
     }
 
     @Override
@@ -101,6 +101,7 @@ public class addNewGroupAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     public int getAdapterCount(){
         return adapterCount;
     }
+
 
 
 }

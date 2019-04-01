@@ -1,11 +1,9 @@
-package com.example.user.zeeals;
+package com.example.user.zeeals.model;
 
 import android.os.Parcel;
-import android.os.Parcelable;
 
 import com.thoughtbot.expandablerecyclerview.models.ExpandableGroup;
 
-import java.io.Serializable;
 import java.util.List;
 
 public class Group extends ExpandableGroup<Source> {

@@ -1,9 +1,7 @@
-package com.example.user.zeeals;
+package com.example.user.zeeals.model;
 
 import android.os.Parcel;
 import android.os.Parcelable;
-
-import java.io.Serializable;
 
 public class Source implements Parcelable {
     private String sourceName;

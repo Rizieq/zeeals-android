@@ -14,7 +14,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".AddNewGroup"></activity>
+        <activity android:name=".adapter.AddNewGroup"></activity>
         <activity
             android:name=".lupaPasswordScreen"
             android:noHistory="true" />
@@ -24,7 +24,7 @@
         <activity
             android:name=".loginScreen"
             android:noHistory="true" />
-        <activity android:name=".MainActivity" />
+        <activity android:name=".adapter.MainActivity" />
         <activity
             android:name=".splashscreen"
             android:label="@string/app_name"
