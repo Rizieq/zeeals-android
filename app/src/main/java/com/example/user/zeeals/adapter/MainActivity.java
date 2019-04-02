@@ -28,12 +28,10 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.example.user.zeeals.R;
 import com.example.user.zeeals.fragment.editSourceFragment;
-import com.example.user.zeeals.model.Group;
 import com.example.user.zeeals.model.Zlink;
 import com.example.user.zeeals.model.zGroup;
 import com.example.user.zeeals.model.zSource;

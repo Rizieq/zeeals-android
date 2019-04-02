@@ -50,7 +50,7 @@ public class RecyclerAdapterTest extends RecyclerView.Adapter<RecyclerView.ViewH
     }
 
     public static class ParentViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        public EditText groupTitle;
+        public TextView groupTitle;
         public ImageView arrow;
 
 
@@ -184,7 +184,7 @@ public class RecyclerAdapterTest extends RecyclerView.Adapter<RecyclerView.ViewH
             sourceName.setText(zSource.getSourceName());
             sourceLink.setText(zSource.getSourceLink());
         }else{
-            EditText groupName = ((ParentViewHolder)viewHolder).groupTitle;
+            TextView groupName = ((ParentViewHolder)viewHolder).groupTitle;
             zGroup zGroup = (zGroup)general.get(i);
             groupName.setText(zGroup.getName());
         }

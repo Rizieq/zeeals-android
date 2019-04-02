@@ -11,7 +11,6 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.example.user.zeeals.R;
-import com.example.user.zeeals.model.Source;
 import com.example.user.zeeals.model.zSource;
 
 import static android.content.ContentValues.TAG;

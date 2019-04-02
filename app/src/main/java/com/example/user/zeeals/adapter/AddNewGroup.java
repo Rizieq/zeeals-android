@@ -7,14 +7,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
 import com.example.user.zeeals.R;
-import com.example.user.zeeals.model.Group;
-import com.example.user.zeeals.model.Source;
 import com.example.user.zeeals.model.zGroup;
 import com.example.user.zeeals.model.zSource;
 

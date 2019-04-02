@@ -30,12 +30,12 @@
                           <map>
                             <entry key="assetSourceType" value="FILE" />
                             <entry key="color" value="5f5f5f" />
-                            <entry key="height" value="400" />
-                            <entry key="opacityPercent" value="73" />
-                            <entry key="outputName" value="ic_left_arrow" />
+                            <entry key="height" value="452" />
+                            <entry key="opacityPercent" value="64" />
+                            <entry key="outputName" value="ic_arrow_down_navigate" />
                             <entry key="overrideSize" value="true" />
-                            <entry key="sourceFile" value="C:\Users\User\Downloads\left-arrow-2.svg" />
-                            <entry key="width" value="400" />
+                            <entry key="sourceFile" value="C:\Users\User\Downloads\arrow-down-sign-to-navigate.svg" />
+                            <entry key="width" value="452" />
                           </map>
                         </option>
                       </PersistentState>
