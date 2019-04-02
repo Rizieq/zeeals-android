@@ -28,9 +28,14 @@
                         </option>
                         <option name="values">
                           <map>
+                            <entry key="assetSourceType" value="FILE" />
                             <entry key="color" value="5f5f5f" />
-                            <entry key="outputName" value="ic_delete" />
-                            <entry key="sourceFile" value="C:\Users\User" />
+                            <entry key="height" value="400" />
+                            <entry key="opacityPercent" value="73" />
+                            <entry key="outputName" value="ic_left_arrow" />
+                            <entry key="overrideSize" value="true" />
+                            <entry key="sourceFile" value="C:\Users\User\Downloads\left-arrow-2.svg" />
+                            <entry key="width" value="400" />
                           </map>
                         </option>
                       </PersistentState>

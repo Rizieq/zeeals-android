@@ -33,8 +33,6 @@ import static android.view.animation.Animation.RELATIVE_TO_SELF;
 public class RecyclerAdapterTest extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     public static final int CHILD = 0;
     public static final int PARENT = 1;
-    static List<zSource> datas = new ArrayList<>();
-    static List<Integer> children = new ArrayList<>();
     static RecyclerAdapterTest recyclerAdapter;
     public RecyclerView recyclerView;
     static List<Zlink> general;
@@ -49,9 +47,6 @@ public class RecyclerAdapterTest extends RecyclerView.Adapter<RecyclerView.ViewH
         this.general = general;
         this.mActivity = v;
 
-        for(int i =0;i<general.size();i++){
-            Log.d(TAG, "RecyclerAdapterTest: "+general.get(0).isParent());
-        }
     }
 
     public static class ParentViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
@@ -95,23 +90,30 @@ public class RecyclerAdapterTest extends RecyclerView.Adapter<RecyclerView.ViewH
             if (zGroup.getzSource().size()!= 0) {
                 //collapse list
                 if (zGroup.isChildrenVisible()) {
-                    animateCollapse();
-                    zGroup.setChildrenVisible(false);
-                    for (int i = id + 1; i < id + 1 + zSources.size(); i++) {
-                        general.remove(id + 1);
+
+                    if(!zGroup.getzSource().isEmpty()){
+                        animateCollapse();
+                        zGroup.setChildrenVisible(false);
+                        for (int i = id + 1; i < id + 1 + zSources.size(); i++) {
+                            general.remove(id + 1);
+                        }
+                        recyclerAdapter.notifyItemRangeRemoved(id + 1, zSources.size());
                     }
-                    recyclerAdapter.notifyItemRangeRemoved(id + 1, zSources.size());
+
                 } else {
                     //expanding list
-                    animateExpand();
-                    zGroup.setChildrenVisible(true);
-                    int index = 0;
+                    if(!zGroup.getzSource().isEmpty()){
+                        animateExpand();
+                        zGroup.setChildrenVisible(true);
+                        int index = 0;
 
-                    for (int i = id + 1; i < (id + 1 + zSources.size()); i++) {
-                        general.add(i, zSources.get(index));
-                        index++;
+                        for (int i = id + 1; i < (id + 1 + zSources.size()); i++) {
+                            general.add(i, zSources.get(index));
+                            index++;
+                        }
+                        recyclerAdapter.notifyItemRangeInserted(id + 1, zSources.size());
                     }
-                    recyclerAdapter.notifyItemRangeInserted(id + 1, zSources.size());
+
                 }
 
                 int lastVisibleItemPosition = ((LinearLayoutManager) recyclerAdapter.recyclerView.
@@ -176,15 +178,12 @@ public class RecyclerAdapterTest extends RecyclerView.Adapter<RecyclerView.ViewH
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, int i) {
         if (viewHolder.getItemViewType()==CHILD){
-            Log.d(TAG, "onBindViewHolder: CHILD "+viewHolder.getItemViewType());
             TextView sourceName = ((ChildsViewHolder)viewHolder).sourceName;
             TextView sourceLink = ((ChildsViewHolder)viewHolder).sourceLink;
             zSource zSource = (zSource) general.get(i);
             sourceName.setText(zSource.getSourceName());
             sourceLink.setText(zSource.getSourceLink());
         }else{
-
-            Log.d(TAG, "onBindViewHolder: PARENT "+viewHolder.getItemViewType());
             EditText groupName = ((ParentViewHolder)viewHolder).groupTitle;
             zGroup zGroup = (zGroup)general.get(i);
             groupName.setText(zGroup.getName());
@@ -207,13 +206,8 @@ public class RecyclerAdapterTest extends RecyclerView.Adapter<RecyclerView.ViewH
     private void showUndoSnackbar() {
         View view = mActivity;
 
-//        final ViewGroup viewGroup = (ViewGroup) ((ViewGroup) view.findViewById(android.R.id.list_container)).getChildAt(0);
         Snackbar snackbar = Snackbar.make(view, "Group Deleted",Snackbar.LENGTH_LONG);
         snackbar.setActionTextColor(Color.rgb(199, 149, 109));
-//        CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams)snackbar.getView().getLayoutParams();
-//        params.setMargins(params.leftMargin + 10, params.topMargin, params.rightMargin + 10, params.bottomMargin + 100);
-
-//        snackbar.getView().setLayoutParams(params);
         snackbar.setAction("UNDO?", new View.OnClickListener() {
             @Override
             public void onClick(View v) {
