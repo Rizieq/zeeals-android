@@ -13,8 +13,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".activity.editGroup"></activity>
-        <activity android:name=".adapter.AddNewGroup" />
+        <activity android:name=".activity.addGroupAndLinkFragmentHost"></activity>
         <activity
             android:name=".lupaPasswordScreen"
             android:noHistory="true" />

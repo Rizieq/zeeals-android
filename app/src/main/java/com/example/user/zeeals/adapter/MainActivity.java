@@ -13,6 +13,7 @@ import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.view.ViewCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -23,6 +24,7 @@ import android.text.TextWatcher;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.animation.OvershootInterpolator;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
@@ -32,15 +34,15 @@ import android.widget.TextView;
 
 import com.example.user.zeeals.R;
 import com.example.user.zeeals.fragment.editSourceFragment;
+import com.example.user.zeeals.fragment.menuFragment;
 import com.example.user.zeeals.model.Zlink;
 import com.example.user.zeeals.model.zGroup;
 import com.example.user.zeeals.model.zSource;
-//import com.thoughtbot.expandablerecyclerview.models.ExpandableGroup;
 
 import java.util.ArrayList;
 import java.util.List;
 
-//editGroupFragment.OnFragmentInteractionListener,
+//addGroupFragment.OnFragmentInteractionListener,
 // implements editSourceFragment.OnFragmentInteractionListener
 public class MainActivity extends AppCompatActivity {
 
@@ -48,6 +50,7 @@ public class MainActivity extends AppCompatActivity {
     Dialog picChangePopUp;
     Uri imgUri;
     private ImageView imgProfpic,imgBannerProfPic;
+    boolean menuShowed;
 
     private static final int PICK_IMAGE_PROF_PIC = 100;
     private static final int PICK_IMAGE_PROF_BANNER =101;
@@ -55,19 +58,42 @@ public class MainActivity extends AppCompatActivity {
     FloatingActionButton fab;
     RecyclerView recyclerViewTes;
     FragmentTransaction transaction;
-//    editGroupFragment fragment;
     editSourceFragment editSource_Fragment;
+    menuFragment menuFragment;
     RecyclerAdapterTest adapterTest;
     List<Zlink> zLink;
-
-
-
     private static final String TAG = "TESTING";
+
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        menuShowed=false;
         recyclerViewTes = findViewById(R.id.recycler_view);
+        fab = findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (menuShowed){
+                    transaction = getSupportFragmentManager().beginTransaction();
+//                    transaction.commit();
+                    transaction.setCustomAnimations(R.anim.animation_enter,R.anim.animation_exit_fragment);
+                    transaction.hide(menuFragment);
+                    transaction.commit();
+                    rotateFab();
+                }else{
+                    openMenuFragment();
+                    rotateFab();
+                }
+
+
+            }
+        });
+
+
+
 
 
 
@@ -94,17 +120,6 @@ public class MainActivity extends AppCompatActivity {
         adapterTest = new RecyclerAdapterTest(recyclerViewTes,zLink,this.findViewById(R.id.snackbar_container));
         recyclerViewTes.setAdapter(adapterTest);
         recyclerViewTes.setLayoutManager(layoutManager);
-
-        fab = findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent i = new Intent(MainActivity.this,AddNewGroup.class);
-                i.putExtra("GROUPSIZE",zLink.size());
-                startActivityForResult(i,1);
-            }
-        });
-
 
         ItemTouchHelper itemTouchHelper = new ItemTouchHelper(new SwipeToDeleteCallback(adapterTest));
         itemTouchHelper.attachToRecyclerView(recyclerViewTes);
@@ -182,12 +197,33 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    public void rotateFab(){
+        if (menuShowed){
+            final OvershootInterpolator interpolator = new OvershootInterpolator();
+            ViewCompat.animate(fab).
+                    rotation(0.0f).
+                    withLayer().
+                    setDuration(1000).
+                    setInterpolator(interpolator).
+                    start();
+
+            menuShowed=false;
+        }else{
+            menuShowed=true;
+            final OvershootInterpolator interpolator = new OvershootInterpolator();
+            ViewCompat.animate(fab).
+                    rotation(405f).
+                    withLayer().
+                    setDuration(1000).
+                    setInterpolator(interpolator).
+                    start();
+        }
+
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-
-        Log.d(TAG, "onActivityResult: Result Code: "+resultCode);
-        Log.d(TAG, "onActivityResult: Request Code: "+requestCode);
 
         if(requestCode==1){
             if(resultCode==RESULT_OK){
@@ -220,13 +256,14 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    public void openSourceEditFragment(String sourceName, String sourceLink) {
+    public void openMenuFragment() {
 
-        editSource_Fragment = editSource_Fragment.newInstance(sourceName,sourceLink);
+        menuFragment = menuFragment.newInstance();
         FragmentManager fragmentManager = getSupportFragmentManager();
         transaction = fragmentManager.beginTransaction();
-        transaction.addToBackStack(null);
-        transaction.add(R.id.fragment_editGroup_container, editSource_Fragment, "BLANK_FRAGMENT").commit();
+//        transaction.addToBackStack(null);
+        transaction.setCustomAnimations(R.anim.animation_enter,R.anim.animation_exit_fragment,R.anim.animation_pop_enter_fragment,R.anim.animation_pop_exit_animation);
+        transaction.add(R.id.fragment_menu_container, menuFragment, "").commit();
 
     }
 
@@ -253,7 +290,7 @@ public class MainActivity extends AppCompatActivity {
 
 //    public void openFragment(String text) {
 //
-//        fragment = editGroupFragment.newInstance(text);
+//        fragment = addGroupFragment.newInstance(text);
 //        FragmentManager fragmentManager = getSupportFragmentManager();
 //        transaction = fragmentManager.beginTransaction();
 ////        transaction.setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_right, R.anim.enter_from_right, R.anim.exit_to_right);
@@ -291,7 +328,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        fab.show();
     }
 
     public void showPopUpProfPic(View v){

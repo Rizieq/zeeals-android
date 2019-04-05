@@ -44,4 +44,19 @@
     <string name="coba_lagi">Coba lagi</string>
     <string name="pesan_registrasi_berhasil">Registrasi telah berhasil dilakukan. Silahkan lakukan verifikasi email melalui email yang telah didaftarkan.</string>
     <string name="registrasi_gagal">Registrasi yang dilakukan gagal. Email yang didaftarkan telah terdaftarkan sebelumnya. Silahkan gunakan fitur lupa password</string>
+    <string name="change_banner">Change Banner for Profile</string>
+    <string name="change_profile_picture">change profile picture</string>
+    <string name="save">SAVE</string>
+    <string name="add_link">Add Link</string>
+    <string name="show">Show</string>
+    <string name="set_the_link_title">Set the link Title</string>
+    <string name="title">Title</string>
+    <string name="set_image_address_here">Set Image Address here</string>
+    <string name="image_address">Image \nAddress</string>
+    <string name="set_the_url_here">Set the URL here</string>
+    <string name="url">URL</string>
+    <string name="group">Group</string>
+    <string name="edit_group">EDIT GROUP</string>
+    <string name="icon">icon</string>
+    <string name="grid">Grid</string>
 </resources>

@@ -25,7 +25,8 @@
         android:layout_marginTop="20dp"
         android:fontFamily="@font/poppinsbold"
         android:textColor="@color/colorPrimary"
-        android:text="Edit Group"
+        android:text="Add Group"
+        android:textSize="18sp"
         app:layout_constraintEnd_toStartOf="@+id/imageView2"
         app:layout_constraintStart_toEndOf="@+id/imageView"
         app:layout_constraintTop_toTopOf="parent" />
@@ -63,7 +64,7 @@
         app:layout_constraintTop_toBottomOf="@+id/view" />
 
     <ImageView
-        android:id="@+id/icon_edit_group"
+        android:id="@+id/icon_add_group"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
@@ -82,7 +83,7 @@
         android:background="@color/grey"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/icon_edit_group" />
+        app:layout_constraintTop_toBottomOf="@+id/icon_add_group" />
 
     <TextView
         android:id="@+id/textView4"
@@ -92,11 +93,11 @@
         android:fontFamily="@font/poppinsbold"
         android:text="Title"
         android:textColor="@color/colorPrimary"
-        app:layout_constraintBaseline_toBaselineOf="@+id/et_title_edit_group"
+        app:layout_constraintBaseline_toBaselineOf="@+id/et_title_add_group"
         app:layout_constraintLeft_toLeftOf="parent" />
 
     <EditText
-        android:id="@+id/et_title_edit_group"
+        android:id="@+id/et_title_add_group"
         android:layout_width="wrap_content"
         android:layout_height="40dp"
         android:layout_marginStart="40dp"
@@ -120,7 +121,7 @@
         android:background="@color/grey"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/et_title_edit_group" />
+        app:layout_constraintTop_toBottomOf="@id/et_title_add_group" />
 
     <TextView
         android:id="@+id/textView5"
@@ -135,7 +136,7 @@
         app:layout_constraintTop_toBottomOf="@+id/sep3" />
 
     <Spinner
-        android:id="@+id/spinner_grid_edit_group"
+        android:id="@+id/spinner_grid_add_group"
         android:layout_width="202dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
@@ -153,7 +154,7 @@
         android:background="@color/grey"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/spinner_grid_edit_group" />
+        app:layout_constraintTop_toBottomOf="@id/spinner_grid_add_group" />
 
     <TextView
         android:id="@+id/textView6"
@@ -169,7 +170,7 @@
         tools:layout_editor_absoluteY="307dp" />
 
     <Switch
-        android:id="@+id/switch_show_edit_group"
+        android:id="@+id/switch_show_add_group"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
@@ -183,7 +184,7 @@
         app:layout_constraintStart_toEndOf="@+id/textView6" />
 
     <Button
-        android:id="@+id/button2"
+        android:id="@+id/btn_save_add_group"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
