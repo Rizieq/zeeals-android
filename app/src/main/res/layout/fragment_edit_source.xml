@@ -1,51 +1,85 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    android:name="com.example.user.zeeals.FragmentAddGroup"
-    android:id="@+id/fragment_layout"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:foregroundGravity="bottom"
-    android:gravity="bottom"
+<android.support.constraint.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    >
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:clickable="true"
+    android:focusable="true">
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="30dp"
-        android:text="Edit Source"
-        android:gravity="center"
-        android:textColor="#fff"
-        android:background="@color/colorPrimary"
-    />
-
-    <LinearLayout
+    <View
+        android:id="@+id/viewEditSourceName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        >
+        android:background="#30000000"
+        android:clickable="true"
+        android:focusable="true"
+        app:layout_constraintBottom_toTopOf="@id/constraint"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/constraint"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@android:color/white"
+        app:layout_constraintBottom_toBottomOf="parent">
+        <TextView
+            android:id="@+id/popUpEditGroupNameText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:background="@color/colorSecondary"
+            android:fontFamily="@font/poppinsbold"
+            android:gravity="center"
+            android:text="Edit Group Name"
+            android:textColor="#fff"
+            android:textSize="20sp"
+            app:layout_constraintBottom_toTopOf="@id/edit_new_source_name_fragment"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
 
         <EditText
             android:id="@+id/edit_new_source_name_fragment"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="15dp"
+            android:background="@android:color/white"
+            android:fontFamily="@font/poppinsregular"
             android:hint="New Source Name"
-            android:layout_weight="0.7"
-            android:imeOptions="actionDone"/>
+            android:imeOptions="actionDone"
+            android:textSize="20sp"
+            android:gravity="center"
+            app:layout_constraintBottom_toTopOf="@+id/edit_new_source_link_fragment"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <EditText
+            android:id="@+id/edit_new_source_link_fragment"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="15dp"
+            android:background="@android:color/white"
+            android:fontFamily="@font/poppinsregular"
+            android:hint="New Source Link"
+            android:imeOptions="actionDone"
+            android:textSize="20sp"
+            android:gravity="center"
+            app:layout_constraintBottom_toTopOf="@+id/btn_save_source_fragment"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
 
         <Button
             android:id="@+id/btn_save_source_fragment"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            android:fontFamily="@font/poppinsbold"
             android:text="Save"
+            android:textColor="@color/text_color"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+    </android.support.constraint.ConstraintLayout>
 
-            />
-
-    </LinearLayout>
-    <EditText
-        android:id="@+id/edit_new_source_link_fragment"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="New source link"
-        android:imeOptions="actionDone"/>
-</LinearLayout>
+</android.support.constraint.ConstraintLayout>

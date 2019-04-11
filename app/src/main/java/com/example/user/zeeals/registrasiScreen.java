@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -23,6 +24,7 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -37,6 +39,17 @@ import com.example.user.zeeals.service.UserClient;
 import com.example.user.zeeals.util.AppController;
 import com.example.user.zeeals.util.PasswordPattern;
 import com.example.user.zeeals.util.ServerAPI;
+import com.facebook.AccessToken;
+import com.facebook.AccessTokenTracker;
+import com.facebook.CallbackManager;
+import com.facebook.FacebookCallback;
+import com.facebook.FacebookException;
+import com.facebook.GraphRequest;
+import com.facebook.GraphResponse;
+import com.facebook.login.LoginBehavior;
+import com.facebook.login.LoginManager;
+import com.facebook.login.LoginResult;
+import com.facebook.login.widget.LoginButton;
 import com.google.gson.Gson;
 
 import org.json.JSONException;
@@ -44,6 +57,7 @@ import org.json.JSONObject;
 import org.w3c.dom.Text;
 
 import java.lang.reflect.Type;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Pattern;
@@ -54,22 +68,15 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 public class registrasiScreen extends AppCompatActivity {
-//    private static final Pattern PASSWORD_PATTERN =
-//            Pattern.compile("^" +
-//                    //"(?=.*[0-9])" +         //at least 1 digit
-//                    //"(?=.*[a-z])" +         //at least 1 lower case letter
-//                    //"(?=.*[A-Z])" +         //at least 1 upper case letter
-//                    "(?=.*[a-zA-Z])" +      //any letter
-//                    "(?=.*[@#$%^&+=])" +    //at least 1 special character
-//                    "(?=\\S+$)" +           //no white spaces
-//                    ".{6,}" +               //at least 6 characters
-//                    "$");
 
-    private TextView textMasuk, zeealsregist;
+    private TextView textMasuk, zeealsregist, textfblogin, textfblogout;
     private AutoCompleteTextView etEmail;
     private EditText etPassword, etConfPassword;
     private ProgressBar pbRegist;
     private Button btnDaftar;
+    LoginButton fbLoginButton;
+    CallbackManager callbackManager;
+    private RelativeLayout fbBtnHandle;
     private static final String TAG = "registrasiScreen";
     Dialog popUpRegistrasi;
 
@@ -89,9 +96,6 @@ public class registrasiScreen extends AppCompatActivity {
         textMasuk = (TextView) findViewById(R.id.textayomasuk);
         zeealsregist = (TextView) findViewById(R.id.txtZealsRegist);
         btnDaftar = (Button) findViewById(R.id.btnDaftar);
-        Typeface poppinsBold = Typeface.createFromAsset(getAssets(), "fonts/Poppins-Bold.otf");
-        Typeface poppinsRegular = Typeface.createFromAsset(getAssets(), "fonts/Poppins-Regular.otf");
-        zeealsregist.setTypeface(poppinsBold);
 
         String text = "Ayo masuk sekarang.";
         SpannableString daftar = new SpannableString(text);
@@ -130,7 +134,95 @@ public class registrasiScreen extends AppCompatActivity {
         popUpRegistrasi = new Dialog(this);
         popUpRegistrasi.setCancelable(false);
 
+        /// USING FOR FACEBOOK LOGIN FUNC ///
+        textfblogin = findViewById(R.id.textfblogin);
+        textfblogout = findViewById(R.id.textfblogout);
+        fbBtnHandle = findViewById(R.id.customBtnFb);
+        fbLoginButton = (LoginButton) findViewById(R.id.btnFacebookLogin);
+        fbBtnHandle.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                fbLoginButton.performClick();
+            }
+        });
+        LoginManager.getInstance().setLoginBehavior(LoginBehavior.WEB_VIEW_ONLY);
+        callbackManager = CallbackManager.Factory.create();
+        fbLoginButton.setReadPermissions(Arrays.asList("email","public_profile"));
+        checkLoginStatus();
 
+        fbLoginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
+            @Override
+            public void onSuccess(LoginResult loginResult) {
+                Toast.makeText(registrasiScreen.this,"NOTE THIS",Toast.LENGTH_LONG).show();
+
+            }
+
+            @Override
+            public void onCancel() {
+
+            }
+
+            @Override
+            public void onError(FacebookException error) {
+
+            }
+        });
+
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        callbackManager.onActivityResult(requestCode, resultCode, data);
+        super.onActivityResult(requestCode, resultCode, data);
+    }
+
+
+    AccessTokenTracker tokenTracker = new AccessTokenTracker() {
+        @Override
+        protected void onCurrentAccessTokenChanged(AccessToken oldAccessToken, AccessToken currentAccessToken) {
+            if (currentAccessToken == null) {
+                Toast.makeText(registrasiScreen.this, "Facebook: User Logged out", Toast.LENGTH_LONG).show();
+                textfblogin.setVisibility(View.VISIBLE);
+                textfblogout.setVisibility(View.INVISIBLE);
+            } else {
+                loadUserProfile(currentAccessToken);
+            }
+        }
+    };
+
+    private void loadUserProfile(AccessToken newAccesToken) {
+        GraphRequest request = GraphRequest.newMeRequest(newAccesToken, new GraphRequest.GraphJSONObjectCallback() {
+            @Override
+            public void onCompleted(JSONObject object, GraphResponse response) {
+                try {
+                    String id = object.getString("id");
+                    String email = object.getString("email");
+                    String first_name = object.getString("first_name");
+                    String last_name = object.getString("last_name");
+                    String full_name = first_name+ " " +last_name;
+
+                    String image_url = "https://graph.facebook.com/"+id+"/picture?type=normal";
+
+                    Toast.makeText(getApplicationContext(),"Facebook: User Logged in as "+ full_name,Toast.LENGTH_LONG).show();
+                    textfblogin.setVisibility(View.INVISIBLE);
+                    textfblogout.setVisibility(View.VISIBLE);
+//                    loginProcess();
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
+        Bundle parameters = new Bundle();
+        parameters.putString("fields", "first_name, last_name,email,id");
+        request.setParameters(parameters);
+        request.executeAsync();
+    }
+
+    private void checkLoginStatus() {
+        if (AccessToken.getCurrentAccessToken() != null) {
+            loadUserProfile(AccessToken.getCurrentAccessToken());
+        }
     }
 
     /// VALIDATE TEXT FIELD REGISTRATION ///
@@ -211,6 +303,7 @@ public class registrasiScreen extends AppCompatActivity {
         final String email = etEmail.getText().toString().trim();
         final String password = etPassword.getText().toString().trim();
         final String confirmPassword = etConfPassword.getText().toString().trim();
+
         final String device = "$2y$10$Ty5GIOshIus/y18kZtDR3O6V9gKPk/Rhhv40zyMYVNeOKhC0QLzz6";
 
 
@@ -234,7 +327,6 @@ public class registrasiScreen extends AppCompatActivity {
                     showPopUpRegistrasiGagal(pesan);
                     pbRegist.setVisibility(View.GONE);
                     btnDaftar.setVisibility(View.VISIBLE);
-
                 }
             }
 

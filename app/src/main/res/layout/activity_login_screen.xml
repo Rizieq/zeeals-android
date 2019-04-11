@@ -44,11 +44,12 @@
     </LinearLayout>
 
     <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_height="420dp"
         android:src="@drawable/ic_login_register_background"
         app:layout_constraintBottom_toBottomOf="parent"
-        tools:ignore="MissingConstraints" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
 
     <android.support.design.widget.TextInputLayout
         android:id="@+id/ETemail"
@@ -103,9 +104,11 @@
 
     <Button
         android:id="@+id/btnMasuk"
-        android:layout_width="300dp"
+        android:layout_width="0dp"
         android:layout_height="50dp"
-        android:layout_marginTop="20dp"
+        android:layout_marginStart="50dp"
+        android:layout_marginTop="25dp"
+        android:layout_marginEnd="50dp"
         android:background="@drawable/button_gradient"
         android:fontFamily="@font/poppinsbold"
         android:text="@string/masuk"
@@ -124,26 +127,57 @@
         android:fontFamily="@font/poppinsregular"
         android:text="@string/lupapass"
         android:textColor="@color/colorSecondary"
-        android:textSize="14dp"
+        android:textSize="15sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/btnMasuk"
         tools:layout_editor_absoluteX="141dp" />
 
+    <RelativeLayout
 
-    <com.facebook.login.widget.LoginButton
-        android:id="@+id/btnFacebookLogin"
-        style="@style/FacebookLoginButton"
-        android:layout_width="300dp"
-        android:layout_height="100dp"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="40dp"
+        android:id="@+id/customBtnFb"
+        android:layout_width="0dp"
+        android:layout_height="50dp"
+        android:layout_marginStart="50dp"
+        android:layout_marginTop="25dp"
+        android:layout_marginEnd="50dp"
         android:background="@drawable/fb_button"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/textLupaPassword" />
+        app:layout_constraintTop_toBottomOf="@id/textLupaPassword">
+
+        <TextView
+            android:id="@+id/textfblogin"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:fontFamily="@font/poppinsbold"
+            android:text="@string/sign_in_with_facebook"
+            android:textColor="@android:color/white" />
+
+        <TextView
+            android:id="@+id/textfblogout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:fontFamily="@font/poppinsbold"
+            android:text="@string/log_out_facebok"
+            android:textColor="@android:color/white"
+            android:visibility="invisible" />
+
+        <com.facebook.login.widget.LoginButton
+            android:id="@+id/btnFacebookLogin"
+            style="@style/FacebookLoginButton"
+            android:layout_width="300dp"
+            android:layout_height="50dp"
+            android:layout_gravity="center_horizontal"
+            android:fontFamily="@font/poppinsbold"
+            android:visibility="invisible" />
+    </RelativeLayout>
+
 
     <TextView
         android:id="@+id/textbelumpunyaakun"
@@ -155,7 +189,7 @@
         android:textSize="13dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btnFacebookLogin" />
+        app:layout_constraintTop_toBottomOf="@+id/customBtnFb" />
 
     <TextView
         android:id="@+id/textayoDaftar"

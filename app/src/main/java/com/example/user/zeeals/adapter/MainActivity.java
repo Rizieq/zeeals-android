@@ -1,76 +1,93 @@
 package com.example.user.zeeals.adapter;
 
 import android.app.Dialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.Color;
-import android.graphics.Typeface;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Parcelable;
-import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
-import android.text.Editable;
-import android.text.TextWatcher;
+import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.View;
 import android.view.animation.OvershootInterpolator;
-import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
+
+//import com.example.user.zeeals.adapter.AddNewGroup;
+import com.example.user.zeeals.editProfileScreen;
+import com.example.user.zeeals.fragment.editSourceFragment;
+import com.example.user.zeeals.loginScreen;
+import com.example.user.zeeals.model.Message;
+import com.example.user.zeeals.model.zGroupList;
+import com.example.user.zeeals.service.UserClient;
+import com.example.user.zeeals.util.ServerAPI;
+import com.soundcloud.android.crop.Crop;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 import com.example.user.zeeals.R;
-import com.example.user.zeeals.fragment.editSourceFragment;
 import com.example.user.zeeals.fragment.menuFragment;
 import com.example.user.zeeals.model.Zlink;
 import com.example.user.zeeals.model.zGroup;
 import com.example.user.zeeals.model.zSource;
 
-import java.util.ArrayList;
-import java.util.List;
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
-//addGroupFragment.OnFragmentInteractionListener,
-// implements editSourceFragment.OnFragmentInteractionListener
+
 public class MainActivity extends AppCompatActivity {
 
-    private EditText profileName, profileDesc;
-    Dialog picChangePopUp;
-    Uri imgUri;
+    private TextView profileName, profileDesc;
+    Dialog picChangePopUp, editGroupNamePopup;
     private ImageView imgProfpic,imgBannerProfPic;
-    boolean menuShowed;
 
     private static final int PICK_IMAGE_PROF_PIC = 100;
     private static final int PICK_IMAGE_PROF_BANNER =101;
+    String imgType="";
 
+    boolean menuShowed;
     FloatingActionButton fab;
     RecyclerView recyclerViewTes;
     FragmentTransaction transaction;
+    //groupAdapter adapter;
     editSourceFragment editSource_Fragment;
     menuFragment menuFragment;
     RecyclerAdapterTest adapterTest;
     List<Zlink> zLink;
+    Context contextr;
+
+    String token;
     private static final String TAG = "TESTING";
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        menuShowed=false;
+
+
+        //TOKEN
+        token = getIntent().getStringExtra("TOKEN");
+
+
         recyclerViewTes = findViewById(R.id.recycler_view);
         fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -88,16 +105,11 @@ public class MainActivity extends AppCompatActivity {
                     rotateFab();
                 }
 
-
             }
         });
 
-
-
-
-
-
 //        Z-VERSION
+        zLink = new ArrayList<>();
         zSource zSource1 = new zSource(0,"Twitter","twitter.com/eldirohmanur",0);
         zSource zSource2 = new zSource(1,"Facebook","facebook.com/eldirohmanur",0);
         zSource zSource3 = new zSource(0,"Telkom","telyu.com/eldirohmanur",1);
@@ -109,92 +121,81 @@ public class MainActivity extends AppCompatActivity {
         ArrayList<zSource> zSourceList2 = new ArrayList<>();
         zSourceList2.add(zSource3); zSourceList2.add(zSource4); zSourceList2.add(zSource5);
 
+        Retrofit.Builder builder = new Retrofit.Builder()
+                .baseUrl(ServerAPI.zeealseRESTAPI)
+                .addConverterFactory(GsonConverterFactory.create());
+
+        Retrofit retrofit = builder.build();
+
+        UserClient userClient = retrofit.create(UserClient.class);
+
+        Call<zGroupList> call = userClient.showGroup(token);
+        call.enqueue(new Callback<zGroupList>() {
+            @Override
+            public void onResponse(Call<zGroupList> call, retrofit2.Response<zGroupList> response) {
+                if (response.isSuccessful()) {
+                    ArrayList<zGroup> responseGroup = response.body().getGroupList();
+                    for(zGroup g : responseGroup){
+                        zGroup g1=new zGroup(g.getId(),g.getUrl_id(),g.getOrientation(),g.getTitle(),g.getIcon(),g.getPosition(),g.getStatus(),g.getCreated_at(),g.getCreated_at());
+                        zLink.add(g1);
+                    }
+                    LinearLayoutManager layoutManager = new LinearLayoutManager(MainActivity.this);
+                    adapterTest = new RecyclerAdapterTest(recyclerViewTes,zLink,MainActivity.this.findViewById(R.id.snackbar_container),token,MainActivity.this);
+                    recyclerViewTes.setAdapter(adapterTest);
+                    recyclerViewTes.setLayoutManager(layoutManager);
+
+                    ItemTouchHelper itemTouchHelper = new ItemTouchHelper(new SwipeToDeleteCallback(adapterTest,MainActivity.this));
+                    itemTouchHelper.attachToRecyclerView(recyclerViewTes);
+                }
+                else {
+
+                }
+            }
+            @Override
+            public void onFailure(Call<zGroupList> call, Throwable t) {
+
+            }
+        });
+
+
+
+
         zGroup zGroup1 = new zGroup(0,zSourceList1,"Social");
         zGroup zGroup2 = new zGroup(1,zSourceList2,"Work");
+        zGroup zGroup3 = new zGroup(2,"Tes");
 
-        zLink = new ArrayList<>();
-        zLink.add(zGroup1);
-        zLink.add(zGroup2);
+//        zLink.add(zGroup1);
+//        zLink.add(zGroup2);
+//        zLink.add(zGroup3);
 
-        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
-        adapterTest = new RecyclerAdapterTest(recyclerViewTes,zLink,this.findViewById(R.id.snackbar_container));
-        recyclerViewTes.setAdapter(adapterTest);
-        recyclerViewTes.setLayoutManager(layoutManager);
 
-        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(new SwipeToDeleteCallback(adapterTest));
-        itemTouchHelper.attachToRecyclerView(recyclerViewTes);
 
 
 //        Z-VERSION  END ---------------------------
 
-
-
-
         /// FOR PROFILE UI ABOVE SEPARATOR//
-        Typeface poppinsBold = Typeface.createFromAsset(getAssets(),"fonts/Poppins-Bold.otf");
-        Typeface poppinsRegular = Typeface.createFromAsset(getAssets(),"fonts/Poppins-Regular.otf");
-        profileName = findViewById(R.id.profileName);
-        profileDesc = findViewById(R.id.profileDesc);
-        imgProfpic = findViewById(R.id.profilePicture);
-        imgBannerProfPic = findViewById(R.id.profileBanner);
-        profileName.setTypeface(poppinsBold);
-        profileDesc.setTypeface(poppinsRegular);
-        profileName.clearFocus();
-        profileDesc.clearFocus();
+        profileName =  findViewById(R.id.profileName);
+        profileDesc =  findViewById(R.id.profileDesc);
+        profileDesc.setMovementMethod(new ScrollingMovementMethod());
+        imgProfpic =  findViewById(R.id.profilePicture);
+        imgBannerProfPic =  findViewById(R.id.profileBanner);
 
-        profileName.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                boolean handled = false;
-                if (actionId == EditorInfo.IME_ACTION_DONE) {
-                    Log.d(TAG, "onEditorAction: FOCUS LOST");
-                    profileName.clearFocus();
-                    keyboardDown();
-                    handled = true;
-                }
-                return handled;
-            }
-        });
+        Bundle bundle = getIntent().getExtras();
+        if (bundle!=null){
+            String nama = bundle.getString("name");
+            String desc = bundle.getString("desc");
 
-        profileName.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if (s.length()>20){
-                    profileName.setError("Maksimal 20 karakter");
-                }else
-                    profileName.setError(null);
-            }
-
-
-            @Override
-            public void afterTextChanged(Editable s) {
-
-            }
-        });
-
-        profileDesc.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                boolean handled = false;
-                if (actionId == EditorInfo.IME_ACTION_DONE) {
-                    Log.d(TAG, "onEditorAction: FOCUS LOST");
-                    profileDesc.clearFocus();
-                    keyboardDown();
-                    handled = true;
-                }
-                return handled;
-            }
-        });
+            profileName.setText(nama);
+            profileDesc.setText(desc);
+        }
 
         picChangePopUp = new Dialog(this);
-
-
-
+        editGroupNamePopup = new Dialog(this);
+        View tb =  findViewById(R.id.menu_appbar);
+        tb.bringToFront();
+        RelativeLayout btnBack = tb.findViewById(R.id.btnBack);
+        RelativeLayout btnEdit =  tb.findViewById(R.id.btnEditPofile);
+        btnBack.setVisibility(View.GONE);
     }
 
     public void rotateFab(){
@@ -221,15 +222,14 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-
         if(requestCode==1){
             if(resultCode==RESULT_OK){
                 ArrayList<Parcelable> sourceParcel = data.getParcelableArrayListExtra("SOURCES");
                 zGroup groupParcel = data.getParcelableExtra("GROUP");
-
 
                 ArrayList<zSource> arraySource = new ArrayList<>();
                 for(int i =0;i<sourceParcel.size();i++){
@@ -244,16 +244,45 @@ public class MainActivity extends AppCompatActivity {
                 Log.d(TAG, "onActivityResult: CANCELED");
             }
         }
-        else if (resultCode == RESULT_OK && requestCode == PICK_IMAGE_PROF_PIC){
-            imgUri = data.getData();
-            imgProfpic.setImageURI(imgUri);
-            picChangePopUp.dismiss();
-        }else if (resultCode == RESULT_OK && requestCode == PICK_IMAGE_PROF_BANNER){
-            imgUri = data.getData();
-            imgBannerProfPic.setImageURI(imgUri);
-            picChangePopUp.dismiss();
+
+        else if (resultCode == RESULT_OK){
+            if (requestCode == PICK_IMAGE_PROF_PIC){
+                imgType = "Profile";
+                Uri source_uri = data.getData();
+                Uri dest_uri = Uri.fromFile(new File(getCacheDir(),"cropped"));
+
+                Crop.of(source_uri,dest_uri).asSquare().start(this);
+                imgProfpic.setImageURI(Crop.getOutput(data));
+                picChangePopUp.dismiss();
+            }else if (requestCode == PICK_IMAGE_PROF_BANNER){
+                Uri source_uri_banner = data.getData();
+                Uri dest_uri_banner = Uri.fromFile(new File(getCacheDir(),"croppedBanner"));
+                imgType = "Banner";
+                Crop.of(source_uri_banner,dest_uri_banner).withAspect(3,1).start(this);
+                imgBannerProfPic.setImageURI(Crop.getOutput(data));
+
+                picChangePopUp.dismiss();
+            }
+            else if (requestCode == Crop.REQUEST_CROP){
+                handle_crop(resultCode,data,imgType);
+            }
         }
 
+    }
+
+    public void handle_crop(int code,Intent result,String imgType){
+        if (code == RESULT_OK){
+            if(imgType == "Profile"){
+                imgProfpic.setImageURI(Crop.getOutput(result));
+            }
+            else if (imgType.equals("Banner")){
+                imgBannerProfPic.setImageURI(Crop.getOutput(result));
+
+            }
+        }
+        else if (code ==Crop.RESULT_ERROR){
+            Toast.makeText(this, "Error on crop", Toast.LENGTH_SHORT).show();
+        }
     }
 
     public void openMenuFragment() {
@@ -267,147 +296,45 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-//    CURRENTLY WAITING ACTIVITY LAYOUT FROM IKHDAR
-//    1/4/2019
-
-//    @Override
-//    public void onFragmentChildInteraction(String newName, String newLink) {
-//        InputMethodManager imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
-//        imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
-//
-//        groupList.get(groupPosisi).getItems().get(childPosisi).setSourceName(newName);
-//        groupList.get(groupPosisi).getItems().get(childPosisi).setSourceLink(newLink);
-//        Log.d(TAG, "onFragmentChildInteraction: GroupPosisi: "+groupPosisi);
-////        adapter.addAll(groupList);
-////        adapter.notifyGroupDataChanged();
-////        adapter.notifyDataSetChanged();
-//
-//        onBackPressed();
-//        fab.show();
-//
-//    }
-
-
-//    public void openFragment(String text) {
-//
-//        fragment = addGroupFragment.newInstance(text);
-//        FragmentManager fragmentManager = getSupportFragmentManager();
-//        transaction = fragmentManager.beginTransaction();
-////        transaction.setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_right, R.anim.enter_from_right, R.anim.exit_to_right);
-//        transaction.addToBackStack(null);
-//        transaction.add(R.id.fragment_editGroup_container, fragment, "BLANK_FRAGMENT").commit();
-//        Log.d(TAG, "openFragment: Pressed "+ text);
-//    }
-
-//    @Override
-//    public void onFragmentInteraction(String sendBackText) {
-//        InputMethodManager imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
-//        imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
-//
-//        groupList.get(posisi).getItems().get(0).setGroupName(sendBackText);
-//
-//        adapter.addAll(groupList);
-//        adapter.notifyGroupDataChanged();
-//        adapter.notifyDataSetChanged();
-//        onBackPressed();
-//        fab.show();
-//    }
-
-//    @Override
-//    protected void onSaveInstanceState(Bundle outState) {
-//        super.onSaveInstanceState(outState);
-//        adapter.onSaveInstanceState(outState);
-//    }
-//
-//    @Override
-//    protected void onRestoreInstanceState(Bundle savedInstanceState) {
-//        super.onRestoreInstanceState(savedInstanceState);
-//        adapter.onRestoreInstanceState(savedInstanceState);
-//    }
-
     @Override
     public void onBackPressed() {
-        super.onBackPressed();
+        //super.onBackPressed();
+        fab.show();
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+        builder.setTitle("Logout akun")
+                .setMessage("Apakah anda ingin kembali ke halaman login ?")
+                .setPositiveButton("Ya", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        startActivity(new Intent(MainActivity.this, loginScreen.class));
+                    }
+                })
+                .setNegativeButton("Tidak", null);
+        AlertDialog alertShow = builder.show();
     }
 
-    public void showPopUpProfPic(View v){
-        Button chagePhoto;
-        Button close;
-        EditText imgUrl;
-        ImageView profPic;
-        picChangePopUp.setContentView(R.layout.popupchangepicture);
-        chagePhoto = (Button) picChangePopUp.findViewById(R.id.btnChangePhotoPopUpProfPic);
-        close = (Button) picChangePopUp.findViewById(R.id.btnClosePopUpProfPic);
-        imgUrl = (EditText) picChangePopUp.findViewById(R.id.insertUrlPopUpProfPic);
-        profPic = (ImageView) picChangePopUp.findViewById(R.id.imageViewPopUpProfPic);
-        profPic.setImageBitmap(convertImageViewToBitmap(imgProfpic));
-
-        chagePhoto.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                pickFotoFromGallery(PICK_IMAGE_PROF_PIC);
-            }
-        });
-
-        close.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                picChangePopUp.dismiss();
-            }
-        });
-        picChangePopUp.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-        picChangePopUp.show();
+    public void openEditScreen(View v){
+        Intent intent = new Intent(MainActivity.this, editProfileScreen.class);
+        intent.putExtra("nama",profileName.getText().toString().trim());
+        intent.putExtra("desc",profileDesc.getText().toString().trim());
+        startActivity(intent);
     }
-
-    public void showPopUpBannerPic(View v){
-        Button chagePhoto;
-        Button close;
-        EditText imgUrl;
-        ImageView profPic;
-
-        Typeface poppinsRegular = Typeface.createFromAsset(getAssets(),"fonts/Poppins-Regular.otf");
-
-        picChangePopUp.setContentView(R.layout.popupchangepicture);
-
-        chagePhoto = (Button) picChangePopUp.findViewById(R.id.btnChangePhotoPopUpProfPic);
-        close = (Button) picChangePopUp.findViewById(R.id.btnClosePopUpProfPic);
-        imgUrl = (EditText) picChangePopUp.findViewById(R.id.insertUrlPopUpProfPic);
-        profPic = (ImageView) picChangePopUp.findViewById(R.id.imageViewPopUpProfPic);
-        profPic.setImageBitmap(convertImageViewToBitmap(imgBannerProfPic));
-
-        chagePhoto.setTypeface(poppinsRegular);
-        close.setTypeface(poppinsRegular);
-
-        chagePhoto.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                pickFotoFromGallery(PICK_IMAGE_PROF_BANNER);
-            }
-        });
-
-        close.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                picChangePopUp.dismiss();
-            }
-        });
-        picChangePopUp.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-        picChangePopUp.show();
-    }
-
-    /// THIS FUNCTION TO CONVERT IMAGEVIEW TO BITMAP ///
-    private Bitmap convertImageViewToBitmap(ImageView v){
-        Bitmap bm=((BitmapDrawable)v.getDrawable()).getBitmap();
-        return bm;
-    }
-
-    public void pickFotoFromGallery(int image){
-        Intent gallery = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.INTERNAL_CONTENT_URI);
-        startActivityForResult(gallery, image);
-    }
-
     public void keyboardDown(){
         InputMethodManager imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
         imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
     }
+
+    public void connectAPI(){
+        Retrofit.Builder builder = new Retrofit.Builder()
+                .baseUrl(ServerAPI.group_REST_API)
+                .addConverterFactory(GsonConverterFactory.create());
+
+        Retrofit retrofit = builder.build();
+        UserClient userClient = retrofit.create(UserClient.class);
+
+
+    }
+
+
 }

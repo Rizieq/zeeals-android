@@ -17,7 +17,7 @@
                 android:endColor="@color/shadowGrey"
                 android:startColor="@android:color/white" />
             <solid android:color="@android:color/white"/>
-            <corners android:radius="5dp" />
+            <corners android:radius="1dp" />
         </shape>
     </item>
 </layer-list>

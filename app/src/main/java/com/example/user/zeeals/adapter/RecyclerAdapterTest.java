@@ -1,11 +1,13 @@
 package com.example.user.zeeals.adapter;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -19,13 +21,23 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.user.zeeals.R;
+import com.example.user.zeeals.loginScreen;
 import com.example.user.zeeals.model.Zlink;
 import com.example.user.zeeals.model.zGroup;
 import com.example.user.zeeals.model.zSource;
+import com.example.user.zeeals.service.UserClient;
+import com.example.user.zeeals.util.ServerAPI;
 //import com.thoughtbot.expandablerecyclerview.viewholders.ChildViewHolder;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 import static android.support.constraint.Constraints.TAG;
 import static android.view.animation.Animation.RELATIVE_TO_SELF;
@@ -39,13 +51,26 @@ public class RecyclerAdapterTest extends RecyclerView.Adapter<RecyclerView.ViewH
     public Zlink mRecentlyDeletedItem;
     public int mRecentlyDeletedItemPosition;
     public View mActivity;
+    public String token;
+    UserClient userClient;
+    Context context;
 
-    public RecyclerAdapterTest(RecyclerView recyclerView, List<Zlink> general,View v){
+    public RecyclerAdapterTest(RecyclerView recyclerView, List<Zlink> general,View v,String token,Context context){
         this.recyclerView = recyclerView;
         recyclerAdapter = this;
         this.general = new ArrayList<>();
         this.general = general;
         this.mActivity = v;
+        this.token = token;
+        this.context = context;
+
+        Retrofit.Builder builder = new Retrofit.Builder()
+                .baseUrl(ServerAPI.zeealseRESTAPI)
+                .addConverterFactory(GsonConverterFactory.create());
+
+        Retrofit retrofit = builder.build();
+
+        userClient = retrofit.create(UserClient.class);
 
     }
 
@@ -59,8 +84,6 @@ public class RecyclerAdapterTest extends RecyclerView.Adapter<RecyclerView.ViewH
             groupTitle = itemView.findViewById(R.id.list_item_group_name);
             itemView.setOnClickListener(this);
             arrow = itemView.findViewById(R.id.list_item_group_arrow);
-
-
         }
 
         private void animateExpand() {
@@ -82,12 +105,12 @@ public class RecyclerAdapterTest extends RecyclerView.Adapter<RecyclerView.ViewH
         @Override
         public void onClick(View v) {
             int id = getLayoutPosition();
-            int adapterPos = getAdapterPosition();
 
             zGroup zGroup = (zGroup) general.get(id);
+            Log.d(TAG, "onClick: "+id);
             List<zSource> zSources = zGroup.getzSource();
+            if (!zGroup.isHasNoChild()) {
 
-            if (zGroup.getzSource().size()!= 0) {
                 //collapse list
                 if (zGroup.isChildrenVisible()) {
 
@@ -116,15 +139,23 @@ public class RecyclerAdapterTest extends RecyclerView.Adapter<RecyclerView.ViewH
 
                 }
 
-                int lastVisibleItemPosition = ((LinearLayoutManager) recyclerAdapter.recyclerView.
-                        getLayoutManager()).findLastCompletelyVisibleItemPosition();
+//                int lastVisibleItemPosition = ((LinearLayoutManager) recyclerAdapter.recyclerView.
+//                        getLayoutManager()).findLastCompletelyVisibleItemPosition();
+//
+//                if ((id + 1) < general.size()) {
+//                    if ((id + 1) > lastVisibleItemPosition) {
+//                        recyclerAdapter.recyclerView.scrollToPosition(id + 1);
+//                    }
+//                }
 
-                if ((id + 1) < general.size()) {
-                    if ((id + 1) > lastVisibleItemPosition) {
-                        recyclerAdapter.recyclerView.scrollToPosition(id + 1);
-                    }
+            }else{
+                if(zGroup.isChildrenVisible()){
+                    animateCollapse();
+                    zGroup.setChildrenVisible(false);
+                }else {
+                    animateExpand();
+                    zGroup.setChildrenVisible(true);
                 }
-
             }
         }
     }
@@ -132,13 +163,11 @@ public class RecyclerAdapterTest extends RecyclerView.Adapter<RecyclerView.ViewH
 
     public  static class ChildsViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         public TextView sourceName;
-        public TextView sourceLink;
 
         public ChildsViewHolder(View itemView) {
             super(itemView);
 
             sourceName = itemView.findViewById(R.id.list_item_source_name);
-            sourceLink = itemView.findViewById(R.id.list_item_source_link);
 
             itemView.setOnClickListener(this);
         }
@@ -146,7 +175,6 @@ public class RecyclerAdapterTest extends RecyclerView.Adapter<RecyclerView.ViewH
         @Override
         public void onClick(View v) {
             Log.d(TAG, "onClick: Child name: "+ sourceName.getText().toString());
-            Log.d(TAG, "onClick: Child link: "+ sourceLink.getText().toString());
         }
     }
 
@@ -179,14 +207,12 @@ public class RecyclerAdapterTest extends RecyclerView.Adapter<RecyclerView.ViewH
     public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, int i) {
         if (viewHolder.getItemViewType()==CHILD){
             TextView sourceName = ((ChildsViewHolder)viewHolder).sourceName;
-            TextView sourceLink = ((ChildsViewHolder)viewHolder).sourceLink;
             zSource zSource = (zSource) general.get(i);
             sourceName.setText(zSource.getSourceName());
-            sourceLink.setText(zSource.getSourceLink());
         }else{
             TextView groupName = ((ParentViewHolder)viewHolder).groupTitle;
             zGroup zGroup = (zGroup)general.get(i);
-            groupName.setText(zGroup.getName());
+            groupName.setText(zGroup.getTitle());
         }
     }
 
@@ -195,15 +221,56 @@ public class RecyclerAdapterTest extends RecyclerView.Adapter<RecyclerView.ViewH
         return general.size();
     }
 
-    public void deleteItem(int position) {
-        mRecentlyDeletedItem = general.get(position);
-        mRecentlyDeletedItemPosition = position;
-        general.remove(position);
-        notifyItemRemoved(position);
-        showUndoSnackbar();
+    public void deleteItem(final int position,RecyclerView.ViewHolder viewHolder) {
+        Log.d(TAG, "deleteItem: "+position);
+        Log.d(TAG, "deleteItem: "+general.get(position));
+        if(viewHolder.getItemViewType()==PARENT){
+
+            AlertDialog.Builder builder = new AlertDialog.Builder(context);
+
+            builder.setTitle("Hapus Group")
+                    .setMessage("Apakah anda yakin menghapus group ini ? ")
+                    .setPositiveButton("Hapus", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+
+                            Call<ResponseBody> call = userClient.delete(token,((zGroup)general.get(position)).getId());
+                            call.enqueue(new Callback<ResponseBody>() {
+                                @Override
+                                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                                    Log.d(TAG, "onResponse: "+response);
+                                    general.remove(position);
+                                    notifyItemRemoved(position);
+                                }
+
+                                @Override
+                                public void onFailure(Call<ResponseBody> call, Throwable t) {
+
+                                }
+                            });
+                        }
+                    })
+                    .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            mRecentlyDeletedItem = general.get(position);
+                            mRecentlyDeletedItemPosition = position;
+                            undoDelete();
+                        }
+                    }).setCancelable(false);
+            AlertDialog alertOut = builder.create();
+            alertOut.show();
+
+
+
+
+//            showUndoSnackbar(((zGroup)general.get(position)).getId());
+
+        }
+
     }
 
-    private void showUndoSnackbar() {
+    private void showUndoSnackbar(final int position) {
         View view = mActivity;
 
         Snackbar snackbar = Snackbar.make(view, "Group Deleted",Snackbar.LENGTH_LONG);
@@ -216,11 +283,38 @@ public class RecyclerAdapterTest extends RecyclerView.Adapter<RecyclerView.ViewH
         });
 
         snackbar.show();
+
+        snackbar.addCallback(new Snackbar.Callback(){
+            @Override
+            public void onDismissed(Snackbar transientBottomBar, int event) {
+
+
+            }
+        });
+
+
     }
 
-    private void undoDelete() {
-        general.add(mRecentlyDeletedItemPosition,
-                mRecentlyDeletedItem);
+    public void undoDelete() {
+        general.remove(mRecentlyDeletedItem);
+        notifyItemRemoved(mRecentlyDeletedItemPosition);
+
+        general.add(mRecentlyDeletedItemPosition,mRecentlyDeletedItem);
+//        zGroup g = (zGroup) mRecentlyDeletedItem;
+
+//        Call<zGroup> call = userClient.create(token,g);
+//        call.enqueue(new Callback<zGroup>() {
+//            @Override
+//            public void onResponse(Call<zGroup> call, Response<zGroup> response) {
+//                Log.d(TAG, "onResponse: "+response);
+//            }
+//
+//            @Override
+//            public void onFailure(Call<zGroup> call, Throwable t) {
+//
+//            }
+//        });
+
         notifyItemInserted(mRecentlyDeletedItemPosition);
     }
 

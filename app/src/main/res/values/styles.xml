@@ -7,6 +7,12 @@
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
     </style>
+    <!--menu item theme-->
+    <style name="CustomPopupStyle" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="android:background">@color/colorPrimaryDark</item>
+        <item name="overlapAnchor">false</item>
+        <item name="android:dropDownVerticalOffset">-4dp</item>
+    </style>
 
     <style name="AppTheme.NoActionBar">
         <item name="windowActionBar">false</item>
@@ -18,16 +24,17 @@
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
     <style name="FacebookLoginButton">
+        <item name="android:textSize">14sp</item>
         <item name="android:background">@drawable/fb_button</item>
         <item name="android:layout_marginTop">10dp</item>
         <item name="android:layout_marginBottom">10dp</item>
-        <item name="android:height">50dp</item>
         <item name="android:layout_gravity">center_horizontal</item>
     </style>
 
-    <style name="buttonStyle" parent="@android:style/Widget.Button">
+    <style name="buttonBackStyle" parent="@android:style/Widget.Button">
         <item name="android:textStyle">bold</item>
-        <item name="android:textColor">@color/text_color</item>
+        <item name="android:color">@color/grey</item>
+        <item name="android:background">@drawable/button_gradient</item>
     </style>
 
 </resources>

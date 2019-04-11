@@ -1,5 +1,6 @@
 package com.example.user.zeeals.fragment;
 
+import android.app.AlertDialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -10,19 +11,22 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.Switch;
+import android.widget.Toast;
 
 import com.example.user.zeeals.R;
 
 public class addGroupFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String GROUPNAME= "name";
     private static final String TAG = "addGroupFragment";
 
     // TODO: Rename and change types of parameters
     private String mGroupName;
+    private Button btnBack, btnDelete, btnAdd, btnIcon;
+    private Switch showGroup;
+    private EditText title;
 
-//    private OnFragmentAddGroupInteractionListener mListener;
 
     private EditText editTextGroupName_fragment;
     private Button btn_icon;
@@ -52,36 +56,40 @@ public class addGroupFragment extends Fragment {
 
     }
 
-    
+
 
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.activity_add_new_group, container, false);
-        editTextGroupName_fragment = view.findViewById(R.id.etTitleAddGroup);
-//        editTextGroupName_fragment.setHint(getArguments().getString(GROUPNAME));
-//        spinner_grid = view.findViewById(R.id.spinner_grid_edit_group);
-        btn_icon = view.findViewById(R.id.btnIconAddGroup);
-        btn_save_add_group= view.findViewById(R.id.btnSaveAddGroup);
+        View addGroupView = inflater.inflate(R.layout.fragment_add_group, container, false);
+        btnBack = addGroupView.findViewById(R.id.btnBackEditGroup);
+        btnDelete = addGroupView.findViewById(R.id.btnDeleteEditGroup);
+        btnAdd = addGroupView.findViewById(R.id.btnAddEditGroup);
+        btnIcon = addGroupView.findViewById(R.id.btnIcon);
+        showGroup = addGroupView.findViewById(R.id.switchshowEditGroup);
 
-        btn_save_add_group.setOnClickListener(new View.OnClickListener() {
+        btnBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                String sendBackNewName = editTextGroupName_fragment.getText().toString();
-//                if(sendBackNewName.equals("")|| sendBackNewName.equals(null)|| sendBackNewName.equals(" ")){
-//                    sendBack(editTextGroupName_fragment.getHint().toString());
-//                }else{
-//                    sendBack(sendBackNewName);
-//                }
-//                sendBack("MANTAP");
-
-
+                getActivity().onBackPressed();
+            }
+        });
+        btnDelete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialogDelete();
+            }
+        });
+        btnAdd.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(getContext(), "Yes berhasil di add", Toast.LENGTH_SHORT).show();
             }
         });
 
-        return view;
+        return addGroupView;
 
     }
 
@@ -114,6 +122,17 @@ public class addGroupFragment extends Fragment {
 //        // TODO: Update argument type and name
 //        void onFragmentAddGroupInteraction(String uri);
 //    }
+
+    private void dialogDelete(){
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        builder.setTitle("Hapus Grup")
+                .setMessage("apakah anda ingin menghapus grup ini ?")
+                .setPositiveButton("Ya",null)
+                .setNegativeButton("Tidak",null);
+        AlertDialog alertShow = builder.create();
+        alertShow.show();
+    }
+
 
 
 }

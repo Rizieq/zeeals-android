@@ -25,6 +25,7 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -61,19 +62,17 @@ import com.facebook.appevents.AppEventsLogger;
 
 public class loginScreen extends AppCompatActivity {
 
-    private TextView zeealslogin, lupaPassword, textdaftar;
-
+    private TextView zeealslogin, lupaPassword, textdaftar, textfblogin, textfblogout;
     private Button btnMasuk;
     private LoginButton fbLoginButton;
-
     private ProgressBar pbLogin;
     private AutoCompleteTextView ETemail;
     private EditText ETPassword;
+    private RelativeLayout fbBtnHandle;
     private static final String TAG = "loginScreen";
     private CallbackManager callbackManager;
 
     private static String tokenAccess;
-    private static String tokenType = "Bearer";
 
     Retrofit.Builder builder = new Retrofit.Builder()
             .baseUrl(ServerAPI.zeealseRESTAPI)
@@ -93,12 +92,12 @@ public class loginScreen extends AppCompatActivity {
 
 
         /// ANOTHER INITIATION ///
-        ETemail = (AutoCompleteTextView) findViewById(R.id.ETemailLoginInput);
-        ETPassword = (EditText) findViewById(R.id.ETpasswordLoginInput);
-        pbLogin = (ProgressBar) findViewById(R.id.login_progress);
+        ETemail = findViewById(R.id.ETemailLoginInput);
+        ETPassword =  findViewById(R.id.ETpasswordLoginInput);
+        pbLogin = findViewById(R.id.login_progress);
 
         /// THIS CODE FOR SPAN "DAFTAR" ///
-        textdaftar = (TextView) findViewById(R.id.textayoDaftar);
+        textdaftar =  findViewById(R.id.textayoDaftar);
         String text = "Ayo daftar sekarang.";
         SpannableString daftar = new SpannableString(text);
         ClickableSpan clickableSpan = new ClickableSpan() {
@@ -119,14 +118,14 @@ public class loginScreen extends AppCompatActivity {
         textdaftar.setMovementMethod(LinkMovementMethod.getInstance());
 
         /// THIS IS FOR SET ZEEALS FONT ///
-        Typeface poppinsBold = Typeface.createFromAsset(getAssets(), "fonts/Poppins-Bold.otf");
-        Typeface poppinsRegular = Typeface.createFromAsset(getAssets(), "fonts/Poppins-Regular.otf");
-        zeealslogin = (TextView) findViewById(R.id.txtZealsLogin);
-        zeealslogin.setTypeface(poppinsBold);
+//        Typeface poppinsBold = Typeface.createFromAsset(getAssets(), "fonts/Poppins-Bold.otf");
+//        Typeface poppinsRegular = Typeface.createFromAsset(getAssets(), "fonts/Poppins-Regular.otf");
+        zeealslogin =  findViewById(R.id.txtZealsLogin);
+//        zeealslogin.setTypeface(poppinsBold);
 
         /// THIS IS FOR SPAN LUPA PASSWORD ////
-        lupaPassword = (TextView) findViewById(R.id.textLupaPassword);
-        lupaPassword.setTypeface(poppinsRegular);
+        lupaPassword =  findViewById(R.id.textLupaPassword);
+//        lupaPassword.setTypeface(poppinsRegular);
         String textLupa = "Lupa password?";
         SpannableString lupapass = new SpannableString(textLupa);
         ClickableSpan clickableSpan1 = new ClickableSpan() {
@@ -148,20 +147,34 @@ public class loginScreen extends AppCompatActivity {
 
 
         /// THIS IS CODE FOR BUTTON SIGN IN ////
-        btnMasuk = (Button) findViewById(R.id.btnMasuk);
+        btnMasuk =  findViewById(R.id.btnMasuk);
         validateEmailPassword(); //FOR VALIDATING EMAIL AND PASSWORD
-        btnMasuk.setEnabled(false);
+        //btnMasuk.setEnabled(false);
         btnMasuk.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                loginProcess();
+                if (validateEmailClicked() && validatePasswordClicked()){
+                    loginProcess();
+                }
+                else {
+                    showPopUpLogin("Format email atau password yang dimasukkan tidak sesuai. Pastikan anda telah memasukkan email dan password yang sesuai");
+                }
             }
         });
 
         popUpLogin = new Dialog(this);
 
         /// USING FOR FACEBOOK LOGIN FUNC ///
-        fbLoginButton = (LoginButton) findViewById(R.id.btnFacebookLogin);
+        textfblogin = findViewById(R.id.textfblogin);
+        textfblogout = findViewById(R.id.textfblogout);
+        fbBtnHandle = findViewById(R.id.customBtnFb);
+        fbLoginButton =  findViewById(R.id.btnFacebookLogin);
+        fbBtnHandle.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                fbLoginButton.performClick();
+            }
+        });
         LoginManager.getInstance().setLoginBehavior(LoginBehavior.WEB_VIEW_ONLY);
         callbackManager = CallbackManager.Factory.create();
         fbLoginButton.setReadPermissions(Arrays.asList("email","public_profile"));
@@ -199,7 +212,8 @@ public class loginScreen extends AppCompatActivity {
         protected void onCurrentAccessTokenChanged(AccessToken oldAccessToken, AccessToken currentAccessToken) {
             if (currentAccessToken == null) {
                 Toast.makeText(loginScreen.this, "Facebook: User Logged out", Toast.LENGTH_LONG).show();
-                lupaPassword.setText("Lupa Password?");
+                textfblogin.setVisibility(View.VISIBLE);
+                textfblogout.setVisibility(View.INVISIBLE);
             } else {
                 loadUserProfile(currentAccessToken);
             }
@@ -220,7 +234,8 @@ public class loginScreen extends AppCompatActivity {
                     String image_url = "https://graph.facebook.com/"+id+"/picture?type=normal";
 
                     Toast.makeText(getApplicationContext(),"Facebook: User Logged in as "+ full_name,Toast.LENGTH_LONG).show();
-
+                    textfblogin.setVisibility(View.INVISIBLE);
+                    textfblogout.setVisibility(View.VISIBLE);
 //                    loginProcess();
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -275,11 +290,11 @@ public class loginScreen extends AppCompatActivity {
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 if (s.toString().length() < 6) {
                     ETPassword.setError("Password need a least 6 characters");
-                    btnMasuk.setEnabled(false);
+                    //btnMasuk.setEnabled(false);
 
                 } else {
                     ETPassword.setError(null);
-                    btnMasuk.setEnabled(true);
+                    //btnMasuk.setEnabled(true);
                 }
             }
 
@@ -288,6 +303,24 @@ public class loginScreen extends AppCompatActivity {
 
             }
         });
+    }
+
+    private boolean validateEmailClicked(){
+        String email = ETemail.getText().toString().trim();
+        if (Patterns.EMAIL_ADDRESS.matcher(email).matches()){
+            return true;
+        }
+        else{
+            return false;
+        }
+    }
+    private boolean validatePasswordClicked(){
+        String password = ETPassword.getText().toString().trim();
+        if (password.length()<6){
+            return false;
+        }else {
+            return true;
+        }
     }
 
     /// THIS FOR LOGIN FUNCTION ///
@@ -309,7 +342,8 @@ public class loginScreen extends AppCompatActivity {
                     Log.d(TAG, "onResponse: "+response.isSuccessful());
                     Log.d(TAG,"onResponse: Post email + Password Berhasil");
 
-                    tokenAccess = tokenType + response.body().getAccess_token();
+                    tokenAccess = "Bearer " + response.body().getAccess_token();
+
                     getLinkAuth(tokenAccess);
                 }
                 else {
@@ -335,8 +369,8 @@ public class loginScreen extends AppCompatActivity {
         });
     }
     /// THIS FOR LOGIN TOKEN AUTHENTICATION PROGRESS ///
-    private void getLinkAuth(String tokenAccess){
-        Call<ResponseBody> call = userClient.getLink(tokenType + tokenAccess);
+    private void getLinkAuth(final String tokenAccess){
+        Call<ResponseBody> call = userClient.getLink("Bearer" + tokenAccess);
 
         call.enqueue(new Callback<ResponseBody>() {
             @Override
@@ -345,7 +379,7 @@ public class loginScreen extends AppCompatActivity {
                     pbLogin.setVisibility(View.GONE);
                     btnMasuk.setVisibility(View.VISIBLE);
                     Log.d(TAG,"onResponse: Token Access Berhasil");
-                    startActivity(new Intent(loginScreen.this,MainActivity.class));
+                    startActivity(new Intent(loginScreen.this, MainActivity.class).putExtra("TOKEN",tokenAccess));
                 }
                 else {
                     pbLogin.setVisibility(View.GONE);
@@ -389,9 +423,9 @@ public class loginScreen extends AppCompatActivity {
         TextView text;
         Button btnClose;
         popUpLogin.setContentView(R.layout.popup_login_gagal);
-        title = (TextView) popUpLogin.findViewById(R.id.popUpRegistrasititle);
-        text = (TextView) popUpLogin.findViewById(R.id.popUpRegistrasitext);
-        btnClose = (Button) popUpLogin.findViewById(R.id.btnClosepopUpRegistrasi);
+        title =  popUpLogin.findViewById(R.id.popUpRegistrasititle);
+        text =  popUpLogin.findViewById(R.id.popUpRegistrasitext);
+        btnClose =  popUpLogin.findViewById(R.id.btnClosepopUpRegistrasi);
 
         Typeface poppinsBold = Typeface.createFromAsset(getAssets(),"fonts/Poppins-Bold.otf");
         Typeface poppinsRegular = Typeface.createFromAsset(getAssets(),"fonts/Poppins-Regular.otf");

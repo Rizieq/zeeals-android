@@ -13,7 +13,7 @@
         android:top="2dp"
         android:bottom="2dp">
         <shape android:shape="rectangle">
-            <gradient android:angle="270"
+            <gradient android:angle="90"
                 android:endColor="@color/shadowGrey"
                 android:startColor="@android:color/white" />
             <solid android:color="@android:color/white"/>
