@@ -63,4 +63,10 @@
     <string name="add">ADD</string>
     <string name="sign_in_with_facebook">SIGN IN WITH FACEBOOK</string>
     <string name="log_out_facebok">LOG OUT FACEBOOK</string>
+
+    <string-array name="grid">
+        <item> Horizontal </item>
+        <item> Vertikal </item>
+
+    </string-array>
 </resources>

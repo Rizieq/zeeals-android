@@ -9,9 +9,31 @@ import java.util.ArrayList;
 
 public class zGroup extends Zlink implements Parcelable {
 
+
+    private ArrayList<zSource> zSource;
+    private boolean hasNoChild;
+    private boolean childrenVisible;
+
+    private int group_link_id;
+    private int account_id;
+    private String orientation;
+    private String title;
+    private String unicode;
+    private int position;
+    private int status;
+    private String created_at;
+    private String updated_at;
+
     protected zGroup(Parcel in) {
-        id = in.readInt();
+        group_link_id = in.readInt();
+        account_id=in.readInt();
         title = in.readString();
+        unicode=in.readString();
+        position=in.readInt();
+        status=in.readInt();
+        created_at=in.readString();
+        updated_at=in.readString();
+
     }
 
     public static final Creator<zGroup> CREATOR = new Creator<zGroup>() {
@@ -32,23 +54,6 @@ public class zGroup extends Zlink implements Parcelable {
     }
 
 
-    @SerializedName("id")
-    private int id;
-    @SerializedName("zSource")
-    private ArrayList<zSource> zSource;
-    private boolean hasNoChild;
-    private boolean childrenVisible;
-
-    private int url_id;
-    private String orientation;
-    private String title;
-    private String icon;
-    private int position;
-    private String status;
-    private String created_at;
-    private String updated_at;
-
-
     public boolean isChildrenVisible() {
         return childrenVisible;
     }
@@ -58,17 +63,17 @@ public class zGroup extends Zlink implements Parcelable {
     }
 
     public zGroup(int id, String title) {
-        this.id = id;
+        this.group_link_id = id;
         this.title = title;
         this.hasNoChild=true;
     }
 
-    public zGroup(int id, int url_id, String orientation, String title, String icon, int position, String status,String created_at, String updated_at) {
-        this.id = id;
-        this.url_id = url_id;
+    public zGroup(int id, int url_id, String orientation, String title, String icon, int position, int status,String created_at, String updated_at) {
+        this.group_link_id = id;
+        this.account_id = url_id;
         this.orientation = orientation;
         this.title= title;
-        this.icon = icon;
+        this.unicode = icon;
         this.position = position;
         this.status = status;
         this.created_at = created_at;
@@ -77,15 +82,41 @@ public class zGroup extends Zlink implements Parcelable {
     }
 
     public zGroup(int id, ArrayList<zSource> zSource, String title) {
-        this.id = id;
+        this.group_link_id = id;
         this.zSource = zSource;
         this.title= title;
         hasNoChild=false;
     }
 
+    public zGroup(String orientation, String title, final String icon, int status) {
+        this.orientation = orientation;
+        this.title = title;
+        this.unicode= icon;
+        this.status = status;
+        hasNoChild=true;
+    }
 
-    public int getUrl_id() {
-        return url_id;
+    public zGroup(String orientation, String title, final String icon, int status,int group_link_id) {
+        this.group_link_id = group_link_id;
+        this.orientation = orientation;
+        this.title = title;
+        this.unicode = unicode;
+    }
+
+    public int getGroup_link_id() {
+        return group_link_id;
+    }
+
+    public void setGroup_link_id(int group_link_id) {
+        this.group_link_id = group_link_id;
+    }
+
+    public int getAccount_id() {
+        return account_id;
+    }
+
+    public void setAccount_id(int account_id) {
+        this.account_id = account_id;
     }
 
     public String getOrientation() {
@@ -93,10 +124,10 @@ public class zGroup extends Zlink implements Parcelable {
     }
 
     public String getIcon() {
-        return icon;
+        return unicode;
     }
 
-    public String getStatus() {
+    public int getStatus() {
         return status;
     }
 
@@ -124,14 +155,6 @@ public class zGroup extends Zlink implements Parcelable {
         this.hasNoChild = hasNoChild;
     }
 
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
     public ArrayList<zSource> getzSource() {
         return zSource;
     }
@@ -144,9 +167,6 @@ public class zGroup extends Zlink implements Parcelable {
         return title;
     }
 
-    public void setRame(String title) {
-        this.title= title;
-    }
 
     @Override
     public int describeContents() {
@@ -155,7 +175,15 @@ public class zGroup extends Zlink implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeInt(id);
+        dest.writeInt(group_link_id);
+        dest.writeInt(account_id);
+        dest.writeString(orientation);
         dest.writeString(title);
+        dest.writeString(unicode);
+        dest.writeInt(position);
+        dest.writeInt(status);
+        dest.writeString(created_at);
+        dest.writeString(updated_at);
+
     }
 }

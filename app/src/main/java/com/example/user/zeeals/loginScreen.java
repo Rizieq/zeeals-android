@@ -4,9 +4,11 @@ package com.example.user.zeeals;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -31,7 +33,12 @@ import android.widget.Toast;
 
 import com.example.user.zeeals.adapter.MainActivity;
 import com.example.user.zeeals.model.Login;
-import com.example.user.zeeals.model.User;
+import com.example.user.zeeals.model.AuthLogin;
+import com.example.user.zeeals.model.Serve;
+import com.example.user.zeeals.model.Zlink;
+import com.example.user.zeeals.model.zGroup;
+import com.example.user.zeeals.model.zGroupList;
+import com.example.user.zeeals.service.RetroConnection;
 import com.example.user.zeeals.service.UserClient;
 import com.example.user.zeeals.util.ServerAPI;
 import com.facebook.AccessToken;
@@ -49,7 +56,10 @@ import com.facebook.login.widget.LoginButton;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -59,6 +69,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 import com.facebook.FacebookSdk;
 import com.facebook.appevents.AppEventsLogger;
+import com.google.gson.Gson;
 
 public class loginScreen extends AppCompatActivity {
 
@@ -71,134 +82,131 @@ public class loginScreen extends AppCompatActivity {
     private RelativeLayout fbBtnHandle;
     private static final String TAG = "loginScreen";
     private CallbackManager callbackManager;
-
     private static String tokenAccess;
-
-    Retrofit.Builder builder = new Retrofit.Builder()
-            .baseUrl(ServerAPI.zeealseRESTAPI)
-            .addConverterFactory(GsonConverterFactory.create());
-
-    Retrofit retrofit = builder.build();
-
-    UserClient userClient = retrofit.create(UserClient.class);
+    RetroConnection conn;
+    UserClient userClient;
+    List<Zlink> zlinks;
 
     Dialog popUpLogin;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        conn = new RetroConnection();
+        userClient = conn.getConnection();
+        zlinks = new ArrayList<>();
+
+        SharedPreferences.Editor pref = getSharedPreferences("TOKEN",MODE_PRIVATE).edit().clear();
+        pref.apply();
+
         setContentView(R.layout.activity_login_screen);
         FacebookSdk.sdkInitialize(getApplicationContext());
         AppEventsLogger.activateApp(this);
 
+            ETemail = findViewById(R.id.ETemailLoginInput);
+            ETPassword =  findViewById(R.id.ETpasswordLoginInput);
+            pbLogin = findViewById(R.id.login_progress);
+
+            /// THIS CODE FOR SPAN "DAFTAR" ///
+            textdaftar =  findViewById(R.id.textayoDaftar);
+            String text = "Ayo daftar sekarang.";
+            SpannableString daftar = new SpannableString(text);
+            ClickableSpan clickableSpan = new ClickableSpan() {
+                @Override
+                public void onClick(View widget) {
+                    startActivity(new Intent(loginScreen.this, registrasiScreen.class));
+                }
+
+                @Override
+                public void updateDrawState(TextPaint ds) {
+                    super.updateDrawState(ds);
+                    ds.setColor(Color.rgb(199, 149, 109));
+                    ds.setUnderlineText(false);
+                }
+            };
+            daftar.setSpan(clickableSpan, 4, 10, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            textdaftar.setText(daftar);
+            textdaftar.setMovementMethod(LinkMovementMethod.getInstance());
+
+            zeealslogin =  findViewById(R.id.txtZealsLogin);
+
+            /// THIS IS FOR SPAN LUPA PASSWORD ////
+            lupaPassword =  findViewById(R.id.textLupaPassword);
+            String textLupa = "Lupa password?";
+            SpannableString lupapass = new SpannableString(textLupa);
+            ClickableSpan clickableSpan1 = new ClickableSpan() {
+                @Override
+                public void onClick(View widget) {
+                    startActivity(new Intent(loginScreen.this, MainActivity.class));
+                }
+
+                @Override
+                public void updateDrawState(TextPaint ds) {
+                    super.updateDrawState(ds);
+                    ds.setColor(Color.rgb(199, 149, 109));
+                    ds.setUnderlineText(false);
+                }
+            };
+            lupapass.setSpan(clickableSpan1, 0, 14, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            lupaPassword.setText(lupapass);
+            lupaPassword.setMovementMethod(LinkMovementMethod.getInstance());
+
+
+            /// THIS IS CODE FOR BUTTON SIGN IN ////
+            btnMasuk =  findViewById(R.id.btnMasuk);
+            validateEmailPassword(); //FOR VALIDATING EMAIL AND PASSWORD
+            btnMasuk.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (validateEmailClicked() && validatePasswordClicked()){
+                        loginProcess();
+                    }
+                    else {
+                        showPopUpLogin("Format email atau password yang dimasukkan tidak sesuai. Pastikan anda telah memasukkan email dan password yang sesuai");
+                    }
+                }
+            });
+
+            popUpLogin = new Dialog(this);
+
+            /// USING FOR FACEBOOK LOGIN FUNC ///
+            textfblogin = findViewById(R.id.textfblogin);
+            textfblogout = findViewById(R.id.textfblogout);
+            fbBtnHandle = findViewById(R.id.customBtnFb);
+            fbLoginButton =  findViewById(R.id.btnFacebookLogin);
+            fbBtnHandle.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    fbLoginButton.performClick();
+                }
+            });
+            LoginManager.getInstance().setLoginBehavior(LoginBehavior.WEB_VIEW_ONLY);
+            callbackManager = CallbackManager.Factory.create();
+            fbLoginButton.setReadPermissions(Arrays.asList("email","public_profile"));
+            checkLoginStatus();
+
+            fbLoginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
+                @Override
+                public void onSuccess(LoginResult loginResult) {
+                    Toast.makeText(loginScreen.this,"NOTE THIS",Toast.LENGTH_LONG).show();
+
+                }
+
+                @Override
+                public void onCancel() {
+
+                }
+
+                @Override
+                public void onError(FacebookException error) {
+
+                }
+            });
+    }
 
         /// ANOTHER INITIATION ///
-        ETemail = findViewById(R.id.ETemailLoginInput);
-        ETPassword =  findViewById(R.id.ETpasswordLoginInput);
-        pbLogin = findViewById(R.id.login_progress);
-
-        /// THIS CODE FOR SPAN "DAFTAR" ///
-        textdaftar =  findViewById(R.id.textayoDaftar);
-        String text = "Ayo daftar sekarang.";
-        SpannableString daftar = new SpannableString(text);
-        ClickableSpan clickableSpan = new ClickableSpan() {
-            @Override
-            public void onClick(View widget) {
-                startActivity(new Intent(loginScreen.this, registrasiScreen.class));
-            }
-
-            @Override
-            public void updateDrawState(TextPaint ds) {
-                super.updateDrawState(ds);
-                ds.setColor(Color.rgb(199, 149, 109));
-                ds.setUnderlineText(false);
-            }
-        };
-        daftar.setSpan(clickableSpan, 4, 10, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-        textdaftar.setText(daftar);
-        textdaftar.setMovementMethod(LinkMovementMethod.getInstance());
-
-        /// THIS IS FOR SET ZEEALS FONT ///
-//        Typeface poppinsBold = Typeface.createFromAsset(getAssets(), "fonts/Poppins-Bold.otf");
-//        Typeface poppinsRegular = Typeface.createFromAsset(getAssets(), "fonts/Poppins-Regular.otf");
-        zeealslogin =  findViewById(R.id.txtZealsLogin);
-//        zeealslogin.setTypeface(poppinsBold);
-
-        /// THIS IS FOR SPAN LUPA PASSWORD ////
-        lupaPassword =  findViewById(R.id.textLupaPassword);
-//        lupaPassword.setTypeface(poppinsRegular);
-        String textLupa = "Lupa password?";
-        SpannableString lupapass = new SpannableString(textLupa);
-        ClickableSpan clickableSpan1 = new ClickableSpan() {
-            @Override
-            public void onClick(View widget) {
-                startActivity(new Intent(loginScreen.this, MainActivity.class));
-            }
-
-            @Override
-            public void updateDrawState(TextPaint ds) {
-                super.updateDrawState(ds);
-                ds.setColor(Color.rgb(199, 149, 109));
-                ds.setUnderlineText(false);
-            }
-        };
-        lupapass.setSpan(clickableSpan1, 0, 14, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-        lupaPassword.setText(lupapass);
-        lupaPassword.setMovementMethod(LinkMovementMethod.getInstance());
 
 
-        /// THIS IS CODE FOR BUTTON SIGN IN ////
-        btnMasuk =  findViewById(R.id.btnMasuk);
-        validateEmailPassword(); //FOR VALIDATING EMAIL AND PASSWORD
-        //btnMasuk.setEnabled(false);
-        btnMasuk.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (validateEmailClicked() && validatePasswordClicked()){
-                    loginProcess();
-                }
-                else {
-                    showPopUpLogin("Format email atau password yang dimasukkan tidak sesuai. Pastikan anda telah memasukkan email dan password yang sesuai");
-                }
-            }
-        });
 
-        popUpLogin = new Dialog(this);
-
-        /// USING FOR FACEBOOK LOGIN FUNC ///
-        textfblogin = findViewById(R.id.textfblogin);
-        textfblogout = findViewById(R.id.textfblogout);
-        fbBtnHandle = findViewById(R.id.customBtnFb);
-        fbLoginButton =  findViewById(R.id.btnFacebookLogin);
-        fbBtnHandle.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                fbLoginButton.performClick();
-            }
-        });
-        LoginManager.getInstance().setLoginBehavior(LoginBehavior.WEB_VIEW_ONLY);
-        callbackManager = CallbackManager.Factory.create();
-        fbLoginButton.setReadPermissions(Arrays.asList("email","public_profile"));
-        checkLoginStatus();
-
-        fbLoginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
-            @Override
-            public void onSuccess(LoginResult loginResult) {
-                Toast.makeText(loginScreen.this,"NOTE THIS",Toast.LENGTH_LONG).show();
-
-            }
-
-            @Override
-            public void onCancel() {
-
-            }
-
-            @Override
-            public void onError(FacebookException error) {
-
-            }
-        });
-
-    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
@@ -333,16 +341,18 @@ public class loginScreen extends AppCompatActivity {
 
         final Login login = new Login(email,password);
 
-        Call<User> call = userClient.login(login);
+        Call<AuthLogin> call = userClient.login(login);
 
-        call.enqueue(new Callback<User>() {
+        call.enqueue(new Callback<AuthLogin>() {
             @Override
-            public void onResponse(Call<User> call, retrofit2.Response<User> response) {
+            public void onResponse(Call<AuthLogin> call, retrofit2.Response<AuthLogin> response) {
                 if (response.isSuccessful()) {
                     Log.d(TAG, "onResponse: "+response.isSuccessful());
                     Log.d(TAG,"onResponse: Post email + Password Berhasil");
+                    Serve serve = response.body().getServe();
+                    tokenAccess = "Bearer " + serve.getAccess_token();
 
-                    tokenAccess = "Bearer " + response.body().getAccess_token();
+                    Log.d(TAG, "onResponse: TOKEN "+tokenAccess);
 
                     getLinkAuth(tokenAccess);
                 }
@@ -357,10 +367,10 @@ public class loginScreen extends AppCompatActivity {
                 }
             }
             @Override
-            public void onFailure(Call<User> call, Throwable t) {
+            public void onFailure(Call<AuthLogin> call, Throwable t) {
                 //Toast.makeText(loginScreen.this,t.toString(),Toast.LENGTH_LONG).show();
                 //wrongInput();
-                Log.d(TAG,"onResponse: Something Error Login");
+                Log.d(TAG,"onResponse: Something Error Login "+t);
                 pbLogin.setVisibility(View.GONE);
                 btnMasuk.setVisibility(View.VISIBLE);
                 String pesan = "Koneksi anda sedang dalam masalah. pastikan koneksi anda terhubung dengan baik. silahkan coba lagi.";
@@ -370,7 +380,7 @@ public class loginScreen extends AppCompatActivity {
     }
     /// THIS FOR LOGIN TOKEN AUTHENTICATION PROGRESS ///
     private void getLinkAuth(final String tokenAccess){
-        Call<ResponseBody> call = userClient.getLink("Bearer" + tokenAccess);
+        Call<ResponseBody> call = userClient.getLink(tokenAccess);
 
         call.enqueue(new Callback<ResponseBody>() {
             @Override
@@ -379,12 +389,21 @@ public class loginScreen extends AppCompatActivity {
                     pbLogin.setVisibility(View.GONE);
                     btnMasuk.setVisibility(View.VISIBLE);
                     Log.d(TAG,"onResponse: Token Access Berhasil");
-                    startActivity(new Intent(loginScreen.this, MainActivity.class).putExtra("TOKEN",tokenAccess));
+
+                    SharedPreferences.Editor tokenPref = getSharedPreferences("TOKEN",MODE_PRIVATE).edit().putString("TOKEN",tokenAccess);
+                    tokenPref.apply();
+                    retreiveList(tokenAccess);
+
+//                    startActivity(new Intent(loginScreen.this, MainActivity.class).putExtra("TOKEN",tokenAccess));
                 }
                 else {
                     pbLogin.setVisibility(View.GONE);
                     btnMasuk.setVisibility(View.VISIBLE);
-
+                    try {
+                        Log.d(TAG, "onResponse: response : "+response.body().string());
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                     Toast.makeText(loginScreen.this,"Token Acceess incorrect",Toast.LENGTH_SHORT).show();
                     Log.d(TAG,"onResponse: Token Access Salah, Cek kembali");
                 }
@@ -398,6 +417,38 @@ public class loginScreen extends AppCompatActivity {
         });
 
     }
+
+    public void retreiveList(String token){
+        Call<zGroupList> call=  userClient.showGroup(token);
+        call.enqueue(new Callback<zGroupList>() {
+            @Override
+            public void onResponse(Call<zGroupList> call, retrofit2.Response<zGroupList> response) {
+                if (response.isSuccessful()) {
+
+                    ArrayList<zGroup> responseGroup = response.body().getGroupList();
+                    for(zGroup g : responseGroup){
+                        zGroup g1=new zGroup(g.getGroup_link_id(),g.getAccount_id(),g.getOrientation(),g.getTitle(),g.getIcon(),g.getPosition(),g.getStatus(),g.getCreated_at(),g.getCreated_at());
+                        zlinks.add(g1);
+                    }
+                    Gson gson = new Gson();
+                    String json = gson.toJson(zlinks);
+                    SharedPreferences.Editor pref = getSharedPreferences("TOKEN",MODE_PRIVATE).edit().putString("GROUPLIST",json);
+                    pref.apply();
+                    startActivity(new Intent(loginScreen.this, MainActivity.class).putExtra("TOKEN",tokenAccess));
+
+                }
+                else {
+
+                }
+            }
+            @Override
+            public void onFailure(@NonNull Call<zGroupList> call, @NonNull Throwable t) {
+
+            }
+        });
+    }
+
+
 
     /// THIS FOR ACTION IF BACK BUTTON CLICKED ON LOGIN ////
     @Override
@@ -422,6 +473,7 @@ public class loginScreen extends AppCompatActivity {
         TextView title;
         TextView text;
         Button btnClose;
+
         popUpLogin.setContentView(R.layout.popup_login_gagal);
         title =  popUpLogin.findViewById(R.id.popUpRegistrasititle);
         text =  popUpLogin.findViewById(R.id.popUpRegistrasitext);

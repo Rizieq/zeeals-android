@@ -3,14 +3,13 @@ package com.example.user.zeeals.service;
 import com.example.user.zeeals.model.ForgotPassword;
 import com.example.user.zeeals.model.Login;
 import com.example.user.zeeals.model.Message;
+import com.example.user.zeeals.model.AuthLogin;
 import com.example.user.zeeals.model.Registration;
-import com.example.user.zeeals.model.User;
 import com.example.user.zeeals.model.zGroup;
 import com.example.user.zeeals.model.zGroupList;
 
 import okhttp3.ResponseBody;
 import retrofit2.Call;
-import retrofit2.Response;
 import retrofit2.http.Body;
 import retrofit2.http.DELETE;
 import retrofit2.http.GET;
@@ -22,9 +21,9 @@ public interface UserClient {
 
 
     @POST("api/v1/auth/login")
-    Call<User> login (@Body Login login);
+    Call<AuthLogin> login (@Body Login login);
 
-    @GET("api/v1/link")
+    @GET("api/v1/credential")
     Call<ResponseBody> getLink(@Header("Authorization") String token);
 
     @POST("api/v1/auth/register")

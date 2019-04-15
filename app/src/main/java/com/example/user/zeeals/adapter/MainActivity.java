@@ -4,6 +4,7 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Parcelable;
 import android.support.design.widget.FloatingActionButton;
@@ -28,15 +29,20 @@ import android.widget.Toast;
 
 //import com.example.user.zeeals.adapter.AddNewGroup;
 import com.example.user.zeeals.editProfileScreen;
+import com.example.user.zeeals.fragment.addGroupFragment;
 import com.example.user.zeeals.fragment.editSourceFragment;
 import com.example.user.zeeals.loginScreen;
 import com.example.user.zeeals.model.Message;
 import com.example.user.zeeals.model.zGroupList;
+import com.example.user.zeeals.service.RetroConnection;
 import com.example.user.zeeals.service.UserClient;
 import com.example.user.zeeals.util.ServerAPI;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.soundcloud.android.crop.Crop;
 
 import java.io.File;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -62,6 +68,7 @@ public class MainActivity extends AppCompatActivity {
 
     private static final int PICK_IMAGE_PROF_PIC = 100;
     private static final int PICK_IMAGE_PROF_BANNER =101;
+    private static final int EDIT_PROFILE =102;
     String imgType="";
 
     boolean menuShowed;
@@ -71,21 +78,36 @@ public class MainActivity extends AppCompatActivity {
     //groupAdapter adapter;
     editSourceFragment editSource_Fragment;
     menuFragment menuFragment;
-    RecyclerAdapterTest adapterTest;
-    List<Zlink> zLink;
-    Context contextr;
 
-    String token;
+
+    //shared ke menu fragment
+    public RecyclerAdapterTest adapterTest;
+    public List<Zlink> zLink;
+    public UserClient userClient;
+    public Retrofit.Builder builder;
+
+    public String token;
+    int USER_ID;
     private static final String TAG = "TESTING";
+    RetroConnection connection;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        String groupJSON = getSharedPreferences("TOKEN",MODE_PRIVATE).getString("GROUPLIST",null);
+//        Log.d(TAG, "onCreate: "+getSharedPreferences("TOKEN",MODE_PRIVATE).getString("GROUPLIST",null));
+        Type listType = new TypeToken<List<zGroup>>(){}.getType();
+        zLink = new ArrayList<>();
+        zLink = new Gson().fromJson(groupJSON,listType);
+
+        //Connection
+        connection = new RetroConnection();
 
         //TOKEN
-        token = getIntent().getStringExtra("TOKEN");
+        token = getSharedPreferences("TOKEN",MODE_PRIVATE).getString("TOKEN",null);
+
 
 
         recyclerViewTes = findViewById(R.id.recycler_view);
@@ -109,69 +131,16 @@ public class MainActivity extends AppCompatActivity {
         });
 
 //        Z-VERSION
-        zLink = new ArrayList<>();
-        zSource zSource1 = new zSource(0,"Twitter","twitter.com/eldirohmanur",0);
-        zSource zSource2 = new zSource(1,"Facebook","facebook.com/eldirohmanur",0);
-        zSource zSource3 = new zSource(0,"Telkom","telyu.com/eldirohmanur",1);
-        zSource zSource4 = new zSource(1,"KONG","kongs.com/eldirohmanur",1);
-        zSource zSource5 = new zSource(2,"HohoHehe","HohoHehe.com/eldirohmanur",1);
 
-        ArrayList<zSource> zSourceList1 = new ArrayList<>();
-        zSourceList1.add(zSource1); zSourceList1.add(zSource2);
-        ArrayList<zSource> zSourceList2 = new ArrayList<>();
-        zSourceList2.add(zSource3); zSourceList2.add(zSource4); zSourceList2.add(zSource5);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(MainActivity.this);
+        adapterTest = new RecyclerAdapterTest(recyclerViewTes,zLink,MainActivity.this.findViewById(R.id.snackbar_container),token,MainActivity.this);
+        recyclerViewTes.setAdapter(adapterTest);
+        recyclerViewTes.setLayoutManager(layoutManager);
 
-        Retrofit.Builder builder = new Retrofit.Builder()
-                .baseUrl(ServerAPI.zeealseRESTAPI)
-                .addConverterFactory(GsonConverterFactory.create());
+        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(new SwipeToDeleteCallback(adapterTest,MainActivity.this));
+        itemTouchHelper.attachToRecyclerView(recyclerViewTes);
 
-        Retrofit retrofit = builder.build();
-
-        UserClient userClient = retrofit.create(UserClient.class);
-
-        Call<zGroupList> call = userClient.showGroup(token);
-        call.enqueue(new Callback<zGroupList>() {
-            @Override
-            public void onResponse(Call<zGroupList> call, retrofit2.Response<zGroupList> response) {
-                if (response.isSuccessful()) {
-                    ArrayList<zGroup> responseGroup = response.body().getGroupList();
-                    for(zGroup g : responseGroup){
-                        zGroup g1=new zGroup(g.getId(),g.getUrl_id(),g.getOrientation(),g.getTitle(),g.getIcon(),g.getPosition(),g.getStatus(),g.getCreated_at(),g.getCreated_at());
-                        zLink.add(g1);
-                    }
-                    LinearLayoutManager layoutManager = new LinearLayoutManager(MainActivity.this);
-                    adapterTest = new RecyclerAdapterTest(recyclerViewTes,zLink,MainActivity.this.findViewById(R.id.snackbar_container),token,MainActivity.this);
-                    recyclerViewTes.setAdapter(adapterTest);
-                    recyclerViewTes.setLayoutManager(layoutManager);
-
-                    ItemTouchHelper itemTouchHelper = new ItemTouchHelper(new SwipeToDeleteCallback(adapterTest,MainActivity.this));
-                    itemTouchHelper.attachToRecyclerView(recyclerViewTes);
-                }
-                else {
-
-                }
-            }
-            @Override
-            public void onFailure(Call<zGroupList> call, Throwable t) {
-
-            }
-        });
-
-
-
-
-        zGroup zGroup1 = new zGroup(0,zSourceList1,"Social");
-        zGroup zGroup2 = new zGroup(1,zSourceList2,"Work");
-        zGroup zGroup3 = new zGroup(2,"Tes");
-
-//        zLink.add(zGroup1);
-//        zLink.add(zGroup2);
-//        zLink.add(zGroup3);
-
-
-
-
-//        Z-VERSION  END ---------------------------
+        userClient = connection.getConnection();
 
         /// FOR PROFILE UI ABOVE SEPARATOR//
         profileName =  findViewById(R.id.profileName);
@@ -226,8 +195,9 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if(requestCode==1){
-            if(resultCode==RESULT_OK){
+
+        if(resultCode==RESULT_OK){
+            if(requestCode==1){
                 ArrayList<Parcelable> sourceParcel = data.getParcelableArrayListExtra("SOURCES");
                 zGroup groupParcel = data.getParcelableExtra("GROUP");
 
@@ -236,17 +206,10 @@ public class MainActivity extends AppCompatActivity {
                     arraySource.add((zSource) sourceParcel.get(i));
                 }
                 groupParcel.setzSource(arraySource);
-
                 zLink.add(groupParcel);
                 adapterTest.notifyItemInserted(zLink.size()-1);
-            }
-            if(requestCode==RESULT_CANCELED){
-                Log.d(TAG, "onActivityResult: CANCELED");
-            }
-        }
 
-        else if (resultCode == RESULT_OK){
-            if (requestCode == PICK_IMAGE_PROF_PIC){
+            }else if (requestCode == PICK_IMAGE_PROF_PIC){
                 imgType = "Profile";
                 Uri source_uri = data.getData();
                 Uri dest_uri = Uri.fromFile(new File(getCacheDir(),"cropped"));
@@ -266,6 +229,9 @@ public class MainActivity extends AppCompatActivity {
             else if (requestCode == Crop.REQUEST_CROP){
                 handle_crop(resultCode,data,imgType);
             }
+        }
+        else{
+            Log.d(TAG, "onActivityResult: error bang, nga tau kenaps");
         }
 
     }
@@ -311,30 +277,38 @@ public class MainActivity extends AppCompatActivity {
                     }
                 })
                 .setNegativeButton("Tidak", null);
-        AlertDialog alertShow = builder.show();
+        builder.show();
     }
 
     public void openEditScreen(View v){
         Intent intent = new Intent(MainActivity.this, editProfileScreen.class);
         intent.putExtra("nama",profileName.getText().toString().trim());
         intent.putExtra("desc",profileDesc.getText().toString().trim());
-        startActivity(intent);
+        startActivityForResult(intent,EDIT_PROFILE);
     }
     public void keyboardDown(){
         InputMethodManager imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
         imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
     }
 
-    public void connectAPI(){
-        Retrofit.Builder builder = new Retrofit.Builder()
-                .baseUrl(ServerAPI.group_REST_API)
-                .addConverterFactory(GsonConverterFactory.create());
 
-        Retrofit retrofit = builder.build();
-        UserClient userClient = retrofit.create(UserClient.class);
+//    DATA PASSING
+//    @Override
+//    public void passDataFromMenutoAct(zGroup group) {
+//        zLink.add(group);
+//        adapterTest.notifyItemInserted(zLink.size()-1);
+//    }
 
-
-    }
+    //    public void connectAPI(){
+//        Retrofit.Builder builder = new Retrofit.Builder()
+//                .baseUrl(ServerAPI.group_REST_API)
+//                .addConverterFactory(GsonConverterFactory.create());
+//
+//        Retrofit retrofit = builder.build();
+//        UserClient userClient = retrofit.create(UserClient.class);
+//
+//
+//    }
 
 
 }

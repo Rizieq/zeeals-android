@@ -19,8 +19,10 @@ import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.user.zeeals.R;
+import com.example.user.zeeals.fragment.addGroupFragment;
 import com.example.user.zeeals.loginScreen;
 import com.example.user.zeeals.model.Zlink;
 import com.example.user.zeeals.model.zGroup;
@@ -73,6 +75,8 @@ public class RecyclerAdapterTest extends RecyclerView.Adapter<RecyclerView.ViewH
         userClient = retrofit.create(UserClient.class);
 
     }
+
+
 
     public static class ParentViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         public TextView groupTitle;
@@ -207,6 +211,8 @@ public class RecyclerAdapterTest extends RecyclerView.Adapter<RecyclerView.ViewH
     public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, int i) {
         if (viewHolder.getItemViewType()==CHILD){
             TextView sourceName = ((ChildsViewHolder)viewHolder).sourceName;
+            Zlink x = general.get(i);
+            Log.d(TAG, "onBindViewHolder: "+x);
             zSource zSource = (zSource) general.get(i);
             sourceName.setText(zSource.getSourceName());
         }else{
@@ -223,7 +229,10 @@ public class RecyclerAdapterTest extends RecyclerView.Adapter<RecyclerView.ViewH
 
     public void deleteItem(final int position,RecyclerView.ViewHolder viewHolder) {
         Log.d(TAG, "deleteItem: "+position);
-        Log.d(TAG, "deleteItem: "+general.get(position));
+        Log.d(TAG, "deleteItem: "+((zGroup)general.get(position)));
+        List<Zlink> z = general;
+        Log.d(TAG, "deleteItem: position: "+position);
+        Log.d(TAG, "deleteItem: "+((zGroup)general.get(position)).getGroup_link_id());
         if(viewHolder.getItemViewType()==PARENT){
 
             AlertDialog.Builder builder = new AlertDialog.Builder(context);
@@ -233,19 +242,19 @@ public class RecyclerAdapterTest extends RecyclerView.Adapter<RecyclerView.ViewH
                     .setPositiveButton("Hapus", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
-
-                            Call<ResponseBody> call = userClient.delete(token,((zGroup)general.get(position)).getId());
+                            int deletePosition = ((zGroup)general.get(position)).getGroup_link_id();
+                            Call<ResponseBody> call = userClient.delete(token,deletePosition);
                             call.enqueue(new Callback<ResponseBody>() {
                                 @Override
                                 public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                                    Log.d(TAG, "onResponse: "+response);
+                                    Log.d(TAG, "onResponse: GROUP DELETED ");
                                     general.remove(position);
                                     notifyItemRemoved(position);
                                 }
 
                                 @Override
                                 public void onFailure(Call<ResponseBody> call, Throwable t) {
-
+                                    Log.d(TAG, "onFailure: FAIL TO DELETE GROUP");
                                 }
                             });
                         }
@@ -261,60 +270,18 @@ public class RecyclerAdapterTest extends RecyclerView.Adapter<RecyclerView.ViewH
             AlertDialog alertOut = builder.create();
             alertOut.show();
 
-
-
-
-//            showUndoSnackbar(((zGroup)general.get(position)).getId());
-
         }
 
     }
 
-    private void showUndoSnackbar(final int position) {
-        View view = mActivity;
-
-        Snackbar snackbar = Snackbar.make(view, "Group Deleted",Snackbar.LENGTH_LONG);
-        snackbar.setActionTextColor(Color.rgb(199, 149, 109));
-        snackbar.setAction("UNDO?", new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                undoDelete();
-            }
-        });
-
-        snackbar.show();
-
-        snackbar.addCallback(new Snackbar.Callback(){
-            @Override
-            public void onDismissed(Snackbar transientBottomBar, int event) {
 
 
-            }
-        });
 
-
-    }
 
     public void undoDelete() {
         general.remove(mRecentlyDeletedItem);
         notifyItemRemoved(mRecentlyDeletedItemPosition);
-
         general.add(mRecentlyDeletedItemPosition,mRecentlyDeletedItem);
-//        zGroup g = (zGroup) mRecentlyDeletedItem;
-
-//        Call<zGroup> call = userClient.create(token,g);
-//        call.enqueue(new Callback<zGroup>() {
-//            @Override
-//            public void onResponse(Call<zGroup> call, Response<zGroup> response) {
-//                Log.d(TAG, "onResponse: "+response);
-//            }
-//
-//            @Override
-//            public void onFailure(Call<zGroup> call, Throwable t) {
-//
-//            }
-//        });
-
         notifyItemInserted(mRecentlyDeletedItemPosition);
     }
 
