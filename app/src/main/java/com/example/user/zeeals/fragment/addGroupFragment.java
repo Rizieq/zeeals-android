@@ -24,15 +24,23 @@ import android.widget.Toast;
 import com.example.user.zeeals.R;
 import com.example.user.zeeals.adapter.IconAdapter;
 import com.example.user.zeeals.adapter.MainActivity;
+import com.example.user.zeeals.model.Zlink;
 import com.example.user.zeeals.model.zGroup;
 import com.example.user.zeeals.service.RetroConnection;
 import com.example.user.zeeals.util.NothingSelectedSpinnerAdapter;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
 import static android.content.ContentValues.TAG;
+import static android.content.Context.MODE_PRIVATE;
 
 public class addGroupFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
@@ -49,7 +57,7 @@ public class addGroupFragment extends Fragment {
     static Context context;
     Dialog iconPicker_dialog;
     GridView gridView;
-    addGroupFragmentInteraction sendback;
+
     String rawIcon,token;
     ProgressBar bar;
 
@@ -71,15 +79,11 @@ public class addGroupFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         this.iconPicker_dialog = new Dialog(getContext());
         conn = new RetroConnection();
-        token = getActivity().getSharedPreferences("TOKEN",Context.MODE_PRIVATE).getString("TOKEN",null);
-
-
+        token = getActivity().getSharedPreferences("TOKEN", MODE_PRIVATE).getString("TOKEN",null);
     }
-
-
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -95,12 +99,15 @@ public class addGroupFragment extends Fragment {
         btnAdd = addGroupView.findViewById(R.id.btnAddAddGroup);
         btnIcon_addGroup = addGroupView.findViewById(R.id.btnIcon);
         switchStatus = addGroupView.findViewById(R.id.switchshowAddGroup);
-        Log.d(TAG, "onCreateView: "+rawIcon);
+
         spinner_grid = addGroupView.findViewById(R.id.spinnerAddGroup);
         ArrayAdapter<CharSequence> adapterGrid = ArrayAdapter.createFromResource(getContext(), R.array.grid, android.R.layout.simple_spinner_item);
         adapterGrid.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+
         spinner_grid.setPrompt("Select your Grid");
         spinner_grid.setAdapter(new NothingSelectedSpinnerAdapter(adapterGrid, R.layout.contact_spinner_row_nothing_selected,getContext()));
+        rawIcon="f039";
 
 
         btnBack.setOnClickListener(new View.OnClickListener() {
@@ -115,17 +122,9 @@ public class addGroupFragment extends Fragment {
                 dialogDelete();
             }
         });
-        btnAdd.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(getContext(), "Yes berhasil di add", Toast.LENGTH_SHORT).show();
-            }
-        });
-
         btnIcon_addGroup.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.d(TAG, "onClick: icon clicked");
                 openIconPicker();
             }
         });
@@ -136,25 +135,49 @@ public class addGroupFragment extends Fragment {
                 bar.setVisibility(View.VISIBLE);
                 btnAdd.setVisibility(View.GONE);
                 final String titleData = title.getText().toString();
-                final String orientationData;
-                if(spinner_grid.getSelectedItem().toString().equals("Horizontal")){
-                    orientationData="h";
-                }else orientationData="v";
+                final char orientationData;
+                if(spinner_grid.getSelectedItem()!=null){
+                    if(spinner_grid.getSelectedItem().toString().equals("Horizontal")){
+                        orientationData='h';
+                    }else orientationData='v';
+                }else{
+                    orientationData='v';
+                }
+
+
+
+                Log.d(TAG, "onClick: "+ orientationData);
+
+
                 final String iconData = rawIcon;
                 final String status;
+
+
                 if(switchStatus.isChecked()){
                     status="1";
                 }else status="0";
 
 
-                zGroup group = new zGroup(orientationData,titleData,iconData,Integer.parseInt(status));
+                final zGroup group = new zGroup(orientationData,titleData,iconData,Integer.parseInt(status));
                 Call<zGroup> call = conn.getConnection().create(token,group);
                 call.enqueue(new Callback<zGroup>() {
                     @Override
                     public void onResponse(Call<zGroup> call, Response<zGroup> response) {
                         if(response.isSuccessful()){
-                            final String[] x = {orientationData,titleData,iconData,status,Integer.toString(response.body().getGroup_link_id())};
-                            sendback.passData(x);
+                            final String[] x = {String.valueOf(orientationData),titleData,iconData,status,Integer.toString(response.body().getGroup_link_id())};
+
+
+                            String groupJSON = getActivity().getSharedPreferences("TOKEN",MODE_PRIVATE).getString("GROUPLIST",null);
+                            Type listType = new TypeToken<List<zGroup>>(){}.getType();
+                            List<Zlink> zLink = new ArrayList<>();
+                            zLink = new Gson().fromJson(groupJSON,listType);
+                            zLink.add(group);
+                            Gson gson = new Gson();
+                            String json = gson.toJson(zLink);
+
+                            getActivity().getSharedPreferences("TOKEN",MODE_PRIVATE).edit().putString("GROUPLIST",json).apply();
+                            getActivity().finish();
+
                             Log.d(TAG, "onResponse: Data added");
                         }
                     }
@@ -195,35 +218,17 @@ public class addGroupFragment extends Fragment {
             }
         });
 
-
-
-
-
     }
-
-
-
-    // TODO: Rename method, update argument and hook method into UI event
-//    public void sendBack(String newName) {
-//        if (mListener != null) {
-//            mListener.onFragmentAddGroupInteraction(newName);
-//        }
-//    }
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        try {
-            sendback = (addGroupFragmentInteraction) context;
-        }catch (ClassCastException e){
-            e.printStackTrace();
-        }
+
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
-        sendback=null;
     }
 
     private void dialogDelete(){
@@ -234,10 +239,6 @@ public class addGroupFragment extends Fragment {
                 .setNegativeButton("Tidak",null);
         AlertDialog alertShow = builder.create();
         alertShow.show();
-    }
-
-    public interface addGroupFragmentInteraction{
-        void passData(String[] group);
     }
 
 

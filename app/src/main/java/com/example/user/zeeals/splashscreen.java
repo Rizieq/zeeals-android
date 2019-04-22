@@ -87,7 +87,10 @@ public class splashscreen extends AppCompatActivity {
                     String json = gson.toJson(zlinks);
                     SharedPreferences.Editor pref = getSharedPreferences("TOKEN",MODE_PRIVATE).edit().putString("GROUPLIST",json);
                     pref.apply();
-                    startActivity(new Intent(splashscreen.this, MainActivity.class));
+
+                    Intent i = new Intent(splashscreen.this, MainActivity.class);
+                    i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    startActivity(i);
 
                 }
                 else {

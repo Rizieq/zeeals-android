@@ -434,7 +434,9 @@ public class loginScreen extends AppCompatActivity {
                     String json = gson.toJson(zlinks);
                     SharedPreferences.Editor pref = getSharedPreferences("TOKEN",MODE_PRIVATE).edit().putString("GROUPLIST",json);
                     pref.apply();
-                    startActivity(new Intent(loginScreen.this, MainActivity.class).putExtra("TOKEN",tokenAccess));
+                    Intent i = new Intent(loginScreen.this, MainActivity.class).putExtra("TOKEN",tokenAccess);
+                    i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    startActivity(i);
 
                 }
                 else {

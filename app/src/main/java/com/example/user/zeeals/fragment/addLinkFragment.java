@@ -2,13 +2,16 @@ package com.example.user.zeeals.fragment;
 
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
@@ -16,7 +19,15 @@ import android.widget.Switch;
 import android.widget.Toast;
 
 import com.example.user.zeeals.R;
+import com.example.user.zeeals.model.Zlink;
+import com.example.user.zeeals.model.zGroup;
+import com.example.user.zeeals.util.NothingSelectedSpinnerAdapter;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.zip.Inflater;
 
 public class addLinkFragment extends Fragment {
@@ -28,9 +39,10 @@ public class addLinkFragment extends Fragment {
     private Spinner spinnerGroup;
     private EditText url, urlImage, title;
     private Switch showLink;
+    private List<Zlink> zLink;
 
     public addLinkFragment(){
-        // Required empty public constructor
+
     }
     public static addLinkFragment newInstance(){
         addLinkFragment fragment = new addLinkFragment();
@@ -41,10 +53,31 @@ public class addLinkFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View addLinkView = inflater.inflate(R.layout.fragment_add_link, container, false);
+
+        String groupJSON = getActivity().getSharedPreferences("TOKEN",Context.MODE_PRIVATE).getString("GROUPLIST",null);
+        Log.d(TAG, "addLinkFragment: "+groupJSON);
+        Type listType = new TypeToken<List<zGroup>>(){}.getType();
+        zLink = new ArrayList<>();
+        zLink = new Gson().fromJson(groupJSON,listType);
+
+
+
+
         btnBack = addLinkView.findViewById(R.id.btnBackEditLink);
         btnAdd = addLinkView.findViewById(R.id.btnAddEditLink);
         btnDelete = addLinkView.findViewById(R.id.btnDeleteEditLink);
         spinnerGroup = addLinkView.findViewById(R.id.spinnerEditGroup);
+        List<String> groupNames = new ArrayList<String>();
+        for (int i=0;i<zLink.size();i++){
+            groupNames.add(((zGroup)zLink.get(i)).getTitle());
+        }
+
+        ArrayAdapter<String> dataSpinner = new ArrayAdapter<String>(getContext(),android.R.layout.simple_spinner_item,groupNames);
+        dataSpinner.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerGroup.setPrompt("Select your Grid");
+        spinnerGroup.setAdapter(new NothingSelectedSpinnerAdapter(dataSpinner, R.layout.contact_spinner_row_nothing_selected,getContext()));
+
+
         url = addLinkView.findViewById(R.id.etURLEditLink);
         urlImage = addLinkView.findViewById(R.id.etImageAddressEditLink);
         title = addLinkView.findViewById(R.id.etTitleEditLink);

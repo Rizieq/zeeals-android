@@ -95,12 +95,9 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        String name = getSharedPreferences("PROFILE",MODE_PRIVATE).getString("PROFILE_NAME","Set Your Name");
+        String desc = getSharedPreferences("PROFILE",MODE_PRIVATE).getString("PROFILE_DESC","Set your description here");
 
-        String groupJSON = getSharedPreferences("TOKEN",MODE_PRIVATE).getString("GROUPLIST",null);
-//        Log.d(TAG, "onCreate: "+getSharedPreferences("TOKEN",MODE_PRIVATE).getString("GROUPLIST",null));
-        Type listType = new TypeToken<List<zGroup>>(){}.getType();
-        zLink = new ArrayList<>();
-        zLink = new Gson().fromJson(groupJSON,listType);
 
         //Connection
         connection = new RetroConnection();
@@ -132,13 +129,7 @@ public class MainActivity extends AppCompatActivity {
 
 //        Z-VERSION
 
-        LinearLayoutManager layoutManager = new LinearLayoutManager(MainActivity.this);
-        adapterTest = new RecyclerAdapterTest(recyclerViewTes,zLink,MainActivity.this.findViewById(R.id.snackbar_container),token,MainActivity.this);
-        recyclerViewTes.setAdapter(adapterTest);
-        recyclerViewTes.setLayoutManager(layoutManager);
 
-        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(new SwipeToDeleteCallback(adapterTest,MainActivity.this));
-        itemTouchHelper.attachToRecyclerView(recyclerViewTes);
 
         userClient = connection.getConnection();
 
@@ -150,13 +141,8 @@ public class MainActivity extends AppCompatActivity {
         imgBannerProfPic =  findViewById(R.id.profileBanner);
 
         Bundle bundle = getIntent().getExtras();
-        if (bundle!=null){
-            String nama = bundle.getString("name");
-            String desc = bundle.getString("desc");
-
-            profileName.setText(nama);
-            profileDesc.setText(desc);
-        }
+        profileName.setText(name);
+        profileDesc.setText(desc);
 
         picChangePopUp = new Dialog(this);
         editGroupNamePopup = new Dialog(this);
@@ -165,6 +151,24 @@ public class MainActivity extends AppCompatActivity {
         RelativeLayout btnBack = tb.findViewById(R.id.btnBack);
         RelativeLayout btnEdit =  tb.findViewById(R.id.btnEditPofile);
         btnBack.setVisibility(View.GONE);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        String groupJSON = getSharedPreferences("TOKEN",MODE_PRIVATE).getString("GROUPLIST",null);
+        Type listType = new TypeToken<List<zGroup>>(){}.getType();
+        zLink = new ArrayList<>();
+        zLink = new Gson().fromJson(groupJSON,listType);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(MainActivity.this);
+        adapterTest = new RecyclerAdapterTest(recyclerViewTes,zLink,MainActivity.this.findViewById(R.id.snackbar_container),token,MainActivity.this);
+        recyclerViewTes.setAdapter(adapterTest);
+        recyclerViewTes.setLayoutManager(layoutManager);
+
+        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(new SwipeToDeleteCallback(adapterTest,MainActivity.this));
+        itemTouchHelper.attachToRecyclerView(recyclerViewTes);
+        adapterTest.notifyDataSetChanged();
     }
 
     public void rotateFab(){

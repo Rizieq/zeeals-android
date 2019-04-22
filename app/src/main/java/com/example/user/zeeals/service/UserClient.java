@@ -15,6 +15,7 @@ import retrofit2.http.DELETE;
 import retrofit2.http.GET;
 import retrofit2.http.Header;
 import retrofit2.http.POST;
+import retrofit2.http.PUT;
 import retrofit2.http.Path;
 
 public interface UserClient {
@@ -43,6 +44,10 @@ public interface UserClient {
     //delete Group
     @DELETE ("api/v1/link/group/{id}")
     Call<ResponseBody> delete(@Header("Authorization") String token, @Path("id") int id);
+
+    // edit Group
+    @PUT ("api/v1/link/group/{id}")
+    Call<ResponseBody> update(@Header ("Authorization")String token, @Path("id") int id,@Body zGroup zgroup);
 
 
 }

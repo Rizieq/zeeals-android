@@ -16,7 +16,7 @@ public class zGroup extends Zlink implements Parcelable {
 
     private int group_link_id;
     private int account_id;
-    private String orientation;
+    private char orientation;
     private String title;
     private String unicode;
     private int position;
@@ -68,7 +68,7 @@ public class zGroup extends Zlink implements Parcelable {
         this.hasNoChild=true;
     }
 
-    public zGroup(int id, int url_id, String orientation, String title, String icon, int position, int status,String created_at, String updated_at) {
+    public zGroup(int id, int url_id, char orientation, String title, String icon, int position, int status,String created_at, String updated_at) {
         this.group_link_id = id;
         this.account_id = url_id;
         this.orientation = orientation;
@@ -88,7 +88,7 @@ public class zGroup extends Zlink implements Parcelable {
         hasNoChild=false;
     }
 
-    public zGroup(String orientation, String title, final String icon, int status) {
+    public zGroup(char orientation, String title, final String icon, int status) {
         this.orientation = orientation;
         this.title = title;
         this.unicode= icon;
@@ -96,12 +96,15 @@ public class zGroup extends Zlink implements Parcelable {
         hasNoChild=true;
     }
 
-    public zGroup(String orientation, String title, final String icon, int status,int group_link_id) {
+    public zGroup(char orientation, String title, final String unicode, int status,int group_link_id) {
         this.group_link_id = group_link_id;
         this.orientation = orientation;
+        this.status=status;
         this.title = title;
         this.unicode = unicode;
     }
+
+
 
     public int getGroup_link_id() {
         return group_link_id;
@@ -119,7 +122,7 @@ public class zGroup extends Zlink implements Parcelable {
         this.account_id = account_id;
     }
 
-    public String getOrientation() {
+    public char getOrientation() {
         return orientation;
     }
 
@@ -167,6 +170,29 @@ public class zGroup extends Zlink implements Parcelable {
         return title;
     }
 
+    public void setOrientation(char orientation) {
+        this.orientation = orientation;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public void setUnicode(String unicode) {
+        this.unicode = unicode;
+    }
+
+    public void setStatus(int status) {
+        this.status = status;
+    }
+
+    public void setCreated_at(String created_at) {
+        this.created_at = created_at;
+    }
+
+    public void setUpdated_at(String updated_at) {
+        this.updated_at = updated_at;
+    }
 
     @Override
     public int describeContents() {
@@ -177,7 +203,6 @@ public class zGroup extends Zlink implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeInt(group_link_id);
         dest.writeInt(account_id);
-        dest.writeString(orientation);
         dest.writeString(title);
         dest.writeString(unicode);
         dest.writeInt(position);

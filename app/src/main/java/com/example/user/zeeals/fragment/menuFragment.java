@@ -98,7 +98,7 @@ public class menuFragment extends Fragment {
                 MainActivity act = (MainActivity)getActivity();
                 Bundle b = data.getExtras();
                 String[] dataParcel = b.getStringArray("newGroup");
-                zGroup newGroup = new zGroup(dataParcel[0],dataParcel[1],dataParcel[2], Integer.parseInt(dataParcel[3]),Integer.parseInt(dataParcel[4]));
+                zGroup newGroup = new zGroup(dataParcel[0].charAt(0),dataParcel[1],dataParcel[2], Integer.parseInt(dataParcel[3]),Integer.parseInt(dataParcel[4]));
                 newGroup.setPosition(act.zLink.size());
                 act.zLink.add(newGroup);
                 act.adapterTest.notifyItemInserted(act.zLink.size()-1);

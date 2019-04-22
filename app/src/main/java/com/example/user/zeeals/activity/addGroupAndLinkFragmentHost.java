@@ -7,11 +7,13 @@ import android.os.Bundle;
 import com.example.user.zeeals.R;
 import com.example.user.zeeals.fragment.addGroupFragment;
 import com.example.user.zeeals.fragment.addLinkFragment;
+import com.example.user.zeeals.fragment.editGroupFragment;
 import com.example.user.zeeals.model.zGroup;
 
-public class addGroupAndLinkFragmentHost extends AppCompatActivity implements addGroupFragment.addGroupFragmentInteraction{
+public class addGroupAndLinkFragmentHost extends AppCompatActivity{
     addGroupFragment addNewGroupFragment;
     addLinkFragment addNewLinkFragment;
+    com.example.user.zeeals.fragment.editGroupFragment editGroupFragment;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -19,8 +21,11 @@ public class addGroupAndLinkFragmentHost extends AppCompatActivity implements ad
         String key = getIntent().getStringExtra("menuType");
         if (key.equals("addGroup")){
             openAddGroupFragment();
-        }else
+        }else if(key.equals("addLink")){
             openAddLinkFragment();
+        }else if(key.equals("editGroup")){
+            openEditGroupFragment(getIntent().getIntExtra("position",100));
+        }
     }
 
     public void openAddGroupFragment() {
@@ -35,13 +40,10 @@ public class addGroupAndLinkFragmentHost extends AppCompatActivity implements ad
         getSupportFragmentManager().beginTransaction().replace(R.id.add_group_and_link_host_container,addNewLinkFragment,"Add Link Fragment").commit();
     }
 
-    @Override
-    public void passData(String[] group) {
-        Intent i = new Intent();
-        Bundle b = new Bundle();
-        b.putStringArray("newGroup",group);
-        i.putExtras(b);
-        setResult(RESULT_OK,i);
-        finish();
+    public void openEditGroupFragment(int position){
+        editGroupFragment = com.example.user.zeeals.fragment.editGroupFragment.newInstance(position);
+        getSupportFragmentManager().beginTransaction().replace(R.id.add_group_and_link_host_container,editGroupFragment,"Edit Group Fragment").commit();
     }
+
+
 }

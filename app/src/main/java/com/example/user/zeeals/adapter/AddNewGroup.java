@@ -32,7 +32,7 @@
 //    @Override
 //    protected void onCreate(Bundle savedInstanceState) {
 //        super.onCreate(savedInstanceState);
-//        setContentView(R.layout.activity_add_new_group);
+//        setContentView(R.layout.fragment_edit_group);
 //        recyclerView = findViewById(R.id.recycler_source);
 //        zSources= new ArrayList<>();
 //        LinearLayoutManager layoutManager = new LinearLayoutManager(this);

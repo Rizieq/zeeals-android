@@ -2,6 +2,7 @@ package com.example.user.zeeals;
 
 import android.app.Dialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
@@ -43,6 +44,14 @@ public class editProfileScreen extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_profile_screen);
+
+        name = findViewById(R.id.etName);
+        Description = findViewById(R.id.etDescription);
+        name.setHint(getSharedPreferences("PROFILE",MODE_PRIVATE).getString("PROFILE_NAME","Name"));
+        Description.setHint(getSharedPreferences("PROFILE",MODE_PRIVATE).getString("PROFILE_DESC","Type your descripton here"));
+
+
+
         tb = findViewById(R.id.menu_appbar);
         tb.bringToFront();
         btnBack = tb.findViewById(R.id.btnBack);
@@ -55,8 +64,9 @@ public class editProfileScreen extends AppCompatActivity {
         });
         btnEdit.setVisibility(View.GONE);
 
-        name = findViewById(R.id.etName);
-        Description = findViewById(R.id.etDescription);
+
+
+
         imgProfPic = findViewById(R.id.ivChangePhoto);
         imgBanner = findViewById(R.id.ivChangeBanner);
         Button btnChangeBanner = findViewById(R.id.btnChangeProfileBanner);
@@ -72,20 +82,29 @@ public class editProfileScreen extends AppCompatActivity {
 //                b.compress(Bitmap.CompressFormat.PNG, 100, bStream);
 //                byte[] byteArray = bStream.toByteArray();
                 Intent intent = new Intent(editProfileScreen.this, MainActivity.class);
-                intent.putExtra("name", name.getText().toString());
-                intent.putExtra("desc", Description.getText().toString());
+                String nama=name.getHint().toString();
+                String desc=Description.getHint().toString();
+
+                if(name.getText()!=null){
+                    nama=name.getText().toString();
+                }
+                if(Description.getText()!=null){
+                    desc=Description.getText().toString();
+                }
+
+
+                intent.putExtra("name", nama);
+                intent.putExtra("desc", desc);
+
+                SharedPreferences.Editor pref = getSharedPreferences("PROFILE",MODE_PRIVATE).edit().putString("PROFILE_NAME",nama);
+                pref.putString("PROFILE_DESC",desc);
+                pref.apply();
                 //intent.putExtra("image", byteArray);
                 startActivity(intent);
             }
         });
 
-        Bundle bundle = getIntent().getExtras();
-        if (bundle!=null){
-            String nama = bundle.getString("nama");
-            String desc = bundle.getString("desc");
-            name.setText(nama);
-            Description.setText(desc);
-        }
+
         pictureChangePopUp = new Dialog(this);
     }
 
@@ -142,6 +161,9 @@ public class editProfileScreen extends AppCompatActivity {
         btnClose = (Button) pictureChangePopUp.findViewById(R.id.btnClosePopUpProfPic);
         imageFromUrl = (EditText) pictureChangePopUp.findViewById(R.id.insertUrlPopUpProfPic);
         imageViewShow = (ImageView) pictureChangePopUp.findViewById(R.id.imageViewPopUpProfPic);
+        Objects.requireNonNull(pictureChangePopUp.getWindow()).setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        pictureChangePopUp.show();
+
         if (imageViewShow!=null){
             imageViewShow.setImageBitmap(convertImageViewToBitmap(imgProfPic));
         }
@@ -159,8 +181,7 @@ public class editProfileScreen extends AppCompatActivity {
                 pictureChangePopUp.dismiss();
             }
         });
-        Objects.requireNonNull(pictureChangePopUp.getWindow()).setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-        pictureChangePopUp.show();
+
     }
 
     public void showPopUpChangeProfileBanner(View v){

@@ -63,10 +63,11 @@
     <string name="add">ADD</string>
     <string name="sign_in_with_facebook">SIGN IN WITH FACEBOOK</string>
     <string name="log_out_facebok">LOG OUT FACEBOOK</string>
+    <string name="account_url">zeeals.link/accountUrl</string>
 
     <string-array name="grid">
         <item> Horizontal </item>
-        <item> Vertikal </item>
+        <item> Vertical </item>
 
     </string-array>
 </resources>

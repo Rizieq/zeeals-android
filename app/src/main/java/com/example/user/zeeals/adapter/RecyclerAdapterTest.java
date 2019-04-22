@@ -2,6 +2,7 @@ package com.example.user.zeeals.adapter;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
@@ -22,6 +23,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.user.zeeals.R;
+import com.example.user.zeeals.activity.addGroupAndLinkFragmentHost;
 import com.example.user.zeeals.fragment.addGroupFragment;
 import com.example.user.zeeals.loginScreen;
 import com.example.user.zeeals.model.Zlink;
@@ -55,7 +57,7 @@ public class RecyclerAdapterTest extends RecyclerView.Adapter<RecyclerView.ViewH
     public View mActivity;
     public String token;
     UserClient userClient;
-    Context context;
+    static Context context;
 
     public RecyclerAdapterTest(RecyclerView recyclerView, List<Zlink> general,View v,String token,Context context){
         this.recyclerView = recyclerView;
@@ -71,77 +73,58 @@ public class RecyclerAdapterTest extends RecyclerView.Adapter<RecyclerView.ViewH
                 .addConverterFactory(GsonConverterFactory.create());
 
         Retrofit retrofit = builder.build();
-
         userClient = retrofit.create(UserClient.class);
-
     }
 
 
 
-    public static class ParentViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        public TextView groupTitle;
-        public ImageView arrow;
+    public static class ParentViewHolder extends RecyclerView.ViewHolder {
+        public static TextView groupTitle;
+        public static ImageView arrow;
+        public TextView icon;
 
 
         public ParentViewHolder(View itemView) {
             super(itemView);
             groupTitle = itemView.findViewById(R.id.list_item_group_name);
-            itemView.setOnClickListener(this);
             arrow = itemView.findViewById(R.id.list_item_group_arrow);
-        }
+            icon = itemView.findViewById(R.id.list_item_group_icon);
+            arrow.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    int id = getLayoutPosition();
 
-        private void animateExpand() {
-            RotateAnimation rotate =
-                    new RotateAnimation(360, 180, RELATIVE_TO_SELF, 0.5f, RELATIVE_TO_SELF, 0.5f);
-            rotate.setDuration(300);
-            rotate.setFillAfter(true);
-            arrow.setAnimation(rotate);
-        }
+                    zGroup zGroup = (zGroup) general.get(id);
+                    List<zSource> zSources = zGroup.getzSource();
+                    if (!zGroup.isHasNoChild()) {
 
-        private void animateCollapse() {
-            RotateAnimation rotate =
-                    new RotateAnimation(180, 360, RELATIVE_TO_SELF, 0.5f, RELATIVE_TO_SELF, 0.5f);
-            rotate.setDuration(300);
-            rotate.setFillAfter(true);
-            arrow.setAnimation(rotate);
-        }
+                        //collapse list
+                        if (zGroup.isChildrenVisible()) {
 
-        @Override
-        public void onClick(View v) {
-            int id = getLayoutPosition();
+                            if(!zGroup.getzSource().isEmpty()){
+                                animateCollapse();
+                                zGroup.setChildrenVisible(false);
+                                for (int i = id + 1; i < id + 1 + zSources.size(); i++) {
+                                    general.remove(id + 1);
+                                }
+                                recyclerAdapter.notifyItemRangeRemoved(id + 1, zSources.size());
+                            }
 
-            zGroup zGroup = (zGroup) general.get(id);
-            Log.d(TAG, "onClick: "+id);
-            List<zSource> zSources = zGroup.getzSource();
-            if (!zGroup.isHasNoChild()) {
+                        } else {
+                            //expanding list
+                            if(!zGroup.getzSource().isEmpty()){
+                                animateExpand();
+                                zGroup.setChildrenVisible(true);
+                                int index = 0;
 
-                //collapse list
-                if (zGroup.isChildrenVisible()) {
+                                for (int i = id + 1; i < (id + 1 + zSources.size()); i++) {
+                                    general.add(i, zSources.get(index));
+                                    index++;
+                                }
+                                recyclerAdapter.notifyItemRangeInserted(id + 1, zSources.size());
+                            }
 
-                    if(!zGroup.getzSource().isEmpty()){
-                        animateCollapse();
-                        zGroup.setChildrenVisible(false);
-                        for (int i = id + 1; i < id + 1 + zSources.size(); i++) {
-                            general.remove(id + 1);
                         }
-                        recyclerAdapter.notifyItemRangeRemoved(id + 1, zSources.size());
-                    }
-
-                } else {
-                    //expanding list
-                    if(!zGroup.getzSource().isEmpty()){
-                        animateExpand();
-                        zGroup.setChildrenVisible(true);
-                        int index = 0;
-
-                        for (int i = id + 1; i < (id + 1 + zSources.size()); i++) {
-                            general.add(i, zSources.get(index));
-                            index++;
-                        }
-                        recyclerAdapter.notifyItemRangeInserted(id + 1, zSources.size());
-                    }
-
-                }
 
 //                int lastVisibleItemPosition = ((LinearLayoutManager) recyclerAdapter.recyclerView.
 //                        getLayoutManager()).findLastCompletelyVisibleItemPosition();
@@ -152,16 +135,45 @@ public class RecyclerAdapterTest extends RecyclerView.Adapter<RecyclerView.ViewH
 //                    }
 //                }
 
-            }else{
-                if(zGroup.isChildrenVisible()){
-                    animateCollapse();
-                    zGroup.setChildrenVisible(false);
-                }else {
-                    animateExpand();
-                    zGroup.setChildrenVisible(true);
+                    }else{
+                        if(zGroup.isChildrenVisible()){
+                            animateCollapse();
+                            zGroup.setChildrenVisible(false);
+                        }else {
+                            animateExpand();
+                            zGroup.setChildrenVisible(true);
+                        }
+                    }
                 }
-            }
+
+            });
+
+
+
+
+
+
         }
+
+        private static void animateExpand() {
+            RotateAnimation rotate =
+                    new RotateAnimation(360, 180, RELATIVE_TO_SELF, 0.5f, RELATIVE_TO_SELF, 0.5f);
+            rotate.setDuration(300);
+            rotate.setFillAfter(true);
+            arrow.setAnimation(rotate);
+        }
+
+        private static void animateCollapse() {
+            RotateAnimation rotate =
+                    new RotateAnimation(180, 360, RELATIVE_TO_SELF, 0.5f, RELATIVE_TO_SELF, 0.5f);
+            rotate.setDuration(300);
+            rotate.setFillAfter(true);
+            arrow.setAnimation(rotate);
+        }
+
+
+
+
     }
 
 
@@ -195,30 +207,44 @@ public class RecyclerAdapterTest extends RecyclerView.Adapter<RecyclerView.ViewH
         Context context = viewGroup.getContext();
 
         LayoutInflater inflater = LayoutInflater.from(context);
+
         //i disini adalah viewType
         if(i==CHILD){
             Log.d(TAG, "onCreateViewHolder: CHILD "+i);
             View itemView = inflater.inflate(R.layout.list_item_source,viewGroup,false);
             return new ChildsViewHolder(itemView);
         }else{
-            Log.d(TAG, "onCreateViewHolder: PARENT "+i);
             View itemView = inflater.inflate(R.layout.list_item_group,viewGroup,false);
             return new ParentViewHolder(itemView);
         }
     }
 
     @Override
-    public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, int i) {
+    public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, final int i) {
         if (viewHolder.getItemViewType()==CHILD){
             TextView sourceName = ((ChildsViewHolder)viewHolder).sourceName;
             Zlink x = general.get(i);
             Log.d(TAG, "onBindViewHolder: "+x);
             zSource zSource = (zSource) general.get(i);
             sourceName.setText(zSource.getSourceName());
+
         }else{
+            ImageView arrowImg = ((ParentViewHolder)viewHolder).arrow;
             TextView groupName = ((ParentViewHolder)viewHolder).groupTitle;
+            TextView iconGroup = ((ParentViewHolder)viewHolder).icon;
             zGroup zGroup = (zGroup)general.get(i);
             groupName.setText(zGroup.getTitle());
+
+            String icon = new String (Character.toChars(Integer.parseInt(
+                    zGroup.getIcon(), 16)));
+
+            iconGroup.setText(icon);
+            groupName.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    context.startActivity(new Intent(context, addGroupAndLinkFragmentHost.class).putExtra("menuType","editGroup").putExtra("position",i));
+                }
+            });
         }
     }
 
@@ -228,11 +254,7 @@ public class RecyclerAdapterTest extends RecyclerView.Adapter<RecyclerView.ViewH
     }
 
     public void deleteItem(final int position,RecyclerView.ViewHolder viewHolder) {
-        Log.d(TAG, "deleteItem: "+position);
-        Log.d(TAG, "deleteItem: "+((zGroup)general.get(position)));
-        List<Zlink> z = general;
-        Log.d(TAG, "deleteItem: position: "+position);
-        Log.d(TAG, "deleteItem: "+((zGroup)general.get(position)).getGroup_link_id());
+
         if(viewHolder.getItemViewType()==PARENT){
 
             AlertDialog.Builder builder = new AlertDialog.Builder(context);
@@ -248,6 +270,7 @@ public class RecyclerAdapterTest extends RecyclerView.Adapter<RecyclerView.ViewH
                                 @Override
                                 public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                                     Log.d(TAG, "onResponse: GROUP DELETED ");
+                                    Log.d(TAG, "onResponse: DELETE_SWIPE"+token);
                                     general.remove(position);
                                     notifyItemRemoved(position);
                                 }
