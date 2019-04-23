@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
 
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
@@ -35,6 +35,10 @@
         <item name="android:textStyle">bold</item>
         <item name="android:color">@color/grey</item>
         <item name="android:background">@drawable/button_gradient</item>
+    </style>
+
+    <style name="SwitchTheme" parent="Theme.AppCompat.Light">
+        <item name="android:colorControlActivated" tools:targetApi="lollipop">@color/colorPrimary</item>
     </style>
 
 </resources>

@@ -185,6 +185,8 @@ public class editGroupFragment extends Fragment {
                 updated_at= sdf.format(currentTime);
                 newGroup.setUpdated_at(updated_at);
 
+                delete.setEnabled(false);
+                back.setEnabled(false);
                 btn_save_group.setVisibility(View.GONE);
                 bar.setVisibility(View.VISIBLE);
 
@@ -230,6 +232,14 @@ public class editGroupFragment extends Fragment {
                 deleteItem();
             }
         });
+        back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getActivity().finish();
+            }
+        });
+
+        //back
         back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -304,18 +314,28 @@ public class editGroupFragment extends Fragment {
                 .setPositiveButton("Hapus", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
+                        btn_save_group.setVisibility(View.GONE);
+                        btn_save_group.setEnabled(false);
+                        btn_save_group.setClickable(false);
+                        bar.setVisibility(View.VISIBLE);
                         int deletePosition = ((zGroup)zlinks.get(position)).getGroup_link_id();
                         Call<ResponseBody> call = conn.getConnection().delete(token,deletePosition);
                         call.enqueue(new Callback<ResponseBody>() {
                             @Override
                             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                                Log.d(TAG, "onResponse: DELETED_EDIT "+token);
-                                zlinks.remove(position);
+                                if(response.isSuccessful()){
+                                    Log.d(TAG, "onResponse: DELETED_EDIT "+token);
+                                    zlinks.remove(position);
 
-                                String json = new Gson().toJson(zlinks);
-                                getActivity().getSharedPreferences("TOKEN",MODE_PRIVATE).edit().putString("GROUPLIST",json).apply();
+                                    String json = new Gson().toJson(zlinks);
+                                    getActivity().getSharedPreferences("TOKEN",MODE_PRIVATE).edit().putString("GROUPLIST",json).apply();
 
+
+                                }else{
+                                    Toast.makeText(getContext(),"Connection error",Toast.LENGTH_SHORT);
+                                }
                                 getActivity().finish();
+
                             }
 
                             @Override

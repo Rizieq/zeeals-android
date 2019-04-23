@@ -43,13 +43,14 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <ImageView
+            android:id="@+id/btnEditPofile_2"
             android:layout_width="20dp"
             android:layout_height="20dp"
             android:layout_centerInParent="true"
             android:clickable="true"
             android:focusable="true"
             android:onClick="openEditScreen"
-            android:src="@drawable/ic_edit_profile" />
+            android:src="@drawable/ic_edit_2" />
     </RelativeLayout>
 
 </android.support.constraint.ConstraintLayout>

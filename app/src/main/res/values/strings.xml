@@ -46,7 +46,7 @@
     <string name="registrasi_gagal">Registrasi yang dilakukan gagal. Email yang didaftarkan telah terdaftarkan sebelumnya. Silahkan gunakan fitur lupa password</string>
     <string name="change_banner">Change Banner for Profile</string>
     <string name="change_profile_picture">change profile picture</string>
-    <string name="save">SAVE</string>
+    <string name="save">Save</string>
     <string name="add_link">ADD LINK</string>
     <string name="show">Show</string>
     <string name="set_the_link_title">Set the link Title</string>
@@ -60,7 +60,7 @@
     <string name="icon">icon</string>
     <string name="grid">Grid</string>
     <string name="add_group">ADD GROUP</string>
-    <string name="add">ADD</string>
+    <string name="SAVE">SAVE</string>
     <string name="sign_in_with_facebook">SIGN IN WITH FACEBOOK</string>
     <string name="log_out_facebok">LOG OUT FACEBOOK</string>
     <string name="account_url">zeeals.link/accountUrl</string>

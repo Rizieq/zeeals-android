@@ -1,13 +1,19 @@
 package com.example.user.zeeals.adapter;
 
+import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Parcelable;
+import android.support.annotation.NonNull;
+import android.support.constraint.ConstraintLayout;
+import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewCompat;
@@ -19,9 +25,12 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.OvershootInterpolator;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.FrameLayout;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -91,228 +100,187 @@ public class MainActivity extends AppCompatActivity {
     private static final String TAG = "TESTING";
     RetroConnection connection;
 
+
+    ConstraintLayout btn_fragment_home,btn_fragment_account,bottom_nav;
+
+    ImageButton btn_fragment_home2,btn_fragment_account2;
+
+
+    @SuppressLint("ResourceAsColor")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        String name = getSharedPreferences("PROFILE",MODE_PRIVATE).getString("PROFILE_NAME","Set Your Name");
-        String desc = getSharedPreferences("PROFILE",MODE_PRIVATE).getString("PROFILE_DESC","Set your description here");
 
 
-        //Connection
-        connection = new RetroConnection();
+//        String name = getSharedPreferences("PROFILE",MODE_PRIVATE).getString("PROFILE_NAME","Set Your Name");
+//        String desc = getSharedPreferences("PROFILE",MODE_PRIVATE).getString("PROFILE_DESC","Set your description here");
+        getSupportFragmentManager().beginTransaction().add(R.id.mainContainer,new mainFragment()).commit();
 
-        //TOKEN
-        token = getSharedPreferences("TOKEN",MODE_PRIVATE).getString("TOKEN",null);
+        btn_fragment_home2=findViewById(R.id.iv_bottomNav_home);
+        btn_fragment_account2=findViewById(R.id.iv_bottomNav_account);
+        bottom_nav = findViewById(R.id.bottom_nav);
+        btn_fragment_account2.setBackgroundColor(R.color.grey);
 
-
-
-        recyclerViewTes = findViewById(R.id.recycler_view);
-        fab = findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (menuShowed){
-                    transaction = getSupportFragmentManager().beginTransaction();
-//                    transaction.commit();
-                    transaction.setCustomAnimations(R.anim.animation_enter,R.anim.animation_exit_fragment);
-                    transaction.hide(menuFragment);
-                    transaction.commit();
-                    rotateFab();
-                }else{
-                    openMenuFragment();
-                    rotateFab();
-                }
-
-            }
-        });
-
-//        Z-VERSION
+        btn_fragment_home = findViewById(R.id.home_nav_btn);
+        btn_fragment_account = findViewById(R.id.account_nav_btn);
+        btn_fragment_account.setBackgroundColor(R.color.grey);
 
 
 
-        userClient = connection.getConnection();
 
-        /// FOR PROFILE UI ABOVE SEPARATOR//
-        profileName =  findViewById(R.id.profileName);
-        profileDesc =  findViewById(R.id.profileDesc);
-        profileDesc.setMovementMethod(new ScrollingMovementMethod());
-        imgProfpic =  findViewById(R.id.profilePicture);
-        imgBannerProfPic =  findViewById(R.id.profileBanner);
 
-        Bundle bundle = getIntent().getExtras();
-        profileName.setText(name);
-        profileDesc.setText(desc);
 
-        picChangePopUp = new Dialog(this);
-        editGroupNamePopup = new Dialog(this);
-        View tb =  findViewById(R.id.menu_appbar);
-        tb.bringToFront();
-        RelativeLayout btnBack = tb.findViewById(R.id.btnBack);
-        RelativeLayout btnEdit =  tb.findViewById(R.id.btnEditPofile);
-        btnBack.setVisibility(View.GONE);
     }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
+    @SuppressLint("ResourceAsColor")
+    public void openMainFragment (View view){
+        Fragment show = new mainFragment();
+        Fragment hide = new accountFragment();
+        getSupportFragmentManager().beginTransaction().setCustomAnimations(R.anim.enter_from_left,R.anim.exit_to_right,R.anim.enter_from_left,R.anim.exit_to_left)
+                .hide(hide).show(show).replace(R.id.mainContainer,show).commit();
 
-        String groupJSON = getSharedPreferences("TOKEN",MODE_PRIVATE).getString("GROUPLIST",null);
-        Type listType = new TypeToken<List<zGroup>>(){}.getType();
-        zLink = new ArrayList<>();
-        zLink = new Gson().fromJson(groupJSON,listType);
-        LinearLayoutManager layoutManager = new LinearLayoutManager(MainActivity.this);
-        adapterTest = new RecyclerAdapterTest(recyclerViewTes,zLink,MainActivity.this.findViewById(R.id.snackbar_container),token,MainActivity.this);
-        recyclerViewTes.setAdapter(adapterTest);
-        recyclerViewTes.setLayoutManager(layoutManager);
-
-        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(new SwipeToDeleteCallback(adapterTest,MainActivity.this));
-        itemTouchHelper.attachToRecyclerView(recyclerViewTes);
-        adapterTest.notifyDataSetChanged();
+        btn_fragment_home2.setBackgroundColor(R.color.colorPrimary);
+        btn_fragment_home.setBackgroundColor(R.color.colorPrimary);
+        btn_fragment_account2.setBackgroundColor(R.color.grey);
+        btn_fragment_account.setBackgroundColor(R.color.grey);
     }
 
-    public void rotateFab(){
-        if (menuShowed){
-            final OvershootInterpolator interpolator = new OvershootInterpolator();
-            ViewCompat.animate(fab).
-                    rotation(0.0f).
-                    withLayer().
-                    setDuration(1000).
-                    setInterpolator(interpolator).
-                    start();
+    @SuppressLint("ResourceAsColor")
+    public void openAccountFragment(View view){
 
-            menuShowed=false;
-        }else{
-            menuShowed=true;
-            final OvershootInterpolator interpolator = new OvershootInterpolator();
-            ViewCompat.animate(fab).
-                    rotation(405f).
-                    withLayer().
-                    setDuration(1000).
-                    setInterpolator(interpolator).
-                    start();
-        }
+        Fragment hide = new mainFragment();
+        Fragment show = new accountFragment();
+        getSupportFragmentManager().beginTransaction().setCustomAnimations(R.anim.enter_from_right,R.anim.exit_to_left,R.anim.enter_from_right,R.anim.exit_to_right)
+                .hide(hide).show(show).replace(R.id.mainContainer,show).commit();
+
+        btn_fragment_account2.setBackgroundColor(R.color.colorPrimary);
+        btn_fragment_home2.setBackgroundColor(R.color.grey);
+        btn_fragment_home.setBackgroundColor(R.color.grey);
+        btn_fragment_account.setBackgroundColor(R.color.colorPrimary);
 
     }
 
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        if(resultCode==RESULT_OK){
-            if(requestCode==1){
-                ArrayList<Parcelable> sourceParcel = data.getParcelableArrayListExtra("SOURCES");
-                zGroup groupParcel = data.getParcelableExtra("GROUP");
-
-                ArrayList<zSource> arraySource = new ArrayList<>();
-                for(int i =0;i<sourceParcel.size();i++){
-                    arraySource.add((zSource) sourceParcel.get(i));
-                }
-                groupParcel.setzSource(arraySource);
-                zLink.add(groupParcel);
-                adapterTest.notifyItemInserted(zLink.size()-1);
-
-            }else if (requestCode == PICK_IMAGE_PROF_PIC){
-                imgType = "Profile";
-                Uri source_uri = data.getData();
-                Uri dest_uri = Uri.fromFile(new File(getCacheDir(),"cropped"));
-
-                Crop.of(source_uri,dest_uri).asSquare().start(this);
-                imgProfpic.setImageURI(Crop.getOutput(data));
-                picChangePopUp.dismiss();
-            }else if (requestCode == PICK_IMAGE_PROF_BANNER){
-                Uri source_uri_banner = data.getData();
-                Uri dest_uri_banner = Uri.fromFile(new File(getCacheDir(),"croppedBanner"));
-                imgType = "Banner";
-                Crop.of(source_uri_banner,dest_uri_banner).withAspect(3,1).start(this);
-                imgBannerProfPic.setImageURI(Crop.getOutput(data));
-
-                picChangePopUp.dismiss();
-            }
-            else if (requestCode == Crop.REQUEST_CROP){
-                handle_crop(resultCode,data,imgType);
-            }
-        }
-        else{
-            Log.d(TAG, "onActivityResult: error bang, nga tau kenaps");
-        }
-
-    }
-
-    public void handle_crop(int code,Intent result,String imgType){
-        if (code == RESULT_OK){
-            if(imgType == "Profile"){
-                imgProfpic.setImageURI(Crop.getOutput(result));
-            }
-            else if (imgType.equals("Banner")){
-                imgBannerProfPic.setImageURI(Crop.getOutput(result));
-
-            }
-        }
-        else if (code ==Crop.RESULT_ERROR){
-            Toast.makeText(this, "Error on crop", Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    public void openMenuFragment() {
-
-        menuFragment = menuFragment.newInstance();
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        transaction = fragmentManager.beginTransaction();
-//        transaction.addToBackStack(null);
-        transaction.setCustomAnimations(R.anim.animation_enter,R.anim.animation_exit_fragment,R.anim.animation_pop_enter_fragment,R.anim.animation_pop_exit_animation);
-        transaction.add(R.id.fragment_menu_container, menuFragment, "").commit();
-
-    }
-
-    @Override
-    public void onBackPressed() {
-        //super.onBackPressed();
-        fab.show();
-
-        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-        builder.setTitle("Logout akun")
-                .setMessage("Apakah anda ingin kembali ke halaman login ?")
-                .setPositiveButton("Ya", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        startActivity(new Intent(MainActivity.this, loginScreen.class));
-                    }
-                })
-                .setNegativeButton("Tidak", null);
-        builder.show();
-    }
-
-    public void openEditScreen(View v){
-        Intent intent = new Intent(MainActivity.this, editProfileScreen.class);
-        intent.putExtra("nama",profileName.getText().toString().trim());
-        intent.putExtra("desc",profileDesc.getText().toString().trim());
-        startActivityForResult(intent,EDIT_PROFILE);
-    }
-    public void keyboardDown(){
-        InputMethodManager imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
-        imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
-    }
 
 
-//    DATA PASSING
 //    @Override
-//    public void passDataFromMenutoAct(zGroup group) {
-//        zLink.add(group);
-//        adapterTest.notifyItemInserted(zLink.size()-1);
+//    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+//        super.onActivityResult(requestCode, resultCode, data);
+//
+//        if(resultCode==RESULT_OK){
+//            if(requestCode==1){
+//                ArrayList<Parcelable> sourceParcel = data.getParcelableArrayListExtra("SOURCES");
+//                zGroup groupParcel = data.getParcelableExtra("GROUP");
+//
+//                ArrayList<zSource> arraySource = new ArrayList<>();
+//                for(int i =0;i<sourceParcel.size();i++){
+//                    arraySource.add((zSource) sourceParcel.get(i));
+//                }
+//                groupParcel.setzSource(arraySource);
+//                zLink.add(groupParcel);
+//                adapterTest.notifyItemInserted(zLink.size()-1);
+//
+//            }else if (requestCode == PICK_IMAGE_PROF_PIC){
+//                imgType = "Profile";
+//                Uri source_uri = data.getData();
+//                Uri dest_uri = Uri.fromFile(new File(getCacheDir(),"cropped"));
+//
+//                Crop.of(source_uri,dest_uri).asSquare().start(this);
+//                imgProfpic.setImageURI(Crop.getOutput(data));
+//                picChangePopUp.dismiss();
+//            }else if (requestCode == PICK_IMAGE_PROF_BANNER){
+//                Uri source_uri_banner = data.getData();
+//                Uri dest_uri_banner = Uri.fromFile(new File(getCacheDir(),"croppedBanner"));
+//                imgType = "Banner";
+//                Crop.of(source_uri_banner,dest_uri_banner).withAspect(3,1).start(this);
+//                imgBannerProfPic.setImageURI(Crop.getOutput(data));
+//
+//                picChangePopUp.dismiss();
+//            }
+//            else if (requestCode == Crop.REQUEST_CROP){
+//                handle_crop(resultCode,data,imgType);
+//            }
+//        }
+//        else{
+//            Log.d(TAG, "onActivityResult: error bang, nga tau kenaps");
+//        }
+//
 //    }
-
-    //    public void connectAPI(){
-//        Retrofit.Builder builder = new Retrofit.Builder()
-//                .baseUrl(ServerAPI.group_REST_API)
-//                .addConverterFactory(GsonConverterFactory.create());
 //
-//        Retrofit retrofit = builder.build();
-//        UserClient userClient = retrofit.create(UserClient.class);
+//    public void handle_crop(int code,Intent result,String imgType){
+//        if (code == RESULT_OK){
+//            if(imgType == "Profile"){
+//                imgProfpic.setImageURI(Crop.getOutput(result));
+//            }
+//            else if (imgType.equals("Banner")){
+//                imgBannerProfPic.setImageURI(Crop.getOutput(result));
 //
+//            }
+//        }
+//        else if (code ==Crop.RESULT_ERROR){
+//            Toast.makeText(this, "Error on crop", Toast.LENGTH_SHORT).show();
+//        }
+//    }
+//
+//    public void openMenuFragment() {
+//
+//        menuFragment = menuFragment.newInstance();
+//        FragmentManager fragmentManager = getSupportFragmentManager();
+//        transaction = fragmentManager.beginTransaction();
+////        transaction.addToBackStack(null);
+//        transaction.setCustomAnimations(R.anim.animation_enter,R.anim.animation_exit_fragment,R.anim.animation_pop_enter_fragment,R.anim.animation_pop_exit_animation);
+//        transaction.add(R.id.fragment_menu_container, menuFragment, "").commit();
 //
 //    }
+//
+//    @Override
+//    public void onBackPressed() {
+//        //super.onBackPressed();
+//        fab.show();
+//
+//        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+//        builder.setTitle("Logout akun")
+//                .setMessage("Apakah anda ingin kembali ke halaman login ?")
+//                .setPositiveButton("Ya", new DialogInterface.OnClickListener() {
+//                    @Override
+//                    public void onClick(DialogInterface dialog, int which) {
+//                        startActivity(new Intent(MainActivity.this, loginScreen.class));
+//                    }
+//                })
+//                .setNegativeButton("Tidak", null);
+//        builder.show();
+//    }
+//
+//    public void openEditScreen(View v){
+////        Intent intent = new Intent(MainActivity.this, editProfileScreen.class);
+////        intent.putExtra("nama",profileName.getText().toString().trim());
+////        intent.putExtra("desc",profileDesc.getText().toString().trim());
+////        startActivityForResult(intent,EDIT_PROFILE);
+//    }
+//    public void keyboardDown(){
+//        InputMethodManager imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+//        imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+//    }
+//
+//
+////    DATA PASSING
+////    @Override
+////    public void passDataFromMenutoAct(zGroup group) {
+////        zLink.add(group);
+////        adapterTest.notifyItemInserted(zLink.size()-1);
+////    }
+//
+//    //    public void connectAPI(){
+////        Retrofit.Builder builder = new Retrofit.Builder()
+////                .baseUrl(ServerAPI.group_REST_API)
+////                .addConverterFactory(GsonConverterFactory.create());
+////
+////        Retrofit retrofit = builder.build();
+////        UserClient userClient = retrofit.create(UserClient.class);
+////
+////
+////    }
 
 
 }

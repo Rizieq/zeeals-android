@@ -54,17 +54,15 @@ public class RecyclerAdapterTest extends RecyclerView.Adapter<RecyclerView.ViewH
     static List<Zlink> general;
     public Zlink mRecentlyDeletedItem;
     public int mRecentlyDeletedItemPosition;
-    public View mActivity;
     public String token;
     UserClient userClient;
     static Context context;
 
-    public RecyclerAdapterTest(RecyclerView recyclerView, List<Zlink> general,View v,String token,Context context){
+    public RecyclerAdapterTest(RecyclerView recyclerView, List<Zlink> general,String token,Context context){
         this.recyclerView = recyclerView;
         recyclerAdapter = this;
         this.general = new ArrayList<>();
         this.general = general;
-        this.mActivity = v;
         this.token = token;
         this.context = context;
 
