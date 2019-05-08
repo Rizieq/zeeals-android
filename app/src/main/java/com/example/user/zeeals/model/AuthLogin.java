@@ -1,7 +1,6 @@
 package com.example.user.zeeals.model;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.example.user.zeeals.responses.Serve;
 
 public class AuthLogin {
     private String message;

@@ -57,13 +57,14 @@
     <string name="url">URL</string>
     <string name="group">Group</string>
     <string name="edit_group">EDIT GROUP</string>
-    <string name="icon">icon</string>
+    <string name="icon">Icon</string>
     <string name="grid">Grid</string>
     <string name="add_group">ADD GROUP</string>
     <string name="SAVE">SAVE</string>
     <string name="sign_in_with_facebook">SIGN IN WITH FACEBOOK</string>
     <string name="log_out_facebok">LOG OUT FACEBOOK</string>
     <string name="account_url">zeeals.link/accountUrl</string>
+    <string name="edit_link">EDIT LINK</string>
 
     <string-array name="grid">
         <item> Horizontal </item>

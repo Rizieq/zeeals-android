@@ -1,11 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/linkLayout"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_marginTop="13dp"
     android:layout_width="match_parent"
     android:layout_marginHorizontal="20dp"
+    android:clickable="true"
     android:background="@drawable/shadow_box"
+    android:elevation="3dp"
     android:layout_height="50dp">
 
     <TextView
@@ -18,10 +21,12 @@
         android:fontFamily="@font/poppinsbold"
         android:textAlignment="center"
         android:gravity="center_vertical"
+        android:clickable="false"
         tools:text="Source Name" />
 
     <TextView
         android:id="@+id/list_item_source_link"
+
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginLeft="72dp"
@@ -30,12 +35,14 @@
         android:textAlignment="center"
         android:paddingTop="15dp"
         android:textSize="10dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:clickable="false"
         tools:text="http://instagram.com/eldirohmanur" />
 
     <ImageView
         android:id="@+id/imageView3"
         android:layout_width="72dp"
-
+        android:clickable="false"
         android:layout_height="wrap_content"
         app:srcCompat="@drawable/proflephoto"
         android:scaleType="centerCrop"/>

@@ -3,13 +3,18 @@ package com.example.user.zeeals.fragment;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.view.animation.GridLayoutAnimationController;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -67,11 +72,11 @@ public class editGroupFragment extends Fragment {
 
     private EditText group_title;
     private Button  btn_save_group;
-    private TextView icon;
+    private GridView icon;
     private Spinner orientationSpinner;
     private Switch show;
     static int position;
-    private zGroup zGroups;
+    private zGroup zGroup;
     String rawIcon;
     ProgressBar bar;
     Button delete;
@@ -79,6 +84,10 @@ public class editGroupFragment extends Fragment {
     String token;
 
     RetroConnection conn;
+    ArrayList<String> iconList;
+
+    TextView prevGridText;
+    int prevGridPosition;
 
 
     private List<Zlink> zlinks;
@@ -106,9 +115,12 @@ public class editGroupFragment extends Fragment {
         Type listType = new TypeToken<List<zGroup>>(){}.getType();
         zlinks = new ArrayList<>();
         zlinks = new Gson().fromJson(groupJSON,listType);
-        zGroups=(zGroup) zlinks.get(position);
+        zGroup=(zGroup) zlinks.get(position);
 
         conn = new RetroConnection();
+        String iconJSON= getActivity().getSharedPreferences("ICON",MODE_PRIVATE).getString("ICON",null);
+        iconList = new Gson().fromJson(iconJSON,ArrayList.class);
+        rawIcon=zGroup.getUnicode();
 
     }
 
@@ -127,28 +139,54 @@ public class editGroupFragment extends Fragment {
         delete=view.findViewById(R.id.editGroup_delete_btn);
         back=view.findViewById(R.id.editGroup_btn_back);
 
+        IconAdapter iconAdapter = new IconAdapter(getContext(),iconList);
+        icon.setAdapter(iconAdapter);
+
+
+
         ArrayAdapter<CharSequence> adapterGrid = ArrayAdapter.createFromResource(getContext(), R.array.grid, android.R.layout.simple_spinner_item);
         adapterGrid.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-
 
         orientationSpinner.setPrompt("Select your Grid");
         orientationSpinner.setAdapter(new NothingSelectedSpinnerAdapter(adapterGrid, R.layout.contact_spinner_row_nothing_selected,getContext()));
 
 
-        group_title.setHint(zGroups.getTitle());
-        if(zGroups.getStatus()==0){
+        group_title.setHint(zGroup.getTitle());
+        if(zGroup.getStatus()==0){
             show.setChecked(false);
         }else show.setChecked(true);
 
-        if(zGroups.getOrientation()=='h'){
+        if(zGroup.getOrientation()=='h'){
             orientationSpinner.setSelection(1);
         }else orientationSpinner.setSelection(2);
-        rawIcon=new String (Character.toChars(Integer.parseInt(zGroups.getIcon(), 16)));
-        icon.setText(rawIcon);
-        icon.setOnClickListener(new View.OnClickListener() {
+
+        rawIcon=zGroup.getUnicode();
+
+
+
+
+
+        icon.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onClick(View v) {
-                openIconPicker();
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                TextView iconText = view.findViewById(R.id.tv_icon);
+                if(position!=prevGridPosition){
+                    if(prevGridText==null){
+                        prevGridText=iconText;
+                        iconText.setTextColor(Color.WHITE);
+
+                    }else{
+                        prevGridText.setTextColor(Color.parseColor("#717171"));
+                        iconText.setTextColor(Color.WHITE);
+                        prevGridText=iconText;
+                    }
+
+
+                }
+                String icon = new String (Character.toChars(Integer.parseInt(
+                        iconList.get(position), 16)));
+
+                rawIcon=iconList.get(position);
             }
         });
 
@@ -183,15 +221,18 @@ public class editGroupFragment extends Fragment {
                 SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                 Date currentTime = Calendar.getInstance().getTime();
                 updated_at= sdf.format(currentTime);
-                newGroup.setUpdated_at(updated_at);
+                newGroup.setUpdatedAt(updated_at);
+                newGroup.setUnicode(rawIcon);
 
                 delete.setEnabled(false);
+                delete.setClickable(false);
                 back.setEnabled(false);
+                back.setClickable(false);
                 btn_save_group.setVisibility(View.GONE);
                 bar.setVisibility(View.VISIBLE);
 
-                // saving
-                Call<ResponseBody> call = conn.getConnection().update(token,newGroup.getGroup_link_id(),newGroup);
+                /*Saving Progress*/
+                Call<ResponseBody> call = conn.getConnection().update(token,newGroup.getGroupLinkId(),newGroup);
                 call.enqueue(new Callback<ResponseBody>() {
                     @Override
                     public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
@@ -200,7 +241,6 @@ public class editGroupFragment extends Fragment {
                             Gson gson = new Gson();
                             String json = gson.toJson(zlinks);
                             getActivity().getSharedPreferences("TOKEN",MODE_PRIVATE).edit().putString("GROUPLIST",json).apply();
-
                             getActivity().finish();
                         }else{
                             try {
@@ -225,21 +265,15 @@ public class editGroupFragment extends Fragment {
 
         });
 
-        //delete
+        /*delete button*/
         delete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 deleteItem();
             }
         });
-        back.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                getActivity().finish();
-            }
-        });
 
-        //back
+        /*back button*/
         back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -251,22 +285,11 @@ public class editGroupFragment extends Fragment {
 
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
-    public void sendBack(String[] group) {
-        if (mListener != null) {
-            mListener.onFragmentEditGroupInteraction(group);
-        }
-    }
+
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-//        if (context instanceof FragmentEditGroupInteraction) {
-//            mListener = (FragmentEditGroupInteraction) context;
-//        } else {
-//            throw new RuntimeException(context.toString()
-//                    + " must implement OnFragmentInteractionListener");
-//        }
     }
 
     @Override
@@ -280,8 +303,6 @@ public class editGroupFragment extends Fragment {
     }
 
     public void openIconPicker(){
-        final String[] iconList = new String []{"f042","f037","f039","f036","f038","f461","f0f9","f2a3","f13d","f103","f100","f101","f102","f107","f104","f105","f106","f187","f358","f359","f35a","f35b","f0ab","f0a8","f0a9","f0aa","f063","f060","f061","f062","f0b2","f337","f338","f2a2","f069","f1fa","f29e","f04a","f24e","f05e","f462","f02a","f0c9","f433","f434","f2cd","f244","f240","f242","f243"};
-
         final Dialog iconPicker_dialog = new Dialog(getContext());
         iconPicker_dialog.setContentView(R.layout.popup_icon_picker);
         GridView gridView;
@@ -295,10 +316,9 @@ public class editGroupFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 String mIcon = new String (Character.toChars(Integer.parseInt(
-                        iconList[position], 16)));
+                        iconList.get(position), 16)));
 
-                rawIcon=iconList[position];
-                icon.setText(mIcon);
+                rawIcon=iconList.get(position);
                 iconPicker_dialog.dismiss();
             }
         });
@@ -318,7 +338,7 @@ public class editGroupFragment extends Fragment {
                         btn_save_group.setEnabled(false);
                         btn_save_group.setClickable(false);
                         bar.setVisibility(View.VISIBLE);
-                        int deletePosition = ((zGroup)zlinks.get(position)).getGroup_link_id();
+                        int deletePosition = ((zGroup)zlinks.get(position)).getGroupLinkId();
                         Call<ResponseBody> call = conn.getConnection().delete(token,deletePosition);
                         call.enqueue(new Callback<ResponseBody>() {
                             @Override

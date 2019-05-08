@@ -1,120 +1,104 @@
 package com.example.user.zeeals.adapter;
 
 import android.annotation.SuppressLint;
-import android.app.Dialog;
-import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.content.SharedPreferences;
-import android.graphics.Color;
-import android.net.Uri;
-import android.os.Parcelable;
-import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
-import android.support.design.widget.BottomNavigationView;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v4.view.ViewCompat;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.helper.ItemTouchHelper;
-import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
-import android.view.MenuItem;
 import android.view.View;
-import android.view.animation.OvershootInterpolator;
-import android.view.inputmethod.InputMethodManager;
-import android.widget.FrameLayout;
 import android.widget.ImageButton;
-import android.widget.ImageView;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 
 //import com.example.user.zeeals.adapter.AddNewGroup;
-import com.example.user.zeeals.editProfileScreen;
-import com.example.user.zeeals.fragment.addGroupFragment;
-import com.example.user.zeeals.fragment.editSourceFragment;
-import com.example.user.zeeals.loginScreen;
-import com.example.user.zeeals.model.Message;
-import com.example.user.zeeals.model.zGroupList;
+import com.example.user.zeeals.responses.IconList;
 import com.example.user.zeeals.service.RetroConnection;
 import com.example.user.zeeals.service.UserClient;
-import com.example.user.zeeals.util.ServerAPI;
 import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-import com.soundcloud.android.crop.Crop;
 
-import java.io.File;
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import com.example.user.zeeals.R;
-import com.example.user.zeeals.fragment.menuFragment;
 import com.example.user.zeeals.model.Zlink;
-import com.example.user.zeeals.model.zGroup;
-import com.example.user.zeeals.model.zSource;
 
-import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
+import retrofit2.Response;
 
 
 public class MainActivity extends AppCompatActivity {
 
-    private TextView profileName, profileDesc;
-    Dialog picChangePopUp, editGroupNamePopup;
-    private ImageView imgProfpic,imgBannerProfPic;
-
-    private static final int PICK_IMAGE_PROF_PIC = 100;
-    private static final int PICK_IMAGE_PROF_BANNER =101;
-    private static final int EDIT_PROFILE =102;
-    String imgType="";
-
-    boolean menuShowed;
-    FloatingActionButton fab;
-    RecyclerView recyclerViewTes;
-    FragmentTransaction transaction;
-    //groupAdapter adapter;
-    editSourceFragment editSource_Fragment;
-    menuFragment menuFragment;
+//    private TextView profileName, profileDesc;
+//    Dialog picChangePopUp, editGroupNamePopup;
+//    private ImageView imgProfpic,imgBannerProfPic;
+//
+//    private static final int PICK_IMAGE_PROF_PIC = 100;
+//    private static final int PICK_IMAGE_PROF_BANNER =101;
+//    private static final int EDIT_PROFILE =102;
+//    String imgType="";
+//
+//    boolean menuShowed;
+//    FloatingActionButton fab;
+//    RecyclerView recyclerViewTes;
+//    FragmentTransaction transaction;
+//    //groupAdapter adapter;
+//    editLinkFragment editSource_Fragment;
+//    menuFragment menuFragment;
 
 
     //shared ke menu fragment
-    public RecyclerAdapterTest adapterTest;
+    public RecyclerAdapter_Main adapterTest;
     public List<Zlink> zLink;
-    public UserClient userClient;
-    public Retrofit.Builder builder;
+
 
     public String token;
     int USER_ID;
     private static final String TAG = "TESTING";
     RetroConnection connection;
+    boolean fragment_in_home;
 
 
     ConstraintLayout btn_fragment_home,btn_fragment_account,bottom_nav;
 
     ImageButton btn_fragment_home2,btn_fragment_account2;
-
+    RetroConnection conn;
 
     @SuppressLint("ResourceAsColor")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        fragment_in_home=true;
 
 
 //        String name = getSharedPreferences("PROFILE",MODE_PRIVATE).getString("PROFILE_NAME","Set Your Name");
 //        String desc = getSharedPreferences("PROFILE",MODE_PRIVATE).getString("PROFILE_DESC","Set your description here");
+        conn = new RetroConnection();
+        UserClient userClient = conn.getConnection();
+        String token = getSharedPreferences("TOKEN",MODE_PRIVATE).getString("TOKEN",null);
+
+        Call<IconList> call = userClient.icon(token);
+        call.enqueue(new Callback<IconList>() {
+            @Override
+            public void onResponse(Call<IconList> call, Response<IconList> response) {
+                if(response.isSuccessful()){
+                    ArrayList<String> x = response.body().getIconList();
+                    Gson gson = new Gson();
+                    String json = gson.toJson(x);
+                    getSharedPreferences("ICON",MODE_PRIVATE).edit().putString("ICON",json).apply();
+                }else{
+                    Toast.makeText(MainActivity.this,"Failed to retrive icon list",Toast.LENGTH_SHORT).show();
+                    Log.d(TAG, "onResponse: failed retrieve icon list");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<IconList> call, Throwable t) {
+                Toast.makeText(MainActivity.this,"Failed to retrive icon list",Toast.LENGTH_SHORT).show();
+                Log.d(TAG, "onFailure: failed retrieve icon list");
+            }
+        });
         getSupportFragmentManager().beginTransaction().add(R.id.mainContainer,new mainFragment()).commit();
 
         btn_fragment_home2=findViewById(R.id.iv_bottomNav_home);
@@ -128,37 +112,38 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-
-
-
     }
 
     @SuppressLint("ResourceAsColor")
     public void openMainFragment (View view){
-        Fragment show = new mainFragment();
-        Fragment hide = new accountFragment();
-        getSupportFragmentManager().beginTransaction().setCustomAnimations(R.anim.enter_from_left,R.anim.exit_to_right,R.anim.enter_from_left,R.anim.exit_to_left)
-                .hide(hide).show(show).replace(R.id.mainContainer,show).commit();
+        if(!fragment_in_home){
+            Fragment show = new mainFragment();
+            Fragment hide = new accountFragment();
+            getSupportFragmentManager().beginTransaction().setCustomAnimations(R.anim.enter_from_left,R.anim.exit_to_right,R.anim.enter_from_left,R.anim.exit_to_left)
+                    .hide(hide).show(show).replace(R.id.mainContainer,show).commit();
 
-        btn_fragment_home2.setBackgroundColor(R.color.colorPrimary);
-        btn_fragment_home.setBackgroundColor(R.color.colorPrimary);
-        btn_fragment_account2.setBackgroundColor(R.color.grey);
-        btn_fragment_account.setBackgroundColor(R.color.grey);
+            btn_fragment_home2.setBackgroundColor(R.color.colorPrimary);
+            btn_fragment_home.setBackgroundColor(R.color.colorPrimary);
+            btn_fragment_account2.setBackgroundColor(R.color.grey);
+            btn_fragment_account.setBackgroundColor(R.color.grey);
+            fragment_in_home=true;
+        }
     }
 
     @SuppressLint("ResourceAsColor")
     public void openAccountFragment(View view){
+        if(fragment_in_home){
+            Fragment hide = new mainFragment();
+            Fragment show = new accountFragment();
+            getSupportFragmentManager().beginTransaction().setCustomAnimations(R.anim.enter_from_right,R.anim.exit_to_left,R.anim.enter_from_right,R.anim.exit_to_right)
+                    .hide(hide).show(show).replace(R.id.mainContainer,show).commit();
+            btn_fragment_account2.setBackgroundColor(R.color.colorPrimary);
+            btn_fragment_home2.setBackgroundColor(R.color.grey);
+            btn_fragment_home.setBackgroundColor(R.color.grey);
+            btn_fragment_account.setBackgroundColor(R.color.colorPrimary);
+            fragment_in_home=false;
 
-        Fragment hide = new mainFragment();
-        Fragment show = new accountFragment();
-        getSupportFragmentManager().beginTransaction().setCustomAnimations(R.anim.enter_from_right,R.anim.exit_to_left,R.anim.enter_from_right,R.anim.exit_to_right)
-                .hide(hide).show(show).replace(R.id.mainContainer,show).commit();
-
-        btn_fragment_account2.setBackgroundColor(R.color.colorPrimary);
-        btn_fragment_home2.setBackgroundColor(R.color.grey);
-        btn_fragment_home.setBackgroundColor(R.color.grey);
-        btn_fragment_account.setBackgroundColor(R.color.colorPrimary);
-
+        }
     }
 
 

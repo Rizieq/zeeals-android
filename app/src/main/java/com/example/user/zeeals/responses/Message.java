@@ -1,4 +1,4 @@
-package com.example.user.zeeals.model;
+package com.example.user.zeeals.responses;
 
 public class Message {
     private String email;

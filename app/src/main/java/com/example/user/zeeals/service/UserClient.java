@@ -1,12 +1,17 @@
 package com.example.user.zeeals.service;
 
+import com.example.user.zeeals.responses.Account_id;
 import com.example.user.zeeals.model.ForgotPassword;
+import com.example.user.zeeals.responses.IconList;
 import com.example.user.zeeals.model.Login;
-import com.example.user.zeeals.model.Message;
+import com.example.user.zeeals.responses.Message;
 import com.example.user.zeeals.model.AuthLogin;
+import com.example.user.zeeals.responses.PostGroupResponse;
 import com.example.user.zeeals.model.Registration;
 import com.example.user.zeeals.model.zGroup;
 import com.example.user.zeeals.model.zGroupList;
+import com.example.user.zeeals.model.zSource;
+import com.example.user.zeeals.responses.PostLinkResponse;
 
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -20,6 +25,9 @@ import retrofit2.http.Path;
 
 public interface UserClient {
 
+    /**
+     * API FOR AUTHENTICATIONS
+     */
 
     @POST("api/v1/auth/login")
     Call<AuthLogin> login (@Body Login login);
@@ -33,21 +41,46 @@ public interface UserClient {
     @POST("api/v1/auth/forgotpassword")
     Call<String> forgot(@Body ForgotPassword forgotPassword);
 
-    //Create Group
-    @POST("api/v1/link/group/")
-    Call<zGroup> create(@Header("Authorization") String token, @Body zGroup zgroup);
 
-    //Get List Group
+    /**
+     *  API FOR GROUPS
+     */
+
+    /*Create Group*/
+    @POST("api/v1/link/group/")
+    Call<PostGroupResponse> create(@Header("Authorization") String token, @Body zGroup zgroup);
+
+    /*Get List Group*/
     @GET ("api/v1/link/group/")
     Call<zGroupList> showGroup (@Header("Authorization") String token);
 
-    //delete Group
+    /*delete Group*/
     @DELETE ("api/v1/link/group/{id}")
     Call<ResponseBody> delete(@Header("Authorization") String token, @Path("id") int id);
 
-    // edit Group
+    /* edit Group*/
     @PUT ("api/v1/link/group/{id}")
     Call<ResponseBody> update(@Header ("Authorization")String token, @Path("id") int id,@Body zGroup zgroup);
+
+    /*show all account group and link */
+    @POST ("api/v1/links")
+    Call<zGroupList> links(@Header ("Authorization") String token,@Body Account_id acid);
+
+
+    /**
+     * API FOR LINKS & ICON
+     */
+    @GET ("api/v1/icon")
+    Call<IconList> icon(@Header("Authorization") String token);
+
+    @POST("api/v1/link")
+    Call<PostLinkResponse> createLink(@Header("Authorization") String token, @Body zSource zSource);
+
+    @PUT("api/v1/link")
+    Call<zSource> updateLink(@Header("Authorization") String token, @Body zSource zSource);
+
+    @DELETE("api/v1/link/{id}")
+    Call<ResponseBody> deleteLink(@Header("Authorization") String token, @Path("id") int id);
 
 
 }

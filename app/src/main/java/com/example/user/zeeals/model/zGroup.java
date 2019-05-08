@@ -1,52 +1,52 @@
 package com.example.user.zeeals.model;
 
-import android.os.Parcel;
-import android.os.Parcelable;
-
+import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
-
+import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
 
-public class zGroup extends Zlink implements Parcelable {
+public class zGroup extends Zlink {
 
 
-    private ArrayList<zSource> zSource;
-    private boolean hasNoChild;
+    private boolean hasChild;
     private boolean childrenVisible;
 
-    private int group_link_id;
-    private int account_id;
-    private char orientation;
-    private String title;
-    private String unicode;
-    private int position;
-    private int status;
-    private String created_at;
-    private String updated_at;
+        @SerializedName("group_link_id")
+        @Expose
+        private Integer groupLinkId;
+        @SerializedName("account_id")
+        @Expose
+        private Integer accountId;
+        @SerializedName("unicode")
+        @Expose
+        private String unicode;
+        @SerializedName("title")
+        @Expose
+        private String title;
+        @SerializedName("orientation")
+        @Expose
+        private char orientation;
+        @SerializedName("position")
+        @Expose
+        private Integer position;
+        @SerializedName("status")
+        @Expose
+        private Integer status;
+        @SerializedName("created_at")
+        @Expose
+        private String createdAt;
+        @SerializedName("updated_at")
+        @Expose
+        private String updatedAt;
+        @SerializedName("uncategorized")
+        @Expose
+        private Integer uncategorized;
+        @SerializedName("child_link")
+        @Expose
+        private List<zSource> childLink = null;
 
-    protected zGroup(Parcel in) {
-        group_link_id = in.readInt();
-        account_id=in.readInt();
-        title = in.readString();
-        unicode=in.readString();
-        position=in.readInt();
-        status=in.readInt();
-        created_at=in.readString();
-        updated_at=in.readString();
 
-    }
-
-    public static final Creator<zGroup> CREATOR = new Creator<zGroup>() {
-        @Override
-        public zGroup createFromParcel(Parcel in) {
-            return new zGroup(in);
-        }
-
-        @Override
-        public zGroup[] newArray(int size) {
-            return new zGroup[size];
-        }
-    };
 
     @Override
     public boolean isParent() {
@@ -63,29 +63,29 @@ public class zGroup extends Zlink implements Parcelable {
     }
 
     public zGroup(int id, String title) {
-        this.group_link_id = id;
+        this.groupLinkId = id;
         this.title = title;
-        this.hasNoChild=true;
+        this.hasChild=true;
     }
 
-    public zGroup(int id, int url_id, char orientation, String title, String icon, int position, int status,String created_at, String updated_at) {
-        this.group_link_id = id;
-        this.account_id = url_id;
+    public zGroup(boolean isHaveChild, Integer groupLinkId, Integer accountId, String unicode, String title, char orientation,  Integer status,  String updatedAt, Integer uncategorized, List<zSource> childLink) {
+        this.groupLinkId = groupLinkId;
+        this.accountId = accountId;
+        this.unicode = unicode;
+        this.title = title;
         this.orientation = orientation;
-        this.title= title;
-        this.unicode = icon;
-        this.position = position;
         this.status = status;
-        this.created_at = created_at;
-        this.updated_at=updated_at;
-        hasNoChild=true;
+        this.updatedAt = updatedAt;
+        this.uncategorized = uncategorized;
+        this.childLink = childLink;
+        hasChild=isHaveChild;
     }
 
     public zGroup(int id, ArrayList<zSource> zSource, String title) {
-        this.group_link_id = id;
-        this.zSource = zSource;
+        this.groupLinkId = id;
+        this.childLink = zSource;
         this.title= title;
-        hasNoChild=false;
+        hasChild=false;
     }
 
     public zGroup(char orientation, String title, final String icon, int status) {
@@ -93,122 +93,112 @@ public class zGroup extends Zlink implements Parcelable {
         this.title = title;
         this.unicode= icon;
         this.status = status;
-        hasNoChild=true;
+        hasChild=true;
     }
 
     public zGroup(char orientation, String title, final String unicode, int status,int group_link_id) {
-        this.group_link_id = group_link_id;
+        this.groupLinkId = group_link_id;
         this.orientation = orientation;
         this.status=status;
         this.title = title;
         this.unicode = unicode;
+        hasChild=true;
+    }
+
+    public boolean isHasChild() {
+        if(childLink==null){
+            return false;
+        }else if(childLink.isEmpty()){
+            return false;
+        }else return true;
     }
 
 
-
-    public int getGroup_link_id() {
-        return group_link_id;
+    public Integer getGroupLinkId() {
+        return groupLinkId;
     }
 
-    public void setGroup_link_id(int group_link_id) {
-        this.group_link_id = group_link_id;
+    public void setGroupLinkId(Integer groupLinkId) {
+        this.groupLinkId = groupLinkId;
     }
 
-    public int getAccount_id() {
-        return account_id;
+    public Integer getAccountId() {
+        return accountId;
     }
 
-    public void setAccount_id(int account_id) {
-        this.account_id = account_id;
+    public void setAccountId(Integer accountId) {
+        this.accountId = accountId;
     }
 
-    public char getOrientation() {
-        return orientation;
-    }
-
-    public String getIcon() {
+    public String getUnicode() {
         return unicode;
-    }
-
-    public int getStatus() {
-        return status;
-    }
-
-    public String getCreated_at() {
-        return created_at;
-    }
-
-    public String getUpdated_at() {
-        return updated_at;
-    }
-
-    public int getPosition() {
-        return position;
-    }
-
-    public void setPosition(int position) {
-        this.position = position;
-    }
-
-    public boolean isHasNoChild() {
-        return hasNoChild;
-    }
-
-    public void setHasNoChild(boolean hasNoChild) {
-        this.hasNoChild = hasNoChild;
-    }
-
-    public ArrayList<zSource> getzSource() {
-        return zSource;
-    }
-
-    public void setzSource(ArrayList<zSource> zSource) {
-        this.zSource = zSource;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setOrientation(char orientation) {
-        this.orientation = orientation;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
     }
 
     public void setUnicode(String unicode) {
         this.unicode = unicode;
     }
 
-    public void setStatus(int status) {
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public char getOrientation() {
+        return orientation;
+    }
+
+    public void setOrientation(char orientation) {
+        this.orientation = orientation;
+    }
+
+    public Integer getPosition() {
+        return position;
+    }
+
+    public void setPosition(Integer position) {
+        this.position = position;
+    }
+
+    public Integer getStatus() {
+        return status;
+    }
+
+    public void setStatus(Integer status) {
         this.status = status;
     }
 
-    public void setCreated_at(String created_at) {
-        this.created_at = created_at;
+    public String getCreatedAt() {
+        return createdAt;
     }
 
-    public void setUpdated_at(String updated_at) {
-        this.updated_at = updated_at;
+    public void setCreatedAt(String createdAt) {
+        this.createdAt = createdAt;
     }
 
-    @Override
-    public int describeContents() {
-        return 0;
+    public String getUpdatedAt() {
+        return updatedAt;
     }
 
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeInt(group_link_id);
-        dest.writeInt(account_id);
-        dest.writeString(title);
-        dest.writeString(unicode);
-        dest.writeInt(position);
-        dest.writeInt(status);
-        dest.writeString(created_at);
-        dest.writeString(updated_at);
+    public void setUpdatedAt(String updatedAt) {
+        this.updatedAt = updatedAt;
+    }
 
+    public Integer getUncategorized() {
+        return uncategorized;
+    }
+
+    public void setUncategorized(Integer uncategorized) {
+        this.uncategorized = uncategorized;
+    }
+
+    public List<zSource> getChildLink() {
+        return childLink;
+    }
+
+    public void setChildLink(List<zSource> childLink) {
+        this.childLink = childLink;
     }
 }

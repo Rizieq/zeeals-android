@@ -8,7 +8,6 @@ import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -32,15 +31,16 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.user.zeeals.adapter.MainActivity;
+import com.example.user.zeeals.responses.Account_id;
 import com.example.user.zeeals.model.Login;
 import com.example.user.zeeals.model.AuthLogin;
-import com.example.user.zeeals.model.Serve;
+import com.example.user.zeeals.responses.Serve;
 import com.example.user.zeeals.model.Zlink;
 import com.example.user.zeeals.model.zGroup;
 import com.example.user.zeeals.model.zGroupList;
+import com.example.user.zeeals.model.zSource;
 import com.example.user.zeeals.service.RetroConnection;
 import com.example.user.zeeals.service.UserClient;
-import com.example.user.zeeals.util.ServerAPI;
 import com.facebook.AccessToken;
 import com.facebook.AccessTokenTracker;
 import com.facebook.CallbackManager;
@@ -64,12 +64,13 @@ import java.util.List;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
+import retrofit2.Response;
 
 import com.facebook.FacebookSdk;
 import com.facebook.appevents.AppEventsLogger;
 import com.google.gson.Gson;
+
+
 
 public class loginScreen extends AppCompatActivity {
 
@@ -95,6 +96,7 @@ public class loginScreen extends AppCompatActivity {
         userClient = conn.getConnection();
         zlinks = new ArrayList<>();
 
+
         SharedPreferences.Editor pref = getSharedPreferences("TOKEN",MODE_PRIVATE).edit().clear();
         pref.apply();
 
@@ -114,6 +116,7 @@ public class loginScreen extends AppCompatActivity {
                 @Override
                 public void onClick(View widget) {
                     startActivity(new Intent(loginScreen.this, registrasiScreen.class));
+                    finish();
                 }
 
                 @Override
@@ -393,8 +396,6 @@ public class loginScreen extends AppCompatActivity {
                     SharedPreferences.Editor tokenPref = getSharedPreferences("TOKEN",MODE_PRIVATE).edit().putString("TOKEN",tokenAccess);
                     tokenPref.apply();
                     retreiveList(tokenAccess);
-
-//                    startActivity(new Intent(loginScreen.this, MainActivity.class).putExtra("TOKEN",tokenAccess));
                 }
                 else {
                     pbLogin.setVisibility(View.GONE);
@@ -419,40 +420,106 @@ public class loginScreen extends AppCompatActivity {
     }
 
     public void retreiveList(String token){
-        Call<zGroupList> call=  userClient.showGroup(token);
+        Account_id acid = new Account_id("1");
+        Call<zGroupList> call=  userClient.links(token,acid);
         call.enqueue(new Callback<zGroupList>() {
             @Override
-            public void onResponse(Call<zGroupList> call, retrofit2.Response<zGroupList> response) {
+            public void onResponse(Call<zGroupList> call, Response<zGroupList> response) {
                 if (response.isSuccessful()) {
-
-                    ArrayList<zGroup> responseGroup = response.body().getGroupList();
-                    for(zGroup g : responseGroup){
-                        zGroup g1=new zGroup(g.getGroup_link_id(),g.getAccount_id(),g.getOrientation(),g.getTitle(),g.getIcon(),g.getPosition(),g.getStatus(),g.getCreated_at(),g.getCreated_at());
-                        zlinks.add(g1);
+                    if (response.body().getServe() != null) {
+                        List<zGroup> responseGroup = response.body().getServe();
+                        for (zGroup g : responseGroup) {
+                            boolean haveChild=true;
+                            List<zSource> child = g.getChildLink();
+                            if(g.getChildLink().isEmpty()){
+                                haveChild=false;
+                            }
+                            zGroup g1 = new zGroup(haveChild,g.getGroupLinkId(),g.getAccountId(),g.getUnicode(),g.getTitle(),g.getOrientation(),g.getStatus(),g.getUpdatedAt(),g.getUncategorized(),child);
+                            zlinks.add(g1);
+                        }
+                        Gson gson = new Gson();
+                        String json = gson.toJson(zlinks);
+                        SharedPreferences.Editor pref = getSharedPreferences("TOKEN", MODE_PRIVATE).edit().putString("GROUPLIST", json);
+                        pref.apply();
                     }
-                    Gson gson = new Gson();
-                    String json = gson.toJson(zlinks);
-                    SharedPreferences.Editor pref = getSharedPreferences("TOKEN",MODE_PRIVATE).edit().putString("GROUPLIST",json);
-                    pref.apply();
-                    Intent i = new Intent(loginScreen.this, MainActivity.class).putExtra("TOKEN",tokenAccess);
+                    Intent i = new Intent(loginScreen.this, MainActivity.class).putExtra("TOKEN", tokenAccess);
                     i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     startActivity(i);
-
+                } else {
+                    Toast.makeText(loginScreen.this, "Connection error", Toast.LENGTH_SHORT);
                 }
-                else {
 
-                }
             }
             @Override
-            public void onFailure(@NonNull Call<zGroupList> call, @NonNull Throwable t) {
+            public void onFailure(Call<zGroupList> call, Throwable t) {
 
             }
         });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//        Call<zGroupList> call=  userClient.showGroup(token);
+//        call.enqueue(new Callback<zGroupList>() {
+//            @Override
+//            public void onResponse(Call<zGroupList> call, retrofit2.Response<zGroupList> response) {
+//                if (response.isSuccessful()) {
+//
+//                    if (response.isSuccessful()) {
+//                        if (response.body().getServe() != null) {
+//                            List<zGroup> responseGroup = response.body().getServe();
+//                            for (zGroup g : responseGroup) {
+//                                zGroup g1 = new zGroup(g.getGroupLinkId(), g.getAccountId(), g.getOrientation(), g.getTitle(), g.getUnicode(), g.getPosition(), g.getStatus(), g.getCreatedAt(), g.getUpdatedAt());
+//                                zlinks.add(g1);
+//                            }
+//                            Gson gson = new Gson();
+//                            String json = gson.toJson(zlinks);
+//                            SharedPreferences.Editor pref = getSharedPreferences("TOKEN", MODE_PRIVATE).edit().putString("GROUPLIST", json);
+//                            pref.apply();
+//                        }
+//                        Intent i = new Intent(loginScreen.this, MainActivity.class).putExtra("TOKEN",tokenAccess);
+//                        i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+//                        startActivity(i);
+//                    }else{
+//                        Toast.makeText(loginScreen.this,"Connection error",Toast.LENGTH_SHORT);
+//                    }
+//
+//
+//                }
+//                else {
+//
+//                }
+//            }
+//            @Override
+//            public void onFailure(@NonNull Call<zGroupList> call, @NonNull Throwable t) {
+//
+//            }
+//        });
     }
 
 
 
-    /// THIS FOR ACTION IF BACK BUTTON CLICKED ON LOGIN ////
+    /* THIS FOR ACTION IF BACK BUTTON CLICKED ON LOGIN */
     @Override
     public void onBackPressed() {
         AlertDialog.Builder builder = new AlertDialog.Builder(loginScreen.this);
@@ -470,7 +537,8 @@ public class loginScreen extends AppCompatActivity {
         alertOut.show();
 
     }
-    // THIS FOR POP UP MESSAGE LOGIN GAGAL ///
+
+    /* THIS FOR POP UP MESSAGE LOGIN GAGAL */
     public void showPopUpLogin(String pesan){
         TextView title;
         TextView text;
@@ -497,114 +565,29 @@ public class loginScreen extends AppCompatActivity {
         popUpLogin.show();
     }
 
-    public void wrongLoginInfoAlert(){
-
-        AlertDialog.Builder builder = new AlertDialog.Builder(loginScreen.this);
-
-        builder.setTitle("Email / Password Salah")
-                .setMessage("Email / password yang dimasukkan salah. Silahkan coba lagi ")
-                .setNeutralButton("Coba Lagi",null);
-        AlertDialog alertOut = builder.create();
-        alertOut.show();
-    }
-
-    public void wrongInput(){
-        AlertDialog.Builder builder = new AlertDialog.Builder(loginScreen.this);
-
-        builder.setTitle("Email yang dimasukkan tidak sesuai")
-                .setMessage("Pastikan data yang anda masukkan sesuai tipe. Silahkan coba lagi ")
-                .setNeutralButton("Coba Lagi",null);
-        AlertDialog alertOut = builder.create();
-        alertOut.show();
-    }
+//    public void wrongLoginInfoAlert(){
+//
+//        AlertDialog.Builder builder = new AlertDialog.Builder(loginScreen.this);
+//
+//        builder.setTitle("Email / Password Salah")
+//                .setMessage("Email / password yang dimasukkan salah. Silahkan coba lagi ")
+//                .setNeutralButton("Coba Lagi",null);
+//        AlertDialog alertOut = builder.create();
+//        alertOut.show();
+//    }
+//
+//    public void wrongInput(){
+//        AlertDialog.Builder builder = new AlertDialog.Builder(loginScreen.this);
+//
+//        builder.setTitle("Email yang dimasukkan tidak sesuai")
+//                .setMessage("Pastikan data yang anda masukkan sesuai tipe. Silahkan coba lagi ")
+//                .setNeutralButton("Coba Lagi",null);
+//        AlertDialog alertOut = builder.create();
+//        alertOut.show();
+//    }
 }
 
 
-
-
-//    Gson gson = new GsonBuilder()
-//            .setLenient()
-//            .create();
-//
-//    Retrofit retrofit = new Retrofit.Builder()
-//            .baseUrl(ServerAPI.URL_POSTLOGIN)
-//            .addConverterFactory(GsonConverterFactory.create(gson))
-//            .build();
-
-
-//    private void loginProgress(){
-//        final String email = ETemail.getText().toString().trim();
-//        final String password = ETPassword.getText().toString().trim();
-//
-//        pbLogin.setVisibility(View.VISIBLE);
-//        btnMasuk.setVisibility(View.INVISIBLE);
-//
-//        StringRequest requestLogin = new StringRequest(Request.Method.POST, ServerAPI.URL_POSTLOGIN,
-//                new Response.Listener<String>() {
-//                    @Override
-//                    public void onResponse(String response) {
-//                        try {
-//                            JSONObject jsonObject = new JSONObject(response);
-//                            String accessToken = jsonObject.getString("access_token");
-//                            String tokenType = jsonObject.getString("token_type");
-//                            Toast.makeText(loginScreen.this,"message: "+accessToken,Toast.LENGTH_SHORT).show();
-//                            pbLogin.setVisibility(View.GONE);
-//                            btnMasuk.setVisibility(View.VISIBLE);
-//
-//                        } catch (JSONException e) {
-//                            e.printStackTrace();
-//                            pbLogin.setVisibility(View.GONE);
-//                            btnMasuk.setVisibility(View.VISIBLE);
-//                            Toast.makeText(loginScreen.this,"message: "+ e.toString(),Toast.LENGTH_SHORT);
-//                        }
-//                    }
-//                },
-//                new Response.ErrorListener() {
-//                    @Override
-//                    public void onErrorResponse(VolleyError error) {
-//                        pbLogin.setVisibility(View.GONE);
-//                        btnMasuk.setVisibility(View.VISIBLE);
-//                        Toast.makeText(loginScreen.this,"message: " +error.toString(),Toast.LENGTH_SHORT).show();
-//                    }
-//                }){
-//            @Override
-//            protected Map<String, String> getParams() throws AuthFailureError {
-//                Map<String,String> params = new HashMap<>();
-//                params.put("email",email);
-//                params.put("password",password);
-//                return params;
-//            }
-//        };
-//        AppController.getInstance().addToRequestQueue(requestLogin);
-//    }
-//
-//    private void loginTokenParse(String tokenAccess, String tokenType){
-//        JsonObjectRequest requestToken = new JsonObjectRequest(Request.Method.GET, ServerAPI.URL_GETTOKEN, null,
-//                new Response.Listener<JSONObject>() {
-//                    @Override
-//                    public void onResponse(JSONObject response) {
-//                        try{
-//                            JSONArray jsonArray = response.getJSONArray("Authorization");
-//
-//                            for (int i=0;i<jsonArray.length();i++){
-//                                JSONObject Authorization = jsonArray.getJSONObject(i);
-//                                Toast.makeText(loginScreen.this,"message "+ Authorization.getString("id"),Toast.LENGTH_SHORT).show();
-//
-//                            }
-//                        } catch (JSONException e) {
-//                            e.printStackTrace();
-//                            Toast.makeText(loginScreen.this,"message "+e.toString(),Toast.LENGTH_SHORT).show();
-//                        }
-//
-//                    }
-//                },
-//                new Response.ErrorListener() {
-//                    @Override
-//                    public void onErrorResponse(VolleyError error) {
-//                        Toast.makeText(loginScreen.this,"message "+error.toString(),Toast.LENGTH_SHORT).show();
-//                    }
-//                });
-//    }
 
 
 

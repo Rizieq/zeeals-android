@@ -1,226 +1,215 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/primaryGrey">
+    android:layout_height="match_parent">
 
-    <android.support.constraint.ConstraintLayout
-        android:id="@+id/topPanel1"
+    <View
+        android:id="@+id/separator1"
         android:layout_width="match_parent"
-        android:layout_height="80dp"
-        android:layout_marginHorizontal="20dp"
-        android:layout_marginTop="20dp"
-        android:layout_marginBottom="12dp"
-        android:background="@drawable/layout_box"
+        android:layout_height="0.5dp"
+        android:layout_marginTop="30dp"
+        android:background="@color/grey"
+        app:layout_constraintTop_toBottomOf="@id/addGroup_btn_back" />
+
+    <ImageView
+        android:id="@+id/addGroup_btn_back"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:layout_marginStart="30dp"
+        android:layout_marginTop="25dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:clickable="true"
+        android:src="@drawable/ic_left_primary_brown_24dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="25dp"
+        android:fontFamily="@font/poppinsbold"
+        android:text="@string/add_group"
+        android:textColor="@color/colorPrimary"
+        android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent" />
 
-        <ImageButton
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:layout_marginStart="20dp"
-            android:background="@android:color/transparent"
-            android:src="@drawable/ic_menu_grey_24dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <ImageButton
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:layout_marginEnd="20dp"
-            android:background="@drawable/circle_grey_background"
-            android:src="@drawable/ic_person"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+    <ImageView
+        android:id="@+id/addGroup_btn_delete"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:layout_marginTop="25dp"
+        android:layout_marginEnd="30dp"
+        android:src="@drawable/ic_delete_button"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:clickable="true"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 
-    </android.support.constraint.ConstraintLayout>
+    <TextView
+        android:id="@+id/tvIconEditGroup"
+        android:layout_width="80dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="30dp"
+        android:layout_marginBottom="8dp"
+        android:fontFamily="@font/poppinsbold"
+        android:text="@string/icon"
+        android:textColor="@color/colorPrimaryDark"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toTopOf="@+id/separator2"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/separator1" />
 
-    <android.support.constraint.ConstraintLayout
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_marginHorizontal="20dp"
-        android:layout_marginTop="12dp"
+
+    <GridView
+        android:id="@+id/iconGrid"
+        android:layout_width="0dp"
+        android:layout_height="200dp"
+        android:layout_marginTop="20dp"
         android:layout_marginBottom="20dp"
-        android:background="@drawable/layout_box"
+        android:layout_marginEnd="20dp"
+        android:columnWidth="50dp"
+        android:foregroundGravity="center"
+        android:gravity="top"
+        android:numColumns="6"
+        android:stretchMode="spacingWidthUniform"
+        android:listSelector="@drawable/grid_selector"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.111"
+        app:layout_constraintStart_toEndOf="@+id/divider"
+        app:layout_constraintTop_toBottomOf="@id/separator1">
+
+    </GridView>
+
+    <View
+        android:id="@+id/separator2"
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:layout_marginTop="10dp"
+        android:background="@color/grey"
+        app:layout_constraintTop_toBottomOf="@id/iconGrid"/>
+
+
+    <TextView
+        android:id="@+id/tvTitleEditGroup"
+        android:layout_width="80dp"
+        android:layout_height="wrap_content"
+
+        android:layout_marginStart="30dp"
+        android:fontFamily="@font/poppinsbold"
+        android:text="@string/title"
+        android:textColor="@color/colorPrimaryDark"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toBottomOf="@+id/separator3"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/separator2" />
+
+    <EditText
+        android:id="@+id/etTitleAddGroup"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="20dp"
+        android:background="@android:color/transparent"
+        android:ems="10"
+        android:fontFamily="@font/poppinsregular"
+        android:hint="@string/set_the_link_title"
+        android:textColor="@color/colorPrimary"
+        android:textColorHint="@color/colorPrimary"
+        android:textSize="16sp"
+        app:layout_constraintStart_toEndOf="@+id/divider"
+        app:layout_constraintTop_toBottomOf="@+id/separator2" />
+
+    <View
+        android:id="@+id/separator3"
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:layout_marginTop="20dp"
+        android:background="@color/grey"
+        app:layout_constraintTop_toBottomOf="@+id/etTitleAddGroup"
+        tools:layout_editor_absoluteX="0dp" />
+
+
+    <TextView
+        android:id="@+id/tvGridEditGroup"
+        android:layout_width="80dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="30dp"
+        android:layout_marginTop="20dp"
+        android:fontFamily="@font/poppinsbold"
+        android:text="@string/grid"
+        android:textColor="@color/colorPrimaryDark"
+        android:textSize="16sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/separator3" />
+
+    <Spinner
+        android:id="@+id/spinnerAddGroup"
+        android:layout_width="240dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:ems="10"
+        app:layout_constraintStart_toEndOf="@+id/divider"
+        app:layout_constraintTop_toBottomOf="@+id/separator3" />
+
+    <View
+        android:id="@+id/separator4"
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:layout_marginTop="20dp"
+        android:background="@color/grey"
+        app:layout_constraintTop_toBottomOf="@id/spinnerAddGroup"
+        tools:layout_editor_absoluteX="0dp" />
+
+
+
+
+    <RelativeLayout
+        android:layout_width="0dp"
+        android:layout_height="45dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginBottom="30dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/topPanel1">
-
-        <ImageButton
-            android:id="@+id/addGroup_btn_back"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:layout_marginLeft="20dp"
-            android:layout_marginTop="20dp"
-            android:background="@drawable/circle_grey_background"
-            android:paddingHorizontal="13dp"
-            android:paddingVertical="13dp"
-            android:scaleType="fitEnd"
-            android:src="@drawable/ic_left_arrow_2"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <ImageButton
-            android:id="@+id/addGroup_btn_save_check"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:layout_marginTop="20dp"
-            android:layout_marginRight="20dp"
-            android:background="@drawable/circle_primary_background"
-            android:src="@drawable/ic_check"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:fontFamily="@font/fontawesomewebfont"
-            android:text="ADD GROUP"
-            android:textColor="@color/colorPrimary"
-            android:textSize="20dp"
-            android:textStyle="bold"
-            app:layout_constraintBottom_toBottomOf="@id/addGroup_btn_save_check"
-            app:layout_constraintLeft_toLeftOf="@id/addGroup_btn_back"
-            app:layout_constraintRight_toRightOf="@id/addGroup_btn_save_check"
-            app:layout_constraintTop_toTopOf="@id/addGroup_btn_back" />
-
-        <TextView
-            android:id="@+id/txtIcon"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="10dp"
-            android:layout_marginTop="30dp"
-            android:fontFamily="@font/fontawesomewebfont"
-            android:text="Icon"
-            android:textStyle="bold"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="@id/addGroup_btn_back"
-            app:layout_constraintTop_toBottomOf="@id/addGroup_btn_back" />
-
-        <GridView
-            android:id="@+id/iconGrid"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_marginEnd="10dp"
-            android:layout_marginBottom="20dp"
-            android:columnWidth="50dp"
-            android:foregroundGravity="center"
-            android:gravity="top"
-            android:numColumns="6"
-            android:stretchMode="spacingWidthUniform"
-            android:listSelector="@android:color/transparent"
-            app:layout_constraintBottom_toTopOf="@id/txtTitle"
-            app:layout_constraintLeft_toLeftOf="@id/txtIcon"
-            app:layout_constraintRight_toRightOf="@id/addGroup_btn_save_check"
-            app:layout_constraintTop_toBottomOf="@id/txtIcon">
-
-        </GridView>
-
-
-        <TextView
-            android:id="@+id/txtTitle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="10dp"
-            android:layout_marginBottom="5dp"
-            android:fontFamily="@font/fontawesomewebfont"
-            android:text="Title"
-            android:textStyle="bold"
-            app:layout_constraintBottom_toTopOf="@id/addGroup_title"
-            app:layout_constraintLeft_toLeftOf="@id/addGroup_title" />
-
-        <EditText
-            android:id="@+id/addGroup_title"
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:layout_marginLeft="20dp"
-            android:layout_marginRight="20dp"
-            android:layout_marginBottom="15dp"
-            android:background="@drawable/edittext_border"
-            android:fontFamily="@font/fontawesomewebfont"
-            app:layout_constraintBottom_toTopOf="@+id/switchshowAddGroup"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent" />
-
-
-        <Switch
-            android:id="@+id/switchshowAddGroup"
-            android:layout_width="wrap_content"
-            android:layout_height="30dp"
-            android:layout_marginBottom="15dp"
-            android:checked="true"
-            android:showText="false"
-            android:thumbTint="@color/colorPrimary"
-            android:trackTint="@color/colorPrimary"
-            app:layout_constraintBottom_toTopOf="@+id/btnSaveAddGroup"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent" />
-
-        <RelativeLayout
-            android:id="@+id/btnSaveAddGroup"
-            android:layout_width="0dp"
-            android:layout_height="45dp"
-            android:layout_marginStart="20dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="20dp"
-            android:layout_marginBottom="20dp"
-            android:background="@drawable/button_primary_color"
-            android:gravity="center"
-            app:layout_constraintBottom_toTopOf="@id/addGroup_btn_back_2"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintVertical_bias="1.0">
-
-            <Button
-                android:id="@+id/btnAddAddGroup"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true"
-                android:layout_centerHorizontal="true"
-                android:background="@android:color/transparent"
-                android:drawableStart="@drawable/ic_check"
-                android:gravity="center"
-                android:text="@string/save"
-                android:textAllCaps="false"
-                android:textColor="@android:color/white"
-
-                android:textSize="16sp" />
-
-            <ProgressBar
-                android:id="@+id/progress_bar_add_group"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_centerInParent="true"
-                android:indeterminateTint="#FFFBFC" />
-
-
-        </RelativeLayout>
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/separator5"
+        app:layout_constraintVertical_bias="1.0"
+        android:background="@drawable/button_primary_color"
+        android:gravity="center">
 
         <Button
-            android:id="@+id/addGroup_btn_back_2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_centerHorizontal="true"
-            android:layout_marginBottom="20dp"
+            android:id="@+id/btnAddAddGroup"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:background="@android:color/transparent"
-            android:drawableStart="@drawable/ic_left_primary_brown_24dp"
+            android:text="@string/save"
+            android:textColor="@android:color/white"
             android:gravity="center"
-            android:text="Back"
-            android:textAllCaps="false"
-            android:textColor="@color/colorPrimary"
-            android:textSize="16sp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintLeft_toLeftOf="parent"
+            android:textSize="16sp"/>
 
-            app:layout_constraintRight_toRightOf="parent" />
+        <ProgressBar
+            android:id="@+id/progress_bar_add_group"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_centerInParent="true"
+            android:indeterminateTint="#FFFBFC"/>
 
-    </android.support.constraint.ConstraintLayout>
+    </RelativeLayout>
+    <View
+        android:id="@+id/divider"
+        android:layout_width="0.1dp"
+        android:layout_height="match_parent"
+        android:layout_marginStart="20dp"
+        android:background="@android:color/transparent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/tvTitleEditGroup"
+        app:layout_constraintTop_toTopOf="parent" />
 
 </android.support.constraint.ConstraintLayout>

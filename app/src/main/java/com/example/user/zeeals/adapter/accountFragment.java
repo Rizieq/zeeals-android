@@ -6,21 +6,16 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.RecyclerView;
-import android.text.method.ScrollingMovementMethod;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.OvershootInterpolator;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.example.user.zeeals.R;
-import com.example.user.zeeals.fragment.editSourceFragment;
+import com.example.user.zeeals.fragment.editLinkFragment;
 import com.example.user.zeeals.model.Zlink;
 import com.example.user.zeeals.service.RetroConnection;
 import com.example.user.zeeals.service.UserClient;
@@ -28,8 +23,6 @@ import com.example.user.zeeals.service.UserClient;
 import java.util.List;
 
 import retrofit2.Retrofit;
-
-import static android.content.Context.MODE_PRIVATE;
 
 public class accountFragment extends Fragment {
     private TextView profileName, profileDesc;
@@ -49,12 +42,12 @@ public class accountFragment extends Fragment {
 
 
     //groupAdapter adapter;
-    editSourceFragment editSource_Fragment;
+    editLinkFragment editSource_Fragment;
     com.example.user.zeeals.fragment.menuFragment menuFragment;
 
 
     //shared ke menu fragment
-    public RecyclerAdapterTest adapterTest;
+    public RecyclerAdapter_Main adapterTest;
     public List<Zlink> zLink;
     public UserClient userClient;
     public Retrofit.Builder builder;

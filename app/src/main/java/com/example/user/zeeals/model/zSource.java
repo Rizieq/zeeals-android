@@ -3,91 +3,171 @@ package com.example.user.zeeals.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-public class zSource extends Zlink implements Parcelable {
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
 
-    protected zSource(Parcel in) {
-        id = in.readInt();
-        sourceName = in.readString();
-        sourceLink = in.readString();
-        parentID = in.readInt();
+public class zSource extends Zlink {
+    @SerializedName("link_id")
+    @Expose
+    private Integer linkId;
+    @SerializedName("id")
+    @Expose
+    private Integer Id;
+    @SerializedName("account_id")
+    @Expose
+    private Integer accountId;
+    @SerializedName("group_link_id")
+    @Expose
+    private Integer groupLinkId;
+    @SerializedName("link_key")
+    @Expose
+    private String linkKey;
+    @SerializedName("url")
+    @Expose
+    private String url;
+    @SerializedName("title")
+    @Expose
+    private String title;
+    @SerializedName("position")
+    @Expose
+    private Integer position;
+    @SerializedName("avatar")
+    @Expose
+    private String avatar;
+    @SerializedName("orientation")
+    @Expose
+    private String orientation;
+    @SerializedName("status")
+    @Expose
+    private Integer status;
+    @SerializedName("created_at")
+    @Expose
+    private String createdAt;
+    @SerializedName("updated_at")
+    @Expose
+    private String updatedAt;
+
+
+
+    public zSource(Integer accountId, Integer groupLinkId, String linkKey, String url, String title, Integer position, String avatar, String orientation, Integer status) {
+        this.accountId = accountId;
+        this.groupLinkId = groupLinkId;
+        this.linkKey = linkKey;
+        this.url = url;
+        this.title = title;
+        this.position = position;
+        this.avatar = avatar;
+        this.orientation = orientation;
+        this.status = status;
     }
-
-    public static final Creator<zSource> CREATOR = new Creator<zSource>() {
-        @Override
-        public zSource createFromParcel(Parcel in) {
-            return new zSource(in);
-        }
-
-        @Override
-        public zSource[] newArray(int size) {
-            return new zSource[size];
-        }
-    };
 
     @Override
     public boolean isParent() {
         return false;
     }
 
-    private int id;
-    private String sourceName;
-    private String sourceLink;
-    private int parentID;
 
-    public zSource(String sourceName, String sourceLink) {
-        this.sourceName = sourceName;
-        this.sourceLink = sourceLink;
+    public Integer getId() {
+        return Id;
     }
 
-    public zSource(int id, String sourceName, String sourceLink, int parentID) {
-        this.id = id;
-        this.sourceName = sourceName;
-        this.sourceLink = sourceLink;
-        this.parentID = parentID;
+    public void setId() {
+        Id = this.linkId;
+    }
+    public Integer getLinkId() {
+        return linkId;
     }
 
-    public int getId() {
-        return id;
+    public void setLinkId(Integer linkId) {
+        this.linkId = linkId;
+        this.Id = linkId;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public Integer getAccountId() {
+        return accountId;
     }
 
-    public String getSourceName() {
-        return sourceName;
+    public void setAccountId(Integer accountId) {
+        this.accountId = accountId;
     }
 
-    public void setSourceName(String sourceName) {
-        this.sourceName = sourceName;
+    public Integer getGroupLinkId() {
+        return groupLinkId;
     }
 
-    public String getSourceLink() {
-        return sourceLink;
+    public void setGroupLinkId(Integer groupLinkId) {
+        this.groupLinkId = groupLinkId;
     }
 
-    public void setSourceLink(String sourceLink) {
-        this.sourceLink = sourceLink;
+    public String getLinkKey() {
+        return linkKey;
     }
 
-    public int getParentID() {
-        return parentID;
+    public void setLinkKey(String linkKey) {
+        this.linkKey = linkKey;
     }
 
-    public void setParentID(int parentID) {
-        this.parentID = parentID;
+    public String getUrl() {
+        return url;
     }
 
-    @Override
-    public int describeContents() {
-        return 0;
+    public void setUrl(String url) {
+        this.url = url;
     }
 
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeInt(id);
-        dest.writeString(sourceName);
-        dest.writeString(sourceLink);
-        dest.writeInt(parentID);
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public Integer getPosition() {
+        return position;
+    }
+
+    public void setPosition(Integer position) {
+        this.position = position;
+    }
+
+    public String getAvatar() {
+        return avatar;
+    }
+
+    public void setAvatar(String avatar) {
+        this.avatar = avatar;
+    }
+
+    public String getOrientation() {
+        return orientation;
+    }
+
+    public void setOrientation(String orientation) {
+        this.orientation = orientation;
+    }
+
+    public Integer getStatus() {
+        return status;
+    }
+
+    public void setStatus(Integer status) {
+        this.status = status;
+    }
+
+    public String getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(String createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public String getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(String updatedAt) {
+        this.updatedAt = updatedAt;
     }
 }

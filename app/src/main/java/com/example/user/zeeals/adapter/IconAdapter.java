@@ -10,18 +10,20 @@ import android.widget.TextView;
 
 import com.example.user.zeeals.R;
 
+import java.util.ArrayList;
+
 public class IconAdapter extends BaseAdapter {
     Context context;
-    String[] icon;
+    ArrayList<String> icon;
 
-    public IconAdapter(Context c, String[] i) {
+    public IconAdapter(Context c, ArrayList<String> i) {
         context=c;
         icon=i;
     }
 
     @Override
     public int getCount() {
-        return icon.length;
+        return icon.size();
     }
 
     @Override
@@ -46,7 +48,7 @@ public class IconAdapter extends BaseAdapter {
 //        Typeface fontawesome =  Typeface.createFromAsset(context.getAssets(),"fonts/fontawesomewebfont.ttf");
 //        iconView.setTypeface(fontawesome);
         iconView.setText(new String (Character.toChars(Integer.parseInt(
-                icon[position], 16))));
+                icon.get(position), 16))));
 
         return convertView;
     }

@@ -1,39 +1,30 @@
 package com.example.user.zeeals.adapter;
 
 import android.content.Context;
-import android.content.DialogInterface;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
-import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.Log;
 import android.view.View;
 
 import com.example.user.zeeals.R;
-import com.example.user.zeeals.service.UserClient;
-
-import okhttp3.ResponseBody;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 import static android.support.constraint.Constraints.TAG;
 
 public class SwipeToDeleteCallback extends ItemTouchHelper.SimpleCallback {
 
-    private RecyclerAdapterTest mAdapter;
+    private RecyclerAdapter_Main mAdapter;
     private Drawable icon;
     private ColorDrawable background;
     private SwipeToDeleteCallbackListener listener;
     private Context context;
     Canvas c;
 
-    public SwipeToDeleteCallback(RecyclerAdapterTest adapter, Context context) {
+    public SwipeToDeleteCallback(RecyclerAdapter_Main adapter, Context context) {
         super(0,ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT);
         this.context = context;
         this.mAdapter = adapter;

@@ -47,8 +47,9 @@ public class editProfileScreen extends AppCompatActivity {
 
         name = findViewById(R.id.etName);
         Description = findViewById(R.id.etDescription);
-        name.setHint(getSharedPreferences("PROFILE",MODE_PRIVATE).getString("PROFILE_NAME","Name"));
-        Description.setHint(getSharedPreferences("PROFILE",MODE_PRIVATE).getString("PROFILE_DESC","Type your descripton here"));
+
+        name.setHint(getSharedPreferences("PROFILE",MODE_PRIVATE).getString("PROFILE_NAME","Set your name"));
+        Description.setHint(getSharedPreferences("PROFILE",MODE_PRIVATE).getString("PROFILE_DESC","Set your descripton"));
 
 
 
@@ -85,10 +86,10 @@ public class editProfileScreen extends AppCompatActivity {
                 String nama=name.getHint().toString();
                 String desc=Description.getHint().toString();
 
-                if(name.getText()!=null){
+                if(!name.getText().toString().equals("")){
                     nama=name.getText().toString();
                 }
-                if(Description.getText()!=null){
+                if(!Description.getText().toString().equals("")){
                     desc=Description.getText().toString();
                 }
 

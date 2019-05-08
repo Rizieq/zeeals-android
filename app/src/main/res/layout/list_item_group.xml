@@ -7,23 +7,23 @@
     android:layout_width="match_parent"
     android:layout_height="@dimen/list_item_height"
     android:layout_marginTop="8dp"
-    android:layout_marginHorizontal="20dp">
+    android:layout_marginHorizontal="20dp"
+    android:background="@color/background">
 
     <TextView
         android:id="@+id/list_item_group_icon"
-        android:layout_width="30dp"
+        android:layout_width="10dp"
         android:layout_height="match_parent"
-        android:layout_gravity="center_vertical"
         android:clickable="false"
         android:layout_weight="0.1"
-        android:gravity="center"
+        android:gravity="center|right"
         android:textSize="18sp"
         android:textColor="@color/profileDesc_Gray"
-        android:fontFamily="@font/fontawesomewebfont"
-        android:text="\uf039"/>
+        android:fontFamily="@font/feather"
+        android:text="\ue81e"/>
 
     <TextView
-        android:background="@android:color/transparent"
+        android:background="?android:attr/selectableItemBackground"
         android:text="Group"
         android:textColor="@color/profileName_Gray"
         android:fontFamily="@font/poppinsbold"
@@ -35,15 +35,18 @@
         android:layout_weight="0.9"
         android:paddingLeft="10dp"
         android:paddingRight="10dp"
+
         />
 
     <ImageView
         android:id="@+id/list_item_group_arrow"
-        android:layout_width="13dp"
+        android:layout_width="45dp"
         android:layout_height="45dp"
         android:layout_gravity="center_vertical|end"
         android:layout_weight="0.1"
         android:paddingVertical="18dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:clickable="true"
         android:src="@drawable/ic_arrow_down_navigate" />
 
 </LinearLayout>

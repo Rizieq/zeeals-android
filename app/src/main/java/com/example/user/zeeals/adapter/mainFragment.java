@@ -2,6 +2,7 @@ package com.example.user.zeeals.adapter;
 
 import android.app.Dialog;
 import android.content.Intent;
+import android.graphics.Canvas;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -18,15 +19,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.OvershootInterpolator;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.example.user.zeeals.R;
 import com.example.user.zeeals.editProfileScreen;
-import com.example.user.zeeals.fragment.editSourceFragment;
-import com.example.user.zeeals.fragment.menuFragment;
+import com.example.user.zeeals.fragment.editLinkFragment;
 import com.example.user.zeeals.model.Zlink;
 import com.example.user.zeeals.model.zGroup;
 import com.example.user.zeeals.service.RetroConnection;
@@ -62,12 +61,12 @@ public class mainFragment extends Fragment {
 
 
     //groupAdapter adapter;
-    editSourceFragment editSource_Fragment;
+    editLinkFragment editSource_Fragment;
     com.example.user.zeeals.fragment.menuFragment menuFragment;
 
 
     //shared ke menu fragment
-    public RecyclerAdapterTest adapterTest;
+    public RecyclerAdapter_Main adapterTest;
     public List<Zlink> zLink;
     public UserClient userClient;
     public Retrofit.Builder builder;
@@ -154,18 +153,45 @@ public class mainFragment extends Fragment {
         super.onStart();
 
         String groupJSON = getActivity().getSharedPreferences("TOKEN",MODE_PRIVATE).getString("GROUPLIST",null);
-        Type listType = new TypeToken<List<zGroup>>(){}.getType();
-        zLink = new ArrayList<>();
-        zLink = new Gson().fromJson(groupJSON,listType);
+        if(groupJSON!=null){
+            Type listType = new TypeToken<List<zGroup>>(){}.getType();
+            zLink = new ArrayList<>();
+            zLink = new Gson().fromJson(groupJSON,listType);
+            setupRecycler();
+        }
+
+
+    }
+
+    private void setupRecycler(){
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
-        adapterTest = new RecyclerAdapterTest(recyclerViewTes,zLink,token,getContext());
+        adapterTest = new RecyclerAdapter_Main(recyclerViewTes,zLink,token,getContext());
         recyclerViewTes.setAdapter(adapterTest);
         recyclerViewTes.setLayoutManager(layoutManager);
 
-        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(new SwipeToDeleteCallback(adapterTest,getContext()));
-        itemTouchHelper.attachToRecyclerView(recyclerViewTes);
-        adapterTest.notifyDataSetChanged();
 
+        /*this show delete after swipe*/
+//        final SwipeController swipeController = new SwipeController(new SwipeControllerActions() {
+//            @Override
+//            public void onLeftClicked(int position) {
+//                zLink.remove(position);
+//                adapterTest.notifyItemRemoved(position);
+//                adapterTest.notifyItemRangeChanged(position,adapterTest.getItemCount());
+//            }
+//        });
+//        ItemTouchHelper itemTouchhelper = new ItemTouchHelper(swipeController);
+//        itemTouchhelper.attachToRecyclerView(recyclerViewTes);
+//
+//        recyclerViewTes.addItemDecoration(new RecyclerView.ItemDecoration() {
+//            @Override
+//            public void onDraw(@NonNull Canvas c, @NonNull RecyclerView parent, @NonNull RecyclerView.State state) {
+//                swipeController.onDraw(c);
+//            }
+//        });
+
+            ItemTouchHelper itemTouchHelper = new ItemTouchHelper(new SwipeToDeleteCallback(adapterTest,getContext()));
+            itemTouchHelper.attachToRecyclerView(recyclerViewTes);
+            adapterTest.notifyDataSetChanged();
     }
 
     public void openMenuFragment() {
@@ -214,6 +240,7 @@ public class mainFragment extends Fragment {
             openEditScreen();
         }
     };
+
 
 
 }

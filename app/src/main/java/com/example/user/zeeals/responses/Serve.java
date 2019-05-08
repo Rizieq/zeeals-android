@@ -1,4 +1,6 @@
-package com.example.user.zeeals.model;
+package com.example.user.zeeals.responses;
+
+import com.example.user.zeeals.model.User;
 
 import java.util.ArrayList;
 import java.util.List;

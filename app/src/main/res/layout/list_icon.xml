@@ -8,7 +8,7 @@
     android:layout_height="wrap_content"
     android:gravity="center"
     android:layout_gravity="center"
-    android:background="@drawable/button_shadow_box"
+    android:background="@android:color/transparent"
     android:orientation="horizontal">
 
     <TextView
@@ -19,7 +19,7 @@
         android:layout_marginTop="2dp"
         android:textSize="20sp"
         android:textColor="#717171"
-        android:fontFamily="@font/fontawesomewebfont"
+        android:fontFamily="@font/feather"
         android:gravity="center"
         android:text="\uf039"
         />

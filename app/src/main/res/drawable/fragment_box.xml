@@ -8,13 +8,9 @@
         android:top="2dp"
         android:bottom="0dp">
         <shape android:shape="rectangle">
-            <gradient android:angle="90"
-
-                android:endColor="@color/shadowGrey"
-                android:startColor="@android:color/white" />
             <solid android:color="@android:color/white"/>
-            <corners android:topLeftRadius="40dp"
-                android:topRightRadius="40dp"/>
+            <corners android:topLeftRadius="20dp"
+                android:topRightRadius="20dp"/>
         </shape>
     </item>
 </layer-list>
