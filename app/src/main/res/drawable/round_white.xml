@@ -3,7 +3,7 @@
     <item>
         <shape android:shape="oval">
             <!-- solid background -->
-            <solid android:color="#1A000000" />
+            <solid android:color="#F0C9C9C9" />
             <corners
                 android:bottomLeftRadius="@dimen/button_white_round"
                 android:bottomRightRadius="@dimen/button_white_round"

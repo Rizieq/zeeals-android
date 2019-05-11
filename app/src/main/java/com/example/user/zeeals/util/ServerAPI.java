@@ -3,6 +3,6 @@ package com.example.user.zeeals.util;
 
 public class ServerAPI {
 
-    public static final String zeealseRESTAPI = "http://8db3ff7c.ngrok.io";
+    public static final String zeealseRESTAPI = "http://07e33d9d.ngrok.io";
 
 }

@@ -11,7 +11,7 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.example.user.zeeals.adapter.MainActivity;
-import com.example.user.zeeals.responses.Account_id;
+import com.example.user.zeeals.ResponsesAndRequest.Account_id;
 import com.example.user.zeeals.model.Zlink;
 import com.example.user.zeeals.model.zGroup;
 import com.example.user.zeeals.model.zGroupList;
@@ -82,6 +82,7 @@ public class splashscreen extends AppCompatActivity {
     }
 
     public void retreiveList(String token){
+        /*ACCOUNT ID HERE's STILL HARCODED SHIT */
         Account_id acid = new Account_id("1");
         Call<zGroupList> call=  userClient.links(token,acid);
         call.enqueue(new Callback<zGroupList>() {

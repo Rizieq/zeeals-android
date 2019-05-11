@@ -17,21 +17,23 @@
         android:id="@+id/btnBackEditLink"
         android:layout_width="50dp"
         android:layout_height="50dp"
-        android:scaleX="0.4"
-        android:scaleY="0.4"
         android:layout_marginStart="30dp"
         android:layout_marginTop="10dp"
-        android:src="@drawable/ic_left_arrow_colour"
         android:background="?attr/selectableItemBackgroundBorderless"
+        android:clickable="true"
+        android:scaleX="0.4"
+        android:scaleY="0.4"
+        android:src="@drawable/ic_left_arrow_colour"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        android:focusable="true" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp"
         android:layout_marginTop="20dp"
+        android:layout_marginEnd="8dp"
         android:fontFamily="@font/poppinsbold"
         android:text="@string/edit_link"
         android:textColor="@color/colorPrimary"
@@ -45,12 +47,12 @@
         android:id="@+id/btnDeleteEditLink"
         android:layout_width="50dp"
         android:layout_height="50dp"
-        android:scaleX="0.4"
-        android:scaleY="0.4"
         android:layout_marginTop="10dp"
         android:layout_marginEnd="30dp"
-        android:src="@drawable/ic_delete_button"
         android:background="?attr/selectableItemBackgroundBorderless"
+        android:scaleX="0.4"
+        android:scaleY="0.4"
+        android:src="@drawable/ic_delete_button"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -59,8 +61,9 @@
         android:id="@+id/tvGroupEditLink"
         android:layout_width="80dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="30dp"
+        android:layout_marginStart="32dp"
         android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
         android:fontFamily="@font/poppinsbold"
         android:text="@string/group"
         android:textColor="@color/colorPrimaryDark"
@@ -73,8 +76,8 @@
         android:id="@+id/spinnerEditLink"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
         android:layout_marginTop="20dp"
-        android:layout_marginStart="40dp"
         android:layout_marginEnd="20dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/guideline"
@@ -91,11 +94,12 @@
     <TextView
         android:id="@+id/tvURLEditLink"
         android:layout_width="80dp"
-
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
         android:fontFamily="@font/poppinsbold"
-        android:text="@string/url"
+        android:text="@string/key"
         android:textColor="@color/colorPrimaryDark"
         android:textSize="16sp"
         app:layout_constraintBottom_toTopOf="@id/separator3"
@@ -104,19 +108,20 @@
 
     <EditText
         android:id="@+id/etURLEditLink"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="20dp"
         android:background="@android:color/transparent"
         android:ems="10"
         android:fontFamily="@font/poppinsregular"
         android:hint="@string/set_the_url_here"
         android:textColor="@color/colorPrimary"
-        android:textColorHint="@color/colorPrimary"
         android:textSize="16sp"
-        android:layout_marginTop="20dp"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/guideline"
         app:layout_constraintTop_toTopOf="@id/separator2"
-        app:layout_constraintEnd_toEndOf="parent"
         tools:layout_editor_absoluteY="166dp" />
 
     <View
@@ -132,29 +137,29 @@
         android:id="@+id/tvImageAddressEditLink"
         android:layout_width="80dp"
         android:layout_height="wrap_content"
-
         android:layout_marginStart="32dp"
+        android:layout_marginTop="8dp"
         android:layout_marginBottom="8dp"
         android:fontFamily="@font/poppinsbold"
         android:text="@string/image_address"
         android:textColor="@color/colorPrimaryDark"
         android:textSize="16sp"
-        android:layout_marginTop="8dp"
         app:layout_constraintBottom_toTopOf="@+id/separator4"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/separator3" />
 
     <EditText
         android:id="@+id/etImageAddressEditLink"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
         android:layout_marginTop="20dp"
+        android:layout_marginEnd="20dp"
         android:background="@android:color/transparent"
         android:ems="10"
         android:fontFamily="@font/poppinsregular"
         android:hint="@string/set_image_address_here"
         android:textColor="@color/colorPrimary"
-        android:textColorHint="@color/colorPrimary"
         android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/guideline"
@@ -173,7 +178,6 @@
         android:id="@+id/tvTitleEditLink"
         android:layout_width="80dp"
         android:layout_height="wrap_content"
-
         android:layout_marginStart="32dp"
         android:layout_marginTop="8dp"
         android:layout_marginBottom="8dp"
@@ -187,19 +191,20 @@
 
     <EditText
         android:id="@+id/etTitleEditLink"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="20dp"
         android:background="@android:color/transparent"
         android:ems="10"
         android:fontFamily="@font/poppinsregular"
         android:hint="@string/set_the_link_title"
         android:textColor="@color/colorPrimary"
-        android:textColorHint="@color/colorPrimary"
         android:textSize="16sp"
-        app:layout_constraintBaseline_toBaselineOf="@id/tvTitleEditLink"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.48"
         app:layout_constraintStart_toEndOf="@+id/guideline"
+        app:layout_constraintTop_toBottomOf="@id/separator4"
         tools:layout_editor_absoluteY="299dp" />
 
     <View
@@ -212,37 +217,63 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/etTitleEditLink" />
 
-    <TextView
-        android:id="@+id/tvShowEditLink"
-        android:layout_width="80dp"
-        android:layout_height="wrap_content"
-
-        android:layout_marginStart="32dp"
-        android:fontFamily="@font/poppinsbold"
-        android:text="@string/show"
-        android:textColor="@color/colorPrimaryDark"
-        android:textSize="16sp"
-        app:layout_constraintBottom_toTopOf="@id/separator6"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/separator5" />
-
-    <Switch
-        android:id="@+id/switchshowEditLink"
-        android:layout_width="240dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/guideline"
-        app:layout_constraintTop_toBottomOf="@id/separator5" />
-
-    <View
-        android:id="@+id/separator6"
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/editLink_message_layout"
         android:layout_width="match_parent"
-        android:layout_height="0.5dp"
-        android:layout_marginTop="20dp"
-        android:background="@color/grey"
-        app:layout_constraintTop_toBottomOf="@+id/switchshowEditLink"
-        tools:layout_editor_absoluteX="0dp" />
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/separator5">
+
+        <android.support.constraint.Guideline
+            android:id="@+id/guideline2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_begin="125dp" />
+
+        <TextView
+            android:id="@+id/tvShowEditLink"
+            android:layout_width="80dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="32dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            android:fontFamily="@font/poppinsbold"
+            android:text="Message"
+            android:textColor="@color/colorPrimaryDark"
+            android:textSize="16sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toBottomOf="@id/separator6"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <EditText
+            android:id="@+id/editLink_message"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginEnd="20dp"
+            android:background="@android:color/transparent"
+            android:fontFamily="@font/poppinsregular"
+            android:hint="@string/set_your_message_here"
+            android:textColor="@color/colorPrimaryDark"
+            android:textSize="16sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/guideline2"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <View
+            android:id="@+id/separator6"
+            android:layout_width="match_parent"
+            android:layout_height="0.5dp"
+            android:layout_marginTop="20dp"
+            android:background="@color/grey"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/editLink_message" />
+
+
+    </android.support.constraint.ConstraintLayout>
 
     <RelativeLayout
         android:layout_width="0dp"
@@ -256,7 +287,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/separator6"
+        app:layout_constraintTop_toBottomOf="@+id/editLink_message_layout"
         app:layout_constraintVertical_bias="1.0">
 
         <Button

@@ -15,6 +15,7 @@
         android:ellipsize="marquee"
         android:textSize="16sp"
         android:textColor="#808080"
-        android:text="- Select Grid Layout -"/>
+        android:gravity="center"
+        android:text="Set orientation"/>
 
 </LinearLayout>

@@ -1,8 +1,6 @@
-package com.example.user.zeeals.responses;
+package com.example.user.zeeals.ResponsesAndRequest;
 
 import com.example.user.zeeals.model.zSource;
-
-import java.util.List;
 
 public class PostLinkResponse {
     private String message;

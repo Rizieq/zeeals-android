@@ -4,8 +4,13 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
+import android.text.Editable;
+import android.text.TextUtils;
+import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,6 +37,7 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.regex.Pattern;
 
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -44,16 +50,17 @@ public class editLinkFragment extends Fragment {
 //    private static final String TAG = "addLinkFragment";
     private Button btnAdd;
     private Spinner spinnerGroup;
-    private EditText url, urlImage, title;
+    private EditText url, urlImage, title,message;
+    private ConstraintLayout message_layout;
     private List<Zlink> zLink;
     private ProgressBar progressBar;
 
     private static int groupId;
     private static int linkId;
-    private int groupPosition;
-    private int linkPosition;
+    private int groupPosition,linkPosition;
+
     RetroConnection conn;
-    private String token;
+    private String token,confirmed_message;;
     private UserClient userClient;
 
 
@@ -95,8 +102,8 @@ public class editLinkFragment extends Fragment {
         url = view.findViewById(R.id.etURLEditLink);
         urlImage = view.findViewById(R.id.etImageAddressEditLink);
         title = view.findViewById(R.id.etTitleEditLink);
-//        Switch showLink = view.findViewById(R.id.switchshowEditLink);
-
+        message = view.findViewById(R.id.editLink_message);
+        message_layout = view.findViewById(R.id.editLink_message_layout);
 
         /* initializing Hint*/
         initHint();
@@ -131,9 +138,6 @@ public class editLinkFragment extends Fragment {
             }
         });
 
-
-
-
         return view;
 
     }
@@ -163,38 +167,64 @@ public class editLinkFragment extends Fragment {
 
         zSource zSource = zGroup.getChildLink().get(linkPosition);
         title.setHint(zSource.getTitle());
-        url.setHint(zSource.getUrl());
+        url.setHint(zSource.getLinkKey());
         urlImage.setHint(zSource.getUrl());
+        if(zSource.getMessage()!=null ){
+            message_layout.setVisibility(View.VISIBLE);
+            message.setHint(zSource.getMessage());
+            confirmed_message = zSource.getMessage();
+        }else message_layout.setVisibility(View.GONE);
         spinnerGroup.post(new Runnable() {
             @Override
             public void run() {
                 spinnerGroup.setSelection(groupPosition+1);
             }
         });
-
+        setWatcher(url);
     }
 
     public void saveLink(){
-
-
         zGroup oldGroup = ((zGroup)zLink.get(groupPosition));
         zGroup newGroup = ((zGroup)zLink.get(spinnerGroup.getSelectedItemPosition()-1));
 
-
         zSource zSources = oldGroup.getChildLink().get(linkPosition);
         String mtitle = title.getHint().toString();
-        String mUrl = url.getHint().toString();
+        String link_key = url.getHint().toString();
         String mUrlImage=urlImage.getHint().toString();
+        String mUrl="";
+
 
         if(!title.getText().toString().equals("")) mtitle = title.getText().toString();
-        if(!url.getText().toString().equals("")) mUrl = url.getText().toString();
+        if(!url.getText().toString().equals("")) link_key = url.getText().toString();
         if(!urlImage.getText().toString().equals("")) mUrlImage = urlImage.getText().toString();
+
+        if(checkEmail(link_key)){
+            confirmed_message = message.getText().toString();
+            mUrl="mailto:"+link_key+"?subject=Hello"+title.getText().toString()+"?&body="+message.getText().toString();
+        }else if(checkPhone(link_key)){
+            if(link_key.length()>=10){
+                confirmed_message=message.getText().toString();
+                mUrl="https://api.whatsapp.com/send?phone="+link_key+"&text="+confirmed_message;
+            }
+        }else if(checkUrl(link_key)){
+            if(!link_key.contains("http://")|| !link_key.contains("https://")){
+                mUrl="http://"+link_key;
+            }
+        }else{
+            if((!link_key.contains("http://")|| !link_key.contains("https://"))&&(!link_key.contains(".com"))){
+                mUrl="http://"+link_key+".com";
+            }else if(!link_key.contains(".com")){
+                mUrl=link_key+".com";
+            }else if(!link_key.contains("http://")|| !link_key.contains("https://")){
+                mUrl="http://"+link_key;
+            }
+        }
 
         zSources.setTitle(mtitle);
         zSources.setUrl(mUrl);
-        zSources.setLinkKey(mUrlImage);
-        zSources.setId();
+        zSources.setLinkKey(link_key);
         zSources.setGroupLinkId(newGroup.getGroupLinkId());
+        zSources.setMessage(confirmed_message);
         newGroup.getChildLink().add(zSources);
         oldGroup.getChildLink().remove(linkPosition);
 
@@ -225,14 +255,12 @@ public class editLinkFragment extends Fragment {
 
     public void delete(){
         AlertDialog.Builder builder = new AlertDialog.Builder(Objects.requireNonNull(getContext()));
-
-
         builder.setTitle("Hapus Group")
                 .setMessage("Apakah anda yakin menghapus group ini ? ")
                 .setPositiveButton("Hapus", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        int deletePosition = ((zGroup)zLink.get(groupPosition)).getGroupLinkId();
+                        zGroup deletePosition = ((zGroup)zLink.get(groupPosition));
                         Call<ResponseBody> call = userClient.delete(token,deletePosition);
                         call.enqueue(new Callback<ResponseBody>() {
                             @Override
@@ -266,9 +294,6 @@ public class editLinkFragment extends Fragment {
         alertOut.show();
     }
 
-
-
-
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -278,5 +303,56 @@ public class editLinkFragment extends Fragment {
     @Override
     public void onDetach() {
         super.onDetach();
+    }
+
+    public void setWatcher(final EditText text){
+        text.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                String target = text.getText().toString();
+                if(checkEmail(s)){
+                    message_layout.setVisibility(View.VISIBLE);
+                }else if(checkPhone(s)){
+                    if(target.length()>=10){
+                        message_layout.setVisibility(View.VISIBLE);
+                    }
+                }else{
+                    message_layout.setVisibility(View.GONE);
+                }
+            }
+        });
+    }
+
+    public static boolean checkEmail(CharSequence target){
+        Log.d("TEXTWATCH", "checkEmail: "+target);
+        if (TextUtils.isEmpty(target)) {
+            return false;
+        } else {
+            return android.util.Patterns.EMAIL_ADDRESS.matcher(target).matches();
+        }
+    }
+
+    public static boolean checkPhone (CharSequence target){
+        Log.d("TEXTWATCH", "checkPhone: "+target);
+        Pattern phone_pattern = Pattern.compile("^((\\+62 ((\\d{3}([ -]\\d{3,})([- ]\\d{4,})?)|(\\d+)))|(\\(\\d+\\) \\d+)|\\d{3}( \\d+)+|(\\d+[ -]\\d+)|\\d+)$");
+        return phone_pattern.matcher(target).matches();
+    }
+
+    public static boolean checkUrl(CharSequence target){
+        Pattern url_pattern= Pattern.compile("/^(http:\\/\\/www\\.|https:\\/\\/www\\.|http:\\/\\/|https:\\/\\/)?[a-z0-9]+([\\-\\.]{1}[a-z0-9]+)*\\.[a-z]{2,5}(:[0-9]{1,5})?(\\/.*)?$/i");
+        Pattern url_pattern_2= Pattern.compile("/^[a-z0-9]+([\\-\\.]{1}[a-z0-9]+)*\\.[a-z]{2,5}(:[0-9]{1,5})?(\\/.*)?$/i");
+        if(url_pattern.matcher(target).matches()){
+            return true;
+        }else if(url_pattern_2.matcher(target).matches()) return true;
+        else return false;
     }
 }

@@ -53,36 +53,41 @@
 
     <TextView
         android:id="@+id/tvIconEditGroup"
-        android:layout_width="80dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="30dp"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginEnd="32dp"
+        android:layout_marginTop="8dp"
         android:layout_marginBottom="8dp"
         android:fontFamily="@font/poppinsbold"
         android:text="@string/icon"
         android:textColor="@color/colorPrimaryDark"
         android:textSize="16sp"
+        android:gravity="center"
+        app:layout_constraintEnd_toStartOf="@id/divider"
+        app:layout_constraintTop_toBottomOf="@id/separator1"
         app:layout_constraintBottom_toTopOf="@+id/separator2"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/separator1" />
+        app:layout_constraintStart_toStartOf="parent" />
 
 
     <GridView
         android:id="@+id/iconGrid"
         android:layout_width="0dp"
-        android:layout_height="200dp"
-        android:layout_marginTop="20dp"
-        android:layout_marginBottom="20dp"
-        android:layout_marginEnd="20dp"
+        android:layout_height="300dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
         android:columnWidth="50dp"
         android:foregroundGravity="center"
         android:gravity="top"
+        android:listSelector="@drawable/grid_selector"
+        android:minWidth="300dp"
         android:numColumns="6"
         android:stretchMode="spacingWidthUniform"
-        android:listSelector="@drawable/grid_selector"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.111"
         app:layout_constraintStart_toEndOf="@+id/divider"
-        app:layout_constraintTop_toBottomOf="@id/separator1">
+        app:layout_constraintTop_toTopOf="@id/tvIconEditGroup"
+        app:layout_constraintBottom_toBottomOf="@id/tvIconEditGroup">
 
     </GridView>
 
@@ -96,51 +101,54 @@
 
 
     <TextView
-        android:id="@+id/tvTitleEditGroup"
-        android:layout_width="80dp"
-        android:layout_height="wrap_content"
-
-        android:layout_marginStart="30dp"
+        android:id="@+id/tvTitleAddGroup"
+        android:layout_width="wrap_content"
+        android:layout_height="40dp"
+        android:gravity="center"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="8dp"
         android:fontFamily="@font/poppinsbold"
         android:text="@string/title"
         android:textColor="@color/colorPrimaryDark"
         android:textSize="16sp"
-        app:layout_constraintBottom_toBottomOf="@+id/separator3"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/separator2" />
+        app:layout_constraintTop_toBottomOf="@+id/separator2"/>
 
     <EditText
         android:id="@+id/etTitleAddGroup"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="20dp"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="13dp"
+        android:layout_marginEnd="8dp"
         android:background="@android:color/transparent"
         android:ems="10"
         android:fontFamily="@font/poppinsregular"
         android:hint="@string/set_the_link_title"
         android:textColor="@color/colorPrimary"
-        android:textColorHint="@color/colorPrimary"
+        android:textColorHint="@color/lightGrey"
         android:textSize="16sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="@id/tvTitleAddGroup"
         app:layout_constraintStart_toEndOf="@+id/divider"
-        app:layout_constraintTop_toBottomOf="@+id/separator2" />
+        app:layout_constraintTop_toTopOf="@+id/tvTitleAddGroup"/>
 
     <View
         android:id="@+id/separator3"
         android:layout_width="match_parent"
         android:layout_height="0.5dp"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="8dp"
         android:background="@color/grey"
-        app:layout_constraintTop_toBottomOf="@+id/etTitleAddGroup"
+        app:layout_constraintTop_toBottomOf="@+id/tvTitleAddGroup"
         tools:layout_editor_absoluteX="0dp" />
 
 
     <TextView
-        android:id="@+id/tvGridEditGroup"
-        android:layout_width="80dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="30dp"
-        android:layout_marginTop="20dp"
+        android:id="@+id/tvGridAddGroup"
+        android:layout_width="wrap_content"
+        android:layout_height="40dp"
+        android:gravity="center"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="8dp"
         android:fontFamily="@font/poppinsbold"
         android:text="@string/grid"
         android:textColor="@color/colorPrimaryDark"
@@ -150,20 +158,24 @@
 
     <Spinner
         android:id="@+id/spinnerAddGroup"
-        android:layout_width="240dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         android:ems="10"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:paddingBottom="3dp"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/divider"
-        app:layout_constraintTop_toBottomOf="@+id/separator3" />
+        app:layout_constraintTop_toTopOf="@+id/tvGridAddGroup"
+        app:layout_constraintBottom_toBottomOf="@id/tvGridAddGroup"/>
 
     <View
         android:id="@+id/separator4"
         android:layout_width="match_parent"
         android:layout_height="0.5dp"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="8dp"
         android:background="@color/grey"
-        app:layout_constraintTop_toBottomOf="@id/spinnerAddGroup"
+        app:layout_constraintTop_toBottomOf="@id/tvGridAddGroup"
         tools:layout_editor_absoluteX="0dp" />
 
 
@@ -206,10 +218,9 @@
         android:id="@+id/divider"
         android:layout_width="0.1dp"
         android:layout_height="match_parent"
-        android:layout_marginStart="20dp"
+        android:layout_marginStart="100dp"
         android:background="@android:color/transparent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/tvTitleEditGroup"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
 </android.support.constraint.ConstraintLayout>

@@ -31,10 +31,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.user.zeeals.adapter.MainActivity;
-import com.example.user.zeeals.responses.Account_id;
+import com.example.user.zeeals.model.Account;
+import com.example.user.zeeals.model.User;
+import com.example.user.zeeals.ResponsesAndRequest.Account_id;
 import com.example.user.zeeals.model.Login;
 import com.example.user.zeeals.model.AuthLogin;
-import com.example.user.zeeals.responses.Serve;
+import com.example.user.zeeals.ResponsesAndRequest.Serve;
 import com.example.user.zeeals.model.Zlink;
 import com.example.user.zeeals.model.zGroup;
 import com.example.user.zeeals.model.zGroupList;
@@ -56,7 +58,6 @@ import com.facebook.login.widget.LoginButton;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -108,7 +109,7 @@ public class loginScreen extends AppCompatActivity {
             ETPassword =  findViewById(R.id.ETpasswordLoginInput);
             pbLogin = findViewById(R.id.login_progress);
 
-            /// THIS CODE FOR SPAN "DAFTAR" ///
+            /* THIS CODE FOR SPAN "DAFTAR" */
             textdaftar =  findViewById(R.id.textayoDaftar);
             String text = "Ayo daftar sekarang.";
             SpannableString daftar = new SpannableString(text);
@@ -132,7 +133,7 @@ public class loginScreen extends AppCompatActivity {
 
             zeealslogin =  findViewById(R.id.txtZealsLogin);
 
-            /// THIS IS FOR SPAN LUPA PASSWORD ////
+            /* THIS IS FOR SPAN LUPA PASSWORD */
             lupaPassword =  findViewById(R.id.textLupaPassword);
             String textLupa = "Lupa password?";
             SpannableString lupapass = new SpannableString(textLupa);
@@ -154,7 +155,7 @@ public class loginScreen extends AppCompatActivity {
             lupaPassword.setMovementMethod(LinkMovementMethod.getInstance());
 
 
-            /// THIS IS CODE FOR BUTTON SIGN IN ////
+            /* THIS IS CODE FOR BUTTON SIGN IN */
             btnMasuk =  findViewById(R.id.btnMasuk);
             validateEmailPassword(); //FOR VALIDATING EMAIL AND PASSWORD
             btnMasuk.setOnClickListener(new View.OnClickListener() {
@@ -171,7 +172,7 @@ public class loginScreen extends AppCompatActivity {
 
             popUpLogin = new Dialog(this);
 
-            /// USING FOR FACEBOOK LOGIN FUNC ///
+            /* USING FOR FACEBOOK LOGIN FUNC */
             textfblogin = findViewById(R.id.textfblogin);
             textfblogout = findViewById(R.id.textfblogout);
             fbBtnHandle = findViewById(R.id.customBtnFb);
@@ -205,11 +206,6 @@ public class loginScreen extends AppCompatActivity {
                 }
             });
     }
-
-        /// ANOTHER INITIATION ///
-
-
-
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
@@ -266,7 +262,7 @@ public class loginScreen extends AppCompatActivity {
         }
     }
 
-    /// VALIDATE TEXT FIELD REGISTRATION ///
+    /* VALIDATE TEXT FIELD REGISTRATION */
     private void validateEmailPassword() {
         ETemail.addTextChangedListener(new TextWatcher() {
             @Override
@@ -334,7 +330,7 @@ public class loginScreen extends AppCompatActivity {
         }
     }
 
-    /// THIS FOR LOGIN FUNCTION ///
+    /* THIS FOR LOGIN FUNCTION */
     private void loginProcess(){
         pbLogin.setVisibility(View.VISIBLE);
         btnMasuk.setVisibility(View.INVISIBLE);
@@ -350,14 +346,26 @@ public class loginScreen extends AppCompatActivity {
             @Override
             public void onResponse(Call<AuthLogin> call, retrofit2.Response<AuthLogin> response) {
                 if (response.isSuccessful()) {
-                    Log.d(TAG, "onResponse: "+response.isSuccessful());
                     Log.d(TAG,"onResponse: Post email + Password Berhasil");
                     Serve serve = response.body().getServe();
                     tokenAccess = "Bearer " + serve.getAccess_token();
 
-                    Log.d(TAG, "onResponse: TOKEN "+tokenAccess);
 
-                    getLinkAuth(tokenAccess);
+
+                    Gson gson = new Gson();
+                    List<Account> account = serve.getUser().getAccount();
+                    User user = serve.getUser();
+                    String json_account = gson.toJson(account);
+                    String json_user= gson.toJson(user);
+
+                    getSharedPreferences("ACCOUNT",MODE_PRIVATE).edit().putString("USER",json_user).apply();
+                    getSharedPreferences("TOKEN",MODE_PRIVATE).edit().putString("TOKEN",tokenAccess).apply();
+                    getSharedPreferences("ACCOUNT",MODE_PRIVATE).edit().putString("ACCOUNT",json_account).apply();
+
+
+
+                    retreiveList(tokenAccess,account.get(0).getAccountId().toString());
+//                    getLinkAuth(tokenAccess);
                 }
                 else {
                     Log.d(TAG,"onResponse: Password Login salah");
@@ -381,7 +389,8 @@ public class loginScreen extends AppCompatActivity {
             }
         });
     }
-    /// THIS FOR LOGIN TOKEN AUTHENTICATION PROGRESS ///
+
+    /* THIS FOR LOGIN TOKEN AUTHENTICATION PROGRESS,  "THIS AINT NEEDED IN MOBILE" - Deri 08,05,2019 */
     private void getLinkAuth(final String tokenAccess){
         Call<ResponseBody> call = userClient.getLink(tokenAccess);
 
@@ -391,20 +400,15 @@ public class loginScreen extends AppCompatActivity {
                 if (response.isSuccessful()) {
                     pbLogin.setVisibility(View.GONE);
                     btnMasuk.setVisibility(View.VISIBLE);
-                    Log.d(TAG,"onResponse: Token Access Berhasil");
+                    Log.d(TAG,"onResponse: Token Auth Berhasil");
 
                     SharedPreferences.Editor tokenPref = getSharedPreferences("TOKEN",MODE_PRIVATE).edit().putString("TOKEN",tokenAccess);
                     tokenPref.apply();
-                    retreiveList(tokenAccess);
+//                    retreiveList(tokenAccess);
                 }
                 else {
                     pbLogin.setVisibility(View.GONE);
                     btnMasuk.setVisibility(View.VISIBLE);
-                    try {
-                        Log.d(TAG, "onResponse: response : "+response.body().string());
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
                     Toast.makeText(loginScreen.this,"Token Acceess incorrect",Toast.LENGTH_SHORT).show();
                     Log.d(TAG,"onResponse: Token Access Salah, Cek kembali");
                 }
@@ -419,8 +423,8 @@ public class loginScreen extends AppCompatActivity {
 
     }
 
-    public void retreiveList(String token){
-        Account_id acid = new Account_id("1");
+    public void retreiveList(String token, String id){
+        Account_id acid = new Account_id(id);
         Call<zGroupList> call=  userClient.links(token,acid);
         call.enqueue(new Callback<zGroupList>() {
             @Override
@@ -455,66 +459,6 @@ public class loginScreen extends AppCompatActivity {
 
             }
         });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-//        Call<zGroupList> call=  userClient.showGroup(token);
-//        call.enqueue(new Callback<zGroupList>() {
-//            @Override
-//            public void onResponse(Call<zGroupList> call, retrofit2.Response<zGroupList> response) {
-//                if (response.isSuccessful()) {
-//
-//                    if (response.isSuccessful()) {
-//                        if (response.body().getServe() != null) {
-//                            List<zGroup> responseGroup = response.body().getServe();
-//                            for (zGroup g : responseGroup) {
-//                                zGroup g1 = new zGroup(g.getGroupLinkId(), g.getAccountId(), g.getOrientation(), g.getTitle(), g.getUnicode(), g.getPosition(), g.getStatus(), g.getCreatedAt(), g.getUpdatedAt());
-//                                zlinks.add(g1);
-//                            }
-//                            Gson gson = new Gson();
-//                            String json = gson.toJson(zlinks);
-//                            SharedPreferences.Editor pref = getSharedPreferences("TOKEN", MODE_PRIVATE).edit().putString("GROUPLIST", json);
-//                            pref.apply();
-//                        }
-//                        Intent i = new Intent(loginScreen.this, MainActivity.class).putExtra("TOKEN",tokenAccess);
-//                        i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-//                        startActivity(i);
-//                    }else{
-//                        Toast.makeText(loginScreen.this,"Connection error",Toast.LENGTH_SHORT);
-//                    }
-//
-//
-//                }
-//                else {
-//
-//                }
-//            }
-//            @Override
-//            public void onFailure(@NonNull Call<zGroupList> call, @NonNull Throwable t) {
-//
-//            }
-//        });
     }
 
 

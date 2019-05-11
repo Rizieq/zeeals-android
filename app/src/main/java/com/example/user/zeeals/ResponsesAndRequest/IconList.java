@@ -1,4 +1,4 @@
-package com.example.user.zeeals.responses;
+package com.example.user.zeeals.ResponsesAndRequest;
 
 import com.example.user.zeeals.model.Icon;
 import com.google.gson.annotations.Expose;

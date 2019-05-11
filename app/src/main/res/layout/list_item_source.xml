@@ -1,50 +1,50 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/linkLayout"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_marginTop="13dp"
+    android:id="@+id/linkLayout"
     android:layout_width="match_parent"
-    android:layout_marginHorizontal="20dp"
-    android:clickable="true"
+    android:layout_height="55dp"
+    android:layout_marginStart="35dp"
+    android:layout_marginEnd="35dp"
+    android:layout_marginBottom="13dp"
     android:background="@drawable/shadow_box"
-    android:elevation="3dp"
-    android:layout_height="50dp">
+    android:clickable="true"
+    android:elevation="3dp">
 
     <TextView
         android:id="@+id/list_item_source_name"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginLeft="72dp"
+        android:layout_marginStart="72dp"
         android:layout_marginTop="5dp"
-        android:paddingBottom="20dp"
-        android:fontFamily="@font/poppinsbold"
-        android:textAlignment="center"
-        android:gravity="center_vertical"
         android:clickable="false"
+        android:fontFamily="@font/poppinsbold"
+        android:gravity="center_vertical"
+        android:paddingBottom="20dp"
+        android:textAlignment="center"
         tools:text="Source Name" />
 
     <TextView
         android:id="@+id/list_item_source_link"
-
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginLeft="72dp"
-        android:fontFamily="@font/poppinsregular"
-        android:gravity="center_vertical"
-        android:textAlignment="center"
-        android:paddingTop="15dp"
-        android:textSize="10dp"
         android:background="?attr/selectableItemBackgroundBorderless"
         android:clickable="false"
+        android:fontFamily="@font/poppinsregular"
+        android:gravity="center_vertical"
+        android:paddingTop="15dp"
+        android:textAlignment="center"
+        android:textSize="10dp"
         tools:text="http://instagram.com/eldirohmanur" />
 
     <ImageView
         android:id="@+id/imageView3"
         android:layout_width="72dp"
+        android:layout_height="53dp"
         android:clickable="false"
-        android:layout_height="wrap_content"
-        app:srcCompat="@drawable/proflephoto"
-        android:scaleType="centerCrop"/>
+        android:scaleType="centerCrop"
+        app:srcCompat="@drawable/proflephoto" />
 
 </FrameLayout>

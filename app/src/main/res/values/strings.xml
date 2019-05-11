@@ -65,6 +65,19 @@
     <string name="log_out_facebok">LOG OUT FACEBOOK</string>
     <string name="account_url">zeeals.link/accountUrl</string>
     <string name="edit_link">EDIT LINK</string>
+    <string name="set_your_message_here">Set your message here</string>
+    <string name="key">Key</string>
+    <string name="set_your_email_here">Set your email here</string>
+    <string name="name">Name</string>
+    <string name="phone">Phone</string>
+    <string name="set_your_phone_number_here">Set your phone number here</string>
+    <string name="address">Address</string>
+    <string name="old_password">Old Password</string>
+    <string name="confirm_password">Confirm New Password</string>
+    <string name="new_password">New Password</string>
+    <string name="type_your_old_password_here">Type your old password here</string>
+    <string name="type_your_new_password_here">Type your new password here</string>
+    <string name="change_password">Change Password</string>
 
     <string-array name="grid">
         <item> Horizontal </item>

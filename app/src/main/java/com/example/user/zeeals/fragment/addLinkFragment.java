@@ -1,9 +1,8 @@
 package com.example.user.zeeals.fragment;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Context;
-import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -21,15 +20,13 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
-import android.widget.Switch;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.user.zeeals.R;
 import com.example.user.zeeals.model.Zlink;
 import com.example.user.zeeals.model.zGroup;
 import com.example.user.zeeals.model.zSource;
-import com.example.user.zeeals.responses.PostLinkResponse;
+import com.example.user.zeeals.ResponsesAndRequest.PostLinkResponse;
 import com.example.user.zeeals.service.RetroConnection;
 import com.example.user.zeeals.service.UserClient;
 import com.example.user.zeeals.util.NothingSelectedSpinnerAdapter;
@@ -39,8 +36,8 @@ import com.google.gson.reflect.TypeToken;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.regex.Pattern;
-import java.util.zip.Inflater;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -53,7 +50,7 @@ public class addLinkFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String TAG = "addLinkFragment";
-    private Button btnBack, btnDelete, btnAdd;
+    private Button btnAdd;
     private Spinner spinnerGroup;
     private EditText url, urlImage, title;
     private List<Zlink> zLink;
@@ -78,7 +75,7 @@ public class addLinkFragment extends Fragment {
         View addLinkView = inflater.inflate(R.layout.fragment_add_link, container, false);
 
         conn = new RetroConnection();
-        String groupJSON = getActivity().getSharedPreferences("TOKEN",Context.MODE_PRIVATE).getString("GROUPLIST",null);
+        String groupJSON = Objects.requireNonNull(getActivity()).getSharedPreferences("TOKEN",Context.MODE_PRIVATE).getString("GROUPLIST",null);
         Type listType = new TypeToken<List<zGroup>>(){}.getType();
         zLink = new ArrayList<>();
         zLink = new Gson().fromJson(groupJSON,listType);
@@ -87,16 +84,16 @@ public class addLinkFragment extends Fragment {
         progressBar = addLinkView.findViewById(R.id.progress_bar_add_link);
         progressBar.setVisibility(View.GONE);
 
-        btnBack = addLinkView.findViewById(R.id.btnBackAddLink);
+        Button btnBack = addLinkView.findViewById(R.id.btnBackAddLink);
         btnAdd = addLinkView.findViewById(R.id.btnAddAddLink);
-        btnDelete = addLinkView.findViewById(R.id.btnDeleteAddLink);
+        Button btnDelete = addLinkView.findViewById(R.id.btnDeleteAddLink);
         spinnerGroup = addLinkView.findViewById(R.id.spinnerAddLink);
         List<String> groupNames = new ArrayList<String>();
         for (int i=0;i<zLink.size();i++){
             groupNames.add(((zGroup)zLink.get(i)).getTitle());
         }
 
-        ArrayAdapter<String> dataSpinner = new ArrayAdapter<String>(getContext(),android.R.layout.simple_spinner_item,groupNames);
+        ArrayAdapter<String> dataSpinner = new ArrayAdapter<>(Objects.requireNonNull(getContext()),android.R.layout.simple_spinner_item,groupNames);
         dataSpinner.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerGroup.setPrompt("Select Group");
         spinnerGroup.setAdapter(new NothingSelectedSpinnerAdapter(dataSpinner, R.layout.contact_spinner_row_nothing_selected,getContext()));
@@ -111,7 +108,7 @@ public class addLinkFragment extends Fragment {
         btnBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getActivity().onBackPressed();
+                Objects.requireNonNull(getActivity()).onBackPressed();
             }
         });
 
@@ -148,6 +145,7 @@ public class addLinkFragment extends Fragment {
         alertShow.show();
     }
 
+    @SuppressLint("SetTextI18n")
     private void saveLink(){
         int spinnerPosition = 0;
         boolean allRequired=true;
@@ -170,33 +168,36 @@ public class addLinkFragment extends Fragment {
         if(allRequired){
             btnAdd.setVisibility(View.GONE);
             progressBar.setVisibility(View.VISIBLE);
-            String target=url.getText().toString();
+            String link_key=url.getText().toString();
+            String mUrl="";
 
-            if(checkEmail(target)){
+            if(checkEmail(link_key)){
                 confirmed_message = message.getText().toString();
-                url.setText("mailto:"+target+"?subject=Hello"+title.getText().toString()+"?&body="+message.getText().toString());
-            }else if(checkPhone(target)){
-                if(target.length()>=10){
+                mUrl="mailto:"+link_key+"?subject=Hello"+title.getText().toString()+"?&body="+message.getText().toString();
+            }else if(checkPhone(link_key)){
+                if(link_key.length()>=10){
                     confirmed_message=message.getText().toString();
-                    url.setText("https://api.whatsapp.com/send?phone="+target+"&text="+confirmed_message);
+                    mUrl="https://api.whatsapp.com/send?phone="+link_key+"&text="+confirmed_message;
                 }
-            }else if(checkUrl(target)){
-                if(!target.contains("http://")|| !target.contains("https://")){
-                    url.setText("http://"+target);
+            }else if(checkUrl(link_key)){
+                if(!link_key.contains("http://")|| !link_key.contains("https://")){
+                    mUrl="http://"+link_key;
                 }
             }else{
-                if((!target.contains("http://")|| !target.contains("https://"))&&(!target.contains(".com"))){
-                    url.setText("http://"+target+".com");
-                }else if(!target.contains(".com")){
-                    url.setText(target+".com");
-                }else if(!target.contains("http://")|| !target.contains("https://")){
-                    url.setText("http://"+target);
+                if((!link_key.contains("http://")|| !link_key.contains("https://"))&&(!link_key.contains(".com"))){
+                    mUrl="http://"+link_key+".com";
+                }else if(!link_key.contains(".com")){
+                    mUrl=link_key+".com";
+                }else if(!link_key.contains("http://")|| !link_key.contains("https://")){
+                    mUrl="http://"+link_key;
                 }
             }
             int groupID = ((zGroup)zLink.get(spinnerPosition-1)).getGroupLinkId();
-            final zSource source = new zSource(1,groupID,"tes",url.getText().toString(),title.getText().toString(),0,"testing","v",1);
-
-            String token = getActivity().getSharedPreferences("TOKEN",Context.MODE_PRIVATE).getString("TOKEN",null);
+            final zSource source = new zSource(1,groupID,link_key,url.getText().toString(),title.getText().toString(),0,"testing","v",1);
+            source.setMessage(confirmed_message);
+            source.setLinkKey(link_key);
+            source.setUrl(mUrl);
+            String token = Objects.requireNonNull(getActivity()).getSharedPreferences("TOKEN",Context.MODE_PRIVATE).getString("TOKEN",null);
             UserClient userClient = conn.getConnection();
             Call<PostLinkResponse> call = userClient.createLink(token,source);
             final int finalSpinnerPosition = spinnerPosition;
@@ -213,20 +214,23 @@ public class addLinkFragment extends Fragment {
                             group.getChildLink().add(source);
                         }
 
+                        assert response.body() != null;
                         source.setLinkId(response.body().getServe().getLinkId());
 
                         Gson gson = new Gson();
                         String json = gson.toJson(zLink);
-                        getActivity().getSharedPreferences("TOKEN",MODE_PRIVATE).edit().putString("GROUPLIST",json).apply();
+                        Objects.requireNonNull(getActivity()).getSharedPreferences("TOKEN",MODE_PRIVATE).edit().putString("GROUPLIST",json).apply();
                         getActivity().finish();
                     }else{
                         Toast.makeText(getContext(),"Oops, Something went error !",Toast.LENGTH_SHORT).show();
+                        Objects.requireNonNull(getActivity()).finish();
                     }
                 }
 
                 @Override
                 public void onFailure(@NonNull Call<PostLinkResponse> call, @NonNull Throwable t) {
                     Toast.makeText(getContext(),"Connection error !",Toast.LENGTH_SHORT).show();
+                    Objects.requireNonNull(getActivity()).finish();
                 }
             });
         }
@@ -277,7 +281,6 @@ public class addLinkFragment extends Fragment {
     }
 
     public static boolean checkUrl(CharSequence target){
-        Log.d("TEXTWATCH", "checkURL: "+target);
         Pattern url_pattern= Pattern.compile("/^(http:\\/\\/www\\.|https:\\/\\/www\\.|http:\\/\\/|https:\\/\\/)?[a-z0-9]+([\\-\\.]{1}[a-z0-9]+)*\\.[a-z]{2,5}(:[0-9]{1,5})?(\\/.*)?$/i");
         Pattern url_pattern_2= Pattern.compile("/^[a-z0-9]+([\\-\\.]{1}[a-z0-9]+)*\\.[a-z]{2,5}(:[0-9]{1,5})?(\\/.*)?$/i");
         if(url_pattern.matcher(target).matches()){

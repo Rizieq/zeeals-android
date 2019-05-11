@@ -25,6 +25,9 @@ public class zSource extends Zlink {
     @SerializedName("url")
     @Expose
     private String url;
+    @SerializedName("message")
+    @Expose
+    private String message;
     @SerializedName("title")
     @Expose
     private String title;
@@ -81,6 +84,14 @@ public class zSource extends Zlink {
     public void setLinkId(Integer linkId) {
         this.linkId = linkId;
         this.Id = linkId;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
     }
 
     public Integer getAccountId() {

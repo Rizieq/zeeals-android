@@ -62,6 +62,9 @@ public class zGroup extends Zlink {
         this.childrenVisible = childrenVisible;
     }
 
+    public zGroup() {
+    }
+
     public zGroup(int id, String title) {
         this.groupLinkId = id;
         this.title = title;

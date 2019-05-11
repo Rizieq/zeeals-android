@@ -1,5 +1,6 @@
 package com.example.user.zeeals.adapter;
 
+import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -11,7 +12,11 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
 import android.view.animation.RotateAnimation;
+import android.view.animation.ScaleAnimation;
+import android.view.animation.TranslateAnimation;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -202,11 +207,12 @@ public class RecyclerAdapter_Main extends RecyclerView.Adapter<RecyclerView.View
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder viewHolder, @SuppressLint("RecyclerView") final int i) {
         if (viewHolder.getItemViewType()==CHILD){
+            setFadeAnimation(viewHolder.itemView);
             TextView sourceName = ((ChildsViewHolder)viewHolder).sourceName;
             TextView sourceLink= ((ChildsViewHolder)viewHolder).sourceLink;
             FrameLayout linkLayout = ((ChildsViewHolder)viewHolder).layoutLink;
             final zSource zSource = (zSource) general.get(i);
-            sourceLink.setText(zSource.getUrl());
+            sourceLink.setText(zSource.getLinkKey());
             sourceName.setText(zSource.getTitle());
             linkLayout.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -255,7 +261,7 @@ public class RecyclerAdapter_Main extends RecyclerView.Adapter<RecyclerView.View
                     .setPositiveButton("Hapus", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
-                            int deletePosition = ((zGroup)general.get(position)).getGroupLinkId();
+                            zGroup deletePosition = ((zGroup)general.get(position));
                             Call<ResponseBody> call = userClient.delete(token,deletePosition);
                             call.enqueue(new Callback<ResponseBody>() {
                                 @Override
@@ -305,7 +311,7 @@ public class RecyclerAdapter_Main extends RecyclerView.Adapter<RecyclerView.View
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
                             int deletePosition = zSource.getLinkId();
-                            Call<ResponseBody> call = userClient.deleteLink(token,deletePosition);
+                            Call<ResponseBody> call = userClient.deleteLink(token,zSource);
                             call.enqueue(new Callback<ResponseBody>() {
                                 @Override
                                 public void onResponse(@NonNull Call<ResponseBody> call, @NonNull Response<ResponseBody> response) {
@@ -388,6 +394,22 @@ public class RecyclerAdapter_Main extends RecyclerView.Adapter<RecyclerView.View
         }
 
         return new int[]{groupPosition,linkPosition};
+    }
+
+
+    private void setFadeAnimation(View view) {
+//        AlphaAnimation anim = new AlphaAnimation(0.0f, 1.0f);
+//        anim.setDuration(230);
+//        view.startAnimation(anim);
+        view.animate().x(50f).y(100f);
+//        ObjectAnimator animation = ObjectAnimator.ofFloat(view, "translationX", 100f);
+//        animation.setDuration(2000);
+//        TranslateAnimation animate =
+//        view.startAnimation(animation);
+
+//        ScaleAnimation anim = new ScaleAnimation(0.0f, 1.0f, 0.0f, 1.0f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+//        anim.setDuration(250);
+//        view.startAnimation(anim);
     }
 
 }

@@ -232,7 +232,7 @@ public class editGroupFragment extends Fragment {
                 bar.setVisibility(View.VISIBLE);
 
                 /*Saving Progress*/
-                Call<ResponseBody> call = conn.getConnection().update(token,newGroup.getGroupLinkId(),newGroup);
+                Call<ResponseBody> call = conn.getConnection().update(token,newGroup);
                 call.enqueue(new Callback<ResponseBody>() {
                     @Override
                     public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
@@ -338,7 +338,7 @@ public class editGroupFragment extends Fragment {
                         btn_save_group.setEnabled(false);
                         btn_save_group.setClickable(false);
                         bar.setVisibility(View.VISIBLE);
-                        int deletePosition = ((zGroup)zlinks.get(position)).getGroupLinkId();
+                        zGroup deletePosition = ((zGroup)zlinks.get(position));
                         Call<ResponseBody> call = conn.getConnection().delete(token,deletePosition);
                         call.enqueue(new Callback<ResponseBody>() {
                             @Override

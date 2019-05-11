@@ -1,4 +1,4 @@
-package com.example.user.zeeals.responses;
+package com.example.user.zeeals.ResponsesAndRequest;
 
 public class PostGroupResponse {
     private String message;

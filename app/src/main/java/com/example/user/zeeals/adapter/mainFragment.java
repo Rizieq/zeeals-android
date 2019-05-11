@@ -1,11 +1,15 @@
 package com.example.user.zeeals.adapter;
 
+import android.animation.ObjectAnimator;
+import android.annotation.SuppressLint;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Canvas;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -15,9 +19,13 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.text.method.ScrollingMovementMethod;
+import android.transition.Transition;
+import android.transition.TransitionSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
 import android.view.animation.OvershootInterpolator;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -75,6 +83,7 @@ public class mainFragment extends Fragment {
     int USER_ID;
     private static final String TAG = "TESTING";
     RetroConnection connection;
+    ConstraintLayout dim;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -89,44 +98,33 @@ public class mainFragment extends Fragment {
 
         //TOKEN
         token = getActivity().getSharedPreferences("TOKEN",MODE_PRIVATE).getString("TOKEN",null);
-
-
     }
 
+    @SuppressLint("RestrictedApi")
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_main,container,false);
-
+        dim = view.findViewById(R.id.semi_white_bg);
         recyclerViewTes = view.findViewById(R.id.recycler_view);
         fab = view.findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (menuShowed){
-                    transaction = getChildFragmentManager().beginTransaction();
-//                    transaction.setCustomAnimations(R.anim.enter_from_bottom,R.anim.exit_to_right);
-                    transaction.hide(menuFragment);
-                    transaction.commit();
-                    rotateFab();
-                }else{
-                    openMenuFragment();
-                    rotateFab();
-                }
-
-            }
-        });
-
+        fab.setVisibility(View.VISIBLE);
         userClient = connection.getConnection();
+        initProfile(view);
+        initListener();
 
-        /// FOR PROFILE UI ABOVE SEPARATOR//
+
+        return view;
+    }
+
+    private void initProfile(View view){
         profileName =  view.findViewById(R.id.profileName);
         profileDesc =  view.findViewById(R.id.profileDesc);
         profileDesc.setMovementMethod(new ScrollingMovementMethod());
         imgProfpic =  view.findViewById(R.id.profilePicture);
         imgBannerProfPic =  view.findViewById(R.id.profileBanner);
         View topBar = view.findViewById(R.id.menu_appbar);
-
+        topBar.bringToFront();
         btn_editProfile = topBar.findViewById(R.id.btnEditPofile);
         btn_editProfile_2=topBar.findViewById(R.id.btnEditPofile_2);
 
@@ -135,29 +133,64 @@ public class mainFragment extends Fragment {
 
         picChangePopUp = new Dialog(view.getContext());
         editGroupNamePopup = new Dialog(view.getContext());
-        View tb =  view.findViewById(R.id.menu_appbar);
-        tb.bringToFront();
-        RelativeLayout btnBack = tb.findViewById(R.id.btnBack);
-        RelativeLayout btnEdit =  tb.findViewById(R.id.btnEditPofile);
+        RelativeLayout btnBack = topBar.findViewById(R.id.btnBack);
+        RelativeLayout btnEdit =  topBar.findViewById(R.id.btnEditPofile);
         btnBack.setVisibility(View.GONE);
 
         btn_editProfile.setOnClickListener(openEditProfile);
         btn_editProfile_2.setOnClickListener(openEditProfile);
+    }
+    private void initListener(){
 
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (menuShowed){
+                    transaction = getChildFragmentManager().beginTransaction();
+                    transaction.hide(menuFragment);
+                    transaction.commit();
+                    dim.setVisibility(View.GONE);
+                    rotateFab();
+                }else{
+                    dim.setVisibility(View.VISIBLE);
+                    openMenuFragment();
+                    rotateFab();
+                }
+            }
+        });
 
-        return view;
+        dim.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(menuShowed){
+                    transaction = getChildFragmentManager().beginTransaction();
+                    transaction.hide(menuFragment);
+                    transaction.commit();
+                    dim.setVisibility(View.GONE);
+                    rotateFab();
+                }
+            }
+        });
     }
 
+    @SuppressLint("RestrictedApi")
     @Override
     public void onStart() {
         super.onStart();
-
         String groupJSON = getActivity().getSharedPreferences("TOKEN",MODE_PRIVATE).getString("GROUPLIST",null);
+        fab.setVisibility(View.VISIBLE);
         if(groupJSON!=null){
             Type listType = new TypeToken<List<zGroup>>(){}.getType();
             zLink = new ArrayList<>();
             zLink = new Gson().fromJson(groupJSON,listType);
             setupRecycler();
+        }
+        if(menuShowed){
+            transaction = getChildFragmentManager().beginTransaction();
+            transaction.hide(menuFragment);
+            transaction.commit();
+            dim.setVisibility(View.GONE);
+            rotateFab();
         }
 
 
@@ -189,13 +222,12 @@ public class mainFragment extends Fragment {
 //            }
 //        });
 
-            ItemTouchHelper itemTouchHelper = new ItemTouchHelper(new SwipeToDeleteCallback(adapterTest,getContext()));
-            itemTouchHelper.attachToRecyclerView(recyclerViewTes);
+//            ItemTouchHelper itemTouchHelper = new ItemTouchHelper(new SwipeToDeleteCallback(adapterTest,getContext()));
+//            itemTouchHelper.attachToRecyclerView(recyclerViewTes);
             adapterTest.notifyDataSetChanged();
     }
 
     public void openMenuFragment() {
-
         menuFragment = menuFragment.newInstance();
         FragmentManager fragmentManager = getChildFragmentManager();
         transaction = fragmentManager.beginTransaction();
@@ -203,6 +235,7 @@ public class mainFragment extends Fragment {
         transaction.replace(R.id.fragment_menu_container, menuFragment).show(menuFragment).commit();
 
     }
+
     public void rotateFab(){
         if (menuShowed){
             final OvershootInterpolator interpolator = new OvershootInterpolator();
@@ -241,6 +274,19 @@ public class mainFragment extends Fragment {
         }
     };
 
+    @SuppressLint("RestrictedApi")
+    @Override
+    public void onStop() {
+        super.onStop();
+        fab.setVisibility(View.GONE);
+    }
 
-
+    @SuppressLint("RestrictedApi")
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        fab.setVisibility(View.VISIBLE);
+        rotateFab();
+        rotateFab();
+    }
 }

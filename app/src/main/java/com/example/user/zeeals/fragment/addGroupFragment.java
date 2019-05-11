@@ -1,5 +1,6 @@
 package com.example.user.zeeals.fragment;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
@@ -16,15 +17,14 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
-import android.widget.Switch;
 import android.widget.TextView;
 
 import com.example.user.zeeals.R;
 import com.example.user.zeeals.adapter.IconAdapter;
-import com.example.user.zeeals.responses.PostGroupResponse;
+import com.example.user.zeeals.model.User;
+import com.example.user.zeeals.ResponsesAndRequest.PostGroupResponse;
 import com.example.user.zeeals.model.Zlink;
 import com.example.user.zeeals.model.zGroup;
 import com.example.user.zeeals.service.RetroConnection;
@@ -44,21 +44,21 @@ import static android.content.Context.MODE_PRIVATE;
 
 public class addGroupFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
-    private static final String GROUPNAME= "name";
+//    private static final String GROUPNAME= "name";
     private static final String TAG = "addGroupFragment";
 
     // TODO: Rename and change types of parameters
     private Button  btnAdd;    //delete ditiadakan
 //    private String btnIcon_addGroup;  //icon
-    private Switch switchStatus;           //status
+//    private Switch switchStatus;           //status
     private EditText title;             //group title
     private Spinner spinner_grid;
     private char orientationData;//orientation :vertical horizontal
     private ImageView btnBack, btnDelete;
+    @SuppressLint("StaticFieldLeak")
     static Context context;
     Dialog iconPicker_dialog;
     GridView gridView;
-    LinearLayout gridItemLayout;
     TextView prevGridText;
     int prevGridPosition;
 
@@ -68,9 +68,7 @@ public class addGroupFragment extends Fragment {
 
     RetroConnection conn;
     ArrayList<String> iconList;
-
-//    final String[] iconList = new String []{"f042","f037","f039","f036","f038","f461","f0f9","f2a3","f13d","f103","f100","f101","f102","f107","f104","f105","f106","f187","f358","f359","f35a","f35b","f0ab","f0a8","f0a9","f0aa","f063","f060","f061","f062","f0b2","f337","f338","f2a2","f069","f1fa","f29e","f04a","f24e","f05e","f462","f02a","f0c9","f433","f434","f2cd","f244","f240","f242","f243"};
-
+    int account_id;
     public addGroupFragment() {
         // Required empty public constructor
     }
@@ -92,6 +90,11 @@ public class addGroupFragment extends Fragment {
         iconList = new Gson().fromJson(iconJSON,ArrayList.class);
         conn = new RetroConnection();
         token = getActivity().getSharedPreferences("TOKEN", MODE_PRIVATE).getString("TOKEN",null);
+
+        String userJSON = getActivity().getSharedPreferences("ACCOUNT",MODE_PRIVATE).getString("USER",null);
+//        Type listType = new TypeToken<User>(){}.getType();
+        User user= new Gson().fromJson(userJSON,User.class);
+        account_id = user.getAccount().get(0).getAccountId();
     }
 
     @Override
@@ -115,7 +118,7 @@ public class addGroupFragment extends Fragment {
 
 
         spinner_grid.setPrompt("Select your Grid");
-        spinner_grid.setAdapter(new NothingSelectedSpinnerAdapter(adapterGrid, R.layout.contact_spinner_row_nothing_selected,getContext()));
+        spinner_grid.setAdapter(adapterGrid);
         rawIcon="f059";
 
 
@@ -131,16 +134,11 @@ public class addGroupFragment extends Fragment {
                 dialogDelete();
             }
         });
-//        btnIcon_addGroup.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                openIconPicker();
-//            }
-//        });
 
 
         gridView = addGroupView.findViewById(R.id.iconGrid);
         IconAdapter iconAdapter = new IconAdapter(getContext(),iconList);
+        gridView.setDrawSelectorOnTop(false);
         gridView.setAdapter(iconAdapter);
 
 //        iconPicker_dialog.show();
@@ -175,55 +173,7 @@ public class addGroupFragment extends Fragment {
         btnAdd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                bar.setVisibility(View.VISIBLE);
-                btnAdd.setVisibility(View.GONE);
-                final String titleData = title.getText().toString();
-                final String iconData = rawIcon;
-                final String status;
-
-                if(spinner_grid.getSelectedItem()!=null){
-                    if(spinner_grid.getSelectedItem().toString().equals("Horizontal")){
-                        orientationData='h';
-                    }else orientationData='v';
-                }else{
-                    orientationData='v';
-                }
-                if(switchStatus.isChecked()){
-                    status="1";
-                }else status="0";
-
-                final zGroup group = new zGroup(orientationData,titleData,iconData,Integer.parseInt(status));
-                Call<PostGroupResponse> call = conn.getConnection().create(token,group);
-                call.enqueue(new Callback<PostGroupResponse>() {
-                    @Override
-                    public void onResponse(Call<PostGroupResponse> call, Response<PostGroupResponse> response) {
-                        if(response.isSuccessful()){
-//                            final String[] x = {String.valueOf(orientationData),titleData,iconData,status,Integer.toString(response.body().getGroupLinkId())};
-                            String groupJSON = getActivity().getSharedPreferences("TOKEN",MODE_PRIVATE).getString("GROUPLIST",null);
-                            List<Zlink> zLink;
-                            group.setGroupLinkId(response.body().getGroupID());
-                            if(groupJSON!=null){
-                                Type listType = new TypeToken<List<zGroup>>(){}.getType();
-                                zLink = new Gson().fromJson(groupJSON,listType);
-                            }else{
-                                zLink = new ArrayList<>();
-                            }
-                            zLink.add(group);
-                            Gson gson = new Gson();
-                            String json = gson.toJson(zLink);
-
-                            getActivity().getSharedPreferences("TOKEN",MODE_PRIVATE).edit().putString("GROUPLIST",json).apply();
-                            getActivity().finish();
-                            Log.d(TAG, "onResponse: Data added");
-                        }
-                    }
-
-                    @Override
-                    public void onFailure(Call<PostGroupResponse> call, Throwable t) {
-
-                    }
-                });
-
+                saveGroup();
             }
         });
 
@@ -252,6 +202,64 @@ public class addGroupFragment extends Fragment {
         alertShow.show();
     }
 
+    private void saveGroup(){
+        bar.setVisibility(View.VISIBLE);
+        btnAdd.setVisibility(View.GONE);
+        final String titleData = title.getText().toString();
+        final String iconData = rawIcon;
+        final String status="1";
 
+        if(spinner_grid.getSelectedItem()!=null){
+            if(spinner_grid.getSelectedItem().toString().equals("Horizontal")){
+                orientationData='h';
+            }else orientationData='v';
+        }else{
+            orientationData='v';
+        }
+//                if(switchStatus.isChecked()){
+//                    status="1";
+//                }else status="0";
+
+        
+        final zGroup group = new zGroup();
+        group.setTitle(titleData);
+        group.setUnicode(iconData);
+        group.setStatus(1);
+        group.setAccountId(account_id);
+        Call<PostGroupResponse> call = conn.getConnection().create(token,group);
+        call.enqueue(new Callback<PostGroupResponse>() {
+            @Override
+            public void onResponse(Call<PostGroupResponse> call, Response<PostGroupResponse> response) {
+                if(response.isSuccessful()){
+//                            final String[] x = {String.valueOf(orientationData),titleData,iconData,status,Integer.toString(response.body().getGroupLinkId())};
+                    String groupJSON = getActivity().getSharedPreferences("TOKEN",MODE_PRIVATE).getString("GROUPLIST",null);
+                    List<Zlink> zLink;
+                    assert response.body() != null;
+                    group.setGroupLinkId(response.body().getGroupID());
+                    if(groupJSON!=null){
+                        Type listType = new TypeToken<List<zGroup>>(){}.getType();
+                        zLink = new Gson().fromJson(groupJSON,listType);
+                    }else{
+                        zLink = new ArrayList<>();
+                    }
+                    zLink.add(group);
+                    Gson gson = new Gson();
+                    String json = gson.toJson(zLink);
+
+                    getActivity().getSharedPreferences("TOKEN",MODE_PRIVATE).edit().putString("GROUPLIST",json).apply();
+                    getActivity().finish();
+                    Log.d(TAG, "onResponse: Data added");
+                }else {
+                    Log.d(TAG, "onResponse: FAILED");
+                    getActivity().finish();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<PostGroupResponse> call, Throwable t) {
+                t.printStackTrace();
+            }
+        });
+    }
 
 }

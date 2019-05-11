@@ -13,6 +13,8 @@
     <color name="greenSuccess">#a0cc86</color>
     <color name="redFailed">#ce6b6b</color>
     <color name="shadowGrey">#eaecef</color>
+    <color name="no_image_grey">#C3C3C3</color>
+
 
     <color name="profileName_Gray">#444444</color>
     <color name="profileDesc_Gray">#888888</color>

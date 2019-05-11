@@ -6,6 +6,7 @@ import android.os.Bundle;
 import com.example.user.zeeals.R;
 import com.example.user.zeeals.fragment.addGroupFragment;
 import com.example.user.zeeals.fragment.addLinkFragment;
+import com.example.user.zeeals.fragment.changePasswordFragment;
 import com.example.user.zeeals.fragment.editLinkFragment;
 import com.example.user.zeeals.service.RetroConnection;
 
@@ -22,28 +23,33 @@ public class addGroupAndLinkFragmentHost extends AppCompatActivity{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_group_and_link_fragment_host);
         String key = getIntent().getStringExtra("menuType");
-        if (key.equals("addGroup")){
-            openAddGroupFragment();
-        }else if(key.equals("addLink")){
-            openAddLinkFragment();
-        }else if(key.equals("editGroup")){
-            openEditGroupFragment(getIntent().getIntExtra("position",100));
-        }else if(key.equals("editLink")){
-            openEditLinkFragment(getIntent().getIntArrayExtra("position"));
+        switch (key) {
+            case "addGroup":
+                openAddGroupFragment();
+                break;
+            case "addLink":
+                openAddLinkFragment();
+                break;
+            case "editGroup":
+                openEditGroupFragment(getIntent().getIntExtra("position", 100));
+                break;
+            case "editLink":
+                openEditLinkFragment(getIntent().getIntArrayExtra("position"));
+                break;
+            case "changePassword":
+                openChangePasswordFragment();
+                break;
         }
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-
     }
 
     public void openAddGroupFragment() {
         addNewGroupFragment = addNewGroupFragment.newInstance(addGroupAndLinkFragmentHost.this);
         getSupportFragmentManager().beginTransaction().replace(R.id.add_group_and_link_host_container,addNewGroupFragment,"Add Group Fragment").commit();
-
-
     }
 
     public void openAddLinkFragment() {
@@ -59,6 +65,11 @@ public class addGroupAndLinkFragmentHost extends AppCompatActivity{
     public void openEditLinkFragment(int[] position){
         editLinkFragment = editLinkFragment.newInstance(position);
         getSupportFragmentManager().beginTransaction().replace(R.id.add_group_and_link_host_container,editLinkFragment,"Edit Link Fragment").commit();
+    }
+
+    public void openChangePasswordFragment(){
+        changePasswordFragment mchangePasswordFragment = changePasswordFragment.newInstance(this);
+        getSupportFragmentManager().beginTransaction().replace(R.id.add_group_and_link_host_container,mchangePasswordFragment).commit();
     }
 
 
