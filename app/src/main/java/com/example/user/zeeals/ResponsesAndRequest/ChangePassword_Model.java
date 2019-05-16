@@ -10,9 +10,13 @@ public class ChangePassword_Model {
     @SerializedName("new_pass")
     @Expose
     private String newPass;
+    @SerializedName("mobile")
+    @Expose
+    private String mobile;
 
     public ChangePassword_Model(String oldPass, String newPass) {
         this.oldPass = oldPass;
         this.newPass = newPass;
+        this.mobile = "$2y$10$s6ZYEuThB8IkZ0sl1ucOOeJFYf/4DmGNbeIyB6j4l9lPpwdu41n5K";
     }
 }

@@ -62,18 +62,18 @@ public class splashscreen extends AppCompatActivity {
             public void run(){
                 try{
                     sleep(3000);
-                }catch (InterruptedException e){
-                    e.printStackTrace();
-                }finally {
                     SharedPreferences pref = getSharedPreferences("TOKEN",MODE_PRIVATE);
                     String tokenAccess = pref.getString("TOKEN",null);
                     if(tokenAccess==null){
                         startActivity(new Intent(splashscreen.this,loginScreen.class));
                         finish();
-
                     }else{
                         retreiveList(tokenAccess);
                     }
+                }catch (InterruptedException e){
+                    e.printStackTrace();
+                }finally {
+
 
                 }
             }

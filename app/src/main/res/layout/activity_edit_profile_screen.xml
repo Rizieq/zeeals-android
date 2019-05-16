@@ -14,33 +14,15 @@
 
     <ImageView
         android:id="@+id/ivChangeBanner"
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="160dp"
         android:contentDescription="@string/change_banner"
         android:scaleType="centerCrop"
         android:src="@drawable/white"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:srcCompat="@drawable/white" />
 
-    <ImageView
-        android:id="@+id/ivChangePhoto"
-        android:layout_width="120dp"
-        android:layout_height="120dp"
-        android:onClick="showPopUpChangeProfilePicture"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="96dp"
-        android:layout_marginEnd="8dp"
-        android:background="@drawable/border_profile_picture"
-        android:contentDescription="@string/change_profile_picture"
-        android:scaleType="fitXY"
-        android:src="@drawable/white"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.12"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/ivChangeBanner"
-        tools:srcCompat="@drawable/white" />
+
 
     <View
         android:id="@+id/separator1"
@@ -54,7 +36,7 @@
     <TextView
         android:id="@+id/textBrandName"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="40dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="8dp"
@@ -62,6 +44,7 @@
         android:text="Brand Name"
         android:textColor="@color/colorPrimaryDark"
         android:textSize="16sp"
+        android:gravity="center"
         app:layout_constraintEnd_toStartOf="@+id/etName"
         app:layout_constraintHorizontal_bias="0.47"
         app:layout_constraintStart_toStartOf="parent"
@@ -70,11 +53,9 @@
     <EditText
         android:id="@+id/etName"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
-        android:layout_marginBottom="8dp"
         android:background="@android:color/transparent"
         android:ems="10"
         android:fontFamily="@font/poppinsregular"
@@ -83,11 +64,10 @@
         android:textColor="@color/colorPrimary"
         android:textColorHint="@color/colorPrimary"
         android:textSize="16sp"
-        app:layout_constraintBottom_toBottomOf="@+id/separator2"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.895"
         app:layout_constraintStart_toEndOf="@id/textBrandName"
-        app:layout_constraintTop_toBottomOf="@+id/separator1" />
+        app:layout_constraintBottom_toBottomOf="@+id/textBrandName"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/textBrandName" />
 
 
     <View
@@ -100,17 +80,17 @@
         tools:layout_editor_absoluteX="0dp" />
 
     <TextView
-
         android:id="@+id/textDescription"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
+        android:layout_height="40dp"
         android:layout_marginTop="16dp"
+        android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
         android:fontFamily="@font/poppinsbold"
         android:text="Description     "
         android:textColor="@color/colorPrimaryDark"
         android:textSize="16sp"
+        android:gravity="center"
         app:layout_constraintEnd_toStartOf="@+id/etDescription"
         app:layout_constraintHorizontal_bias="0.114"
         app:layout_constraintStart_toStartOf="parent"
@@ -120,8 +100,7 @@
     <EditText
         android:id="@+id/etDescription"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
+        android:layout_height="0dp"
         android:layout_marginEnd="8dp"
         android:background="@android:color/transparent"
         android:ems="10"
@@ -131,35 +110,55 @@
         android:textColor="@color/colorPrimary"
         android:textColorHint="@color/colorPrimary"
         android:textSize="16sp"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/textDescription"
-        app:layout_constraintTop_toBottomOf="@+id/separator2" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/textDescription"
+        app:layout_constraintBottom_toBottomOf="@id/textDescription"/>
 
     <View
         android:id="@+id/separator3"
         android:layout_width="match_parent"
         android:layout_height="0.5dp"
         android:layout_marginTop="16dp"
-        android:layout_marginBottom="8dp"
         android:background="@color/grey"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/etDescription"
+        app:layout_constraintTop_toBottomOf="@id/textDescription"
         app:layout_constraintVertical_bias="0.0" />
 
-    <Button
-        android:id="@+id/btnSaveEditProfile"
-        android:layout_width="350dp"
-        android:layout_height="wrap_content"
+
+    <RelativeLayout
+        android:layout_width="0dp"
+        android:layout_height="45dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
         android:layout_marginTop="8dp"
-        android:background="@drawable/button_primary_color"
-        android:text="@string/save"
-        android:textColor="@android:color/white"
-        android:textSize="16dp"
+        android:layout_marginBottom="30dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/separator3"
-        app:layout_constraintVertical_bias="1.0" />
+        app:layout_constraintVertical_bias="1.0"
+        android:background="@drawable/button_primary_color"
+        android:gravity="center">
+
+        <Button
+            android:id="@+id/editProfile_btn_save"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/button_primary_color"
+            android:text="@string/save"
+            android:textColor="@android:color/white"
+            android:textSize="16dp"
+             />
+
+        <ProgressBar
+            android:id="@+id/editProfile_progress_bar"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_centerInParent="true"
+            android:indeterminateTint="#FFFBFC"
+            android:visibility="gone"/>
+
+    </RelativeLayout>
+
 
     <Button
         android:id="@+id/btnChangeProfileBanner"
@@ -171,6 +170,23 @@
         app:layout_constraintEnd_toEndOf="@+id/ivChangeBanner"
         app:layout_constraintStart_toStartOf="@+id/ivChangeBanner"
         app:layout_constraintTop_toTopOf="@+id/ivChangeBanner" />
+
+
+    <ImageView
+        android:id="@+id/ivChangePhoto"
+        android:layout_width="120dp"
+        android:layout_height="120dp"
+        android:layout_marginStart="50dp"
+        android:layout_marginTop="96dp"
+        android:background="@drawable/border_profile_picture"
+        android:contentDescription="@string/change_profile_picture"
+        android:onClick="showPopUpChangeProfilePicture"
+        android:scaleType="fitXY"
+        android:src="@drawable/white"
+        app:layout_constraintBottom_toBottomOf="@id/ivChangeBanner"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/ivChangeBanner"
+        tools:srcCompat="@drawable/white" />
 
     <Button
         android:id="@+id/btnChangeProfilePicture"

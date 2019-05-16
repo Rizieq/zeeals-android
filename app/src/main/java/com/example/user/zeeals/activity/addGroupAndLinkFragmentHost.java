@@ -2,6 +2,7 @@ package com.example.user.zeeals.activity;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.WindowManager;
 
 import com.example.user.zeeals.R;
 import com.example.user.zeeals.fragment.addGroupFragment;
@@ -22,6 +23,7 @@ public class addGroupAndLinkFragmentHost extends AppCompatActivity{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_group_and_link_fragment_host);
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
         String key = getIntent().getStringExtra("menuType");
         switch (key) {
             case "addGroup":

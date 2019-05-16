@@ -72,7 +72,7 @@ public class editProfileScreen extends AppCompatActivity {
         imgBanner = findViewById(R.id.ivChangeBanner);
         Button btnChangeBanner = findViewById(R.id.btnChangeProfileBanner);
         btnChangePicture = findViewById(R.id.btnChangeProfilePicture);
-        btnSave = findViewById(R.id.btnSaveEditProfile);
+        btnSave = findViewById(R.id.editProfile_btn_save);
         btnSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -116,6 +116,7 @@ public class editProfileScreen extends AppCompatActivity {
             if (requestCode == PICK_IMAGE_PROF_PIC){
                 Uri Source_uri = data.getData();
                 Uri dest_uri = Uri.fromFile(new File(getCacheDir(),"Cropped_Profile_Picture"));
+//                getSharedPreferences("PROFILE",MODE_PRIVATE).edit().putString()
                 imgType = "profile_picture";
                 Crop.of(Source_uri, dest_uri).asSquare().start(this);
                 imgProfPic.setImageURI(Crop.getOutput(data));

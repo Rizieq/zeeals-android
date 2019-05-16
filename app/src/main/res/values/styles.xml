@@ -41,4 +41,8 @@
         <item name="android:colorControlActivated" tools:targetApi="lollipop">@color/colorPrimary</item>
     </style>
 
+    <style name="AppTheme.WhiteAccent">
+        <item name="colorAccent">#FFFFFF</item> <!-- Whatever color you want-->
+    </style>
+
 </resources>

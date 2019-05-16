@@ -24,6 +24,7 @@ import android.transition.TransitionSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.OvershootInterpolator;
@@ -34,6 +35,9 @@ import android.widget.TextView;
 import com.example.user.zeeals.R;
 import com.example.user.zeeals.editProfileScreen;
 import com.example.user.zeeals.fragment.editLinkFragment;
+import com.example.user.zeeals.fragment.menuFragment;
+import com.example.user.zeeals.listener.dimLayoutListener;
+import com.example.user.zeeals.model.User;
 import com.example.user.zeeals.model.Zlink;
 import com.example.user.zeeals.model.zGroup;
 import com.example.user.zeeals.service.RetroConnection;
@@ -49,7 +53,7 @@ import retrofit2.Retrofit;
 
 import static android.content.Context.MODE_PRIVATE;
 
-public class mainFragment extends Fragment {
+public class mainFragment extends Fragment{
     private TextView profileName, profileDesc;
     Dialog picChangePopUp, editGroupNamePopup;
     private ImageView imgProfpic,imgBannerProfPic;
@@ -60,30 +64,27 @@ public class mainFragment extends Fragment {
     String imgType="";
 
     boolean menuShowed;
-    FloatingActionButton fab;
+//    FloatingActionButton fab;
     RecyclerView recyclerViewTes;
     FragmentTransaction transaction;
-    String name,desc;
     RelativeLayout btn_editProfile;
     ImageView btn_editProfile_2;
+    TextView account_url;
 
-
-    //groupAdapter adapter;
-    editLinkFragment editSource_Fragment;
     com.example.user.zeeals.fragment.menuFragment menuFragment;
+
+
 
 
     //shared ke menu fragment
     public RecyclerAdapter_Main adapterTest;
     public List<Zlink> zLink;
     public UserClient userClient;
-    public Retrofit.Builder builder;
 
-    public String token;
-    int USER_ID;
-    private static final String TAG = "TESTING";
+    public String token,name,desc;
     RetroConnection connection;
     ConstraintLayout dim;
+    View thisView;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -107,13 +108,16 @@ public class mainFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_main,container,false);
         dim = view.findViewById(R.id.semi_white_bg);
         recyclerViewTes = view.findViewById(R.id.recycler_view);
-        fab = view.findViewById(R.id.fab);
-        fab.setVisibility(View.VISIBLE);
+        account_url = view.findViewById(R.id.account_url);
+//        fab = view.findViewById(R.id.fab);
+//        fab.setVisibility(View.VISIBLE);
         userClient = connection.getConnection();
         initProfile(view);
         initListener();
-
-
+        String userJSON = getActivity().getSharedPreferences("ACCOUNT", Context.MODE_PRIVATE).getString("USER",null);
+        User user= new Gson().fromJson(userJSON, User.class);
+        account_url.setText(String.format("zeeals.link/%s", user.getAccount().get(0).getMainUrl()));
+        thisView=view;
         return view;
     }
 
@@ -141,44 +145,31 @@ public class mainFragment extends Fragment {
         btn_editProfile_2.setOnClickListener(openEditProfile);
     }
     private void initListener(){
-
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (menuShowed){
-                    transaction = getChildFragmentManager().beginTransaction();
-                    transaction.hide(menuFragment);
-                    transaction.commit();
-                    dim.setVisibility(View.GONE);
-                    rotateFab();
-                }else{
-                    dim.setVisibility(View.VISIBLE);
-                    openMenuFragment();
-                    rotateFab();
-                }
-            }
-        });
-
         dim.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(menuShowed){
-                    transaction = getChildFragmentManager().beginTransaction();
-                    transaction.hide(menuFragment);
-                    transaction.commit();
-                    dim.setVisibility(View.GONE);
-                    rotateFab();
-                }
+                ((MainActivity)getActivity()).rotateFab();
+                ((MainActivity)getActivity()).hideMenu();
+
+                dim.setVisibility(View.GONE);
             }
         });
     }
+
+
+    public void dimLayout(boolean on){
+        dim = thisView.findViewById(R.id.semi_white_bg);
+        if(on) dim.setVisibility(View.VISIBLE);
+        else dim.setVisibility(View.GONE);
+    }
+
 
     @SuppressLint("RestrictedApi")
     @Override
     public void onStart() {
         super.onStart();
         String groupJSON = getActivity().getSharedPreferences("TOKEN",MODE_PRIVATE).getString("GROUPLIST",null);
-        fab.setVisibility(View.VISIBLE);
+//        fab.setVisibility(View.VISIBLE);
         if(groupJSON!=null){
             Type listType = new TypeToken<List<zGroup>>(){}.getType();
             zLink = new ArrayList<>();
@@ -189,8 +180,8 @@ public class mainFragment extends Fragment {
             transaction = getChildFragmentManager().beginTransaction();
             transaction.hide(menuFragment);
             transaction.commit();
-            dim.setVisibility(View.GONE);
-            rotateFab();
+//            dim.setVisibility(View.GONE);
+//            rotateFab();
         }
 
 
@@ -227,39 +218,6 @@ public class mainFragment extends Fragment {
             adapterTest.notifyDataSetChanged();
     }
 
-    public void openMenuFragment() {
-        menuFragment = menuFragment.newInstance();
-        FragmentManager fragmentManager = getChildFragmentManager();
-        transaction = fragmentManager.beginTransaction();
-        transaction.setCustomAnimations(R.anim.enter_from_bottom,R.anim.enter_from_bottom);
-        transaction.replace(R.id.fragment_menu_container, menuFragment).show(menuFragment).commit();
-
-    }
-
-    public void rotateFab(){
-        if (menuShowed){
-            final OvershootInterpolator interpolator = new OvershootInterpolator();
-            ViewCompat.animate(fab).
-                    rotation(0.0f).
-                    withLayer().
-                    setDuration(1000).
-                    setInterpolator(interpolator).
-                    start();
-
-            menuShowed=false;
-        }else{
-            menuShowed=true;
-            final OvershootInterpolator interpolator = new OvershootInterpolator();
-            ViewCompat.animate(fab).
-                    rotation(405f).
-                    withLayer().
-                    setDuration(1000).
-                    setInterpolator(interpolator).
-                    start();
-        }
-
-    }
-
     public void openEditScreen(){
         Intent intent = new Intent(getContext(), editProfileScreen.class);
         intent.putExtra("nama",profileName.getText().toString().trim());
@@ -278,15 +236,16 @@ public class mainFragment extends Fragment {
     @Override
     public void onStop() {
         super.onStop();
-        fab.setVisibility(View.GONE);
+//        fab.setVisibility(View.GONE);
     }
 
     @SuppressLint("RestrictedApi")
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        fab.setVisibility(View.VISIBLE);
-        rotateFab();
-        rotateFab();
+//        fab.setVisibility(View.VISIBLE);
+//        rotateFab();
+//        rotateFab();
     }
+
 }

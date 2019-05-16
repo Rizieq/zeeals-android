@@ -11,6 +11,7 @@ import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
@@ -33,6 +34,7 @@ public class changePasswordFragment extends Fragment {
     EditText oldPassword,newPassword,confirmPassword;
     RelativeLayout btn_save;
     ProgressBar progressBar;
+    Button save;
 
     boolean allRequirement=false;
     String token;
@@ -63,6 +65,7 @@ public class changePasswordFragment extends Fragment {
         confirmPassword = view.findViewById(R.id.changePassword_confirmPassword);
         btn_save = view.findViewById(R.id.btn_save_change_password);
         progressBar = view.findViewById(R.id.progress_bar_change_password);
+        save = view.findViewById(R.id.changePassword_btn_save);
         progressBar.setVisibility(View.GONE);
         passwordWatcher();
         setButtonClick();
@@ -125,23 +128,27 @@ public class changePasswordFragment extends Fragment {
                     allRequirement=false;
                 }else allRequirement=true;
                 if(allRequirement){
+                    save.setVisibility(View.GONE);
+                    progressBar.setVisibility(View.VISIBLE);
                     ChangePassword_Model passwordModel = new ChangePassword_Model(oldPassword.getText().toString(),newPassword.getText().toString());
                     Call<Basic_Response> call = conn.getConnection().changepassword(token,passwordModel);
                     call.enqueue(new Callback<Basic_Response>() {
                         @Override
                         public void onResponse(Call<Basic_Response> call, Response<Basic_Response> response) {
                             if(response.isSuccessful()){
-                                Toast.makeText(getContext(),"Password updated!",Toast.LENGTH_SHORT);
-                                getActivity().finish();
-                            }else     Toast.makeText(getContext(),"Fail to update password",Toast.LENGTH_SHORT);
+                                Toast.makeText(getActivity().getApplicationContext(),"Password updated!",Toast.LENGTH_SHORT);
+                            }else Toast.makeText(getActivity().getApplicationContext(),"Wrong password!",Toast.LENGTH_SHORT);
+                            save.setVisibility(View.VISIBLE);
+                            progressBar.setVisibility(View.GONE);
+                            getActivity().finish();
                         }
 
                         @Override
                         public void onFailure(Call<Basic_Response> call, Throwable t) {
-                            Toast.makeText(getContext(),"Connection error",Toast.LENGTH_SHORT);
+                            Toast.makeText(getActivity().getApplicationContext(),"Connection error",Toast.LENGTH_SHORT);
                         }
                     });
-                    getActivity().finish();
+
                 }
 
 
