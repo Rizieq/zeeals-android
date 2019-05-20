@@ -260,8 +260,8 @@ public class editLinkFragment extends Fragment {
                 .setPositiveButton("Hapus", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        zGroup deletePosition = ((zGroup)zLink.get(groupPosition));
-                        Call<ResponseBody> call = userClient.delete(token,deletePosition);
+                        zSource deletePosition = ((zGroup)zLink.get(groupPosition)).getChildLink().get(linkPosition);
+                        Call<ResponseBody> call = userClient.deleteLink2(token,deletePosition);
                         call.enqueue(new Callback<ResponseBody>() {
                             @Override
                             public void onResponse(@NonNull Call<ResponseBody> call, @NonNull Response<ResponseBody> response) {

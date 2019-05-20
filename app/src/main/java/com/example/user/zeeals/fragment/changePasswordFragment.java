@@ -5,6 +5,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.Fragment;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -13,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
@@ -20,8 +22,9 @@ import android.widget.Toast;
 import com.example.user.zeeals.R;
 import com.example.user.zeeals.ResponsesAndRequest.Basic_Response;
 import com.example.user.zeeals.ResponsesAndRequest.ChangePassword_Model;
-import com.example.user.zeeals.adapter.MainActivity;
 import com.example.user.zeeals.service.RetroConnection;
+
+import java.util.Objects;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -35,6 +38,8 @@ public class changePasswordFragment extends Fragment {
     RelativeLayout btn_save;
     ProgressBar progressBar;
     Button save;
+    ImageView back;
+    ConstraintLayout back_2;
 
     boolean allRequirement=false;
     String token;
@@ -53,7 +58,7 @@ public class changePasswordFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         conn = new RetroConnection();
-        token = getActivity().getSharedPreferences("TOKEN", Context.MODE_PRIVATE).getString("TOKEN",null);
+        token = Objects.requireNonNull(getActivity()).getSharedPreferences("TOKEN", Context.MODE_PRIVATE).getString("TOKEN",null);
     }
 
     @Nullable
@@ -66,6 +71,8 @@ public class changePasswordFragment extends Fragment {
         btn_save = view.findViewById(R.id.btn_save_change_password);
         progressBar = view.findViewById(R.id.progress_bar_change_password);
         save = view.findViewById(R.id.changePassword_btn_save);
+        back = view.findViewById(R.id.changePassword_btn_back);
+        back_2 = view.findViewById(R.id.changePassword_btn_back_2);
         progressBar.setVisibility(View.GONE);
         passwordWatcher();
         setButtonClick();
@@ -119,41 +126,55 @@ public class changePasswordFragment extends Fragment {
         btn_save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(confirmPassword.getText().toString().equals("")){
-                    confirmPassword.setError("Please fill this field");
-                    allRequirement=false;
-                } else allRequirement=true;
-                if(newPassword.getText().toString().equals("")){
-                    newPassword.setError("Please fill this field");
-                    allRequirement=false;
-                }else allRequirement=true;
-                if(allRequirement){
-                    save.setVisibility(View.GONE);
-                    progressBar.setVisibility(View.VISIBLE);
-                    ChangePassword_Model passwordModel = new ChangePassword_Model(oldPassword.getText().toString(),newPassword.getText().toString());
-                    Call<Basic_Response> call = conn.getConnection().changepassword(token,passwordModel);
-                    call.enqueue(new Callback<Basic_Response>() {
-                        @Override
-                        public void onResponse(Call<Basic_Response> call, Response<Basic_Response> response) {
-                            if(response.isSuccessful()){
-                                Toast.makeText(getActivity().getApplicationContext(),"Password updated!",Toast.LENGTH_SHORT);
-                            }else Toast.makeText(getActivity().getApplicationContext(),"Wrong password!",Toast.LENGTH_SHORT);
-                            save.setVisibility(View.VISIBLE);
-                            progressBar.setVisibility(View.GONE);
-                            getActivity().finish();
-                        }
-
-                        @Override
-                        public void onFailure(Call<Basic_Response> call, Throwable t) {
-                            Toast.makeText(getActivity().getApplicationContext(),"Connection error",Toast.LENGTH_SHORT);
-                        }
-                    });
-
-                }
-
-
+                save();
+            }
+        });
+        back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Objects.requireNonNull(getActivity()).finish();
+            }
+        });
+        back_2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Objects.requireNonNull(getActivity()).finish();
             }
         });
     }
 
+    /** Clicking method Area **/
+    void save(){
+        if(confirmPassword.getText().toString().equals("")){
+            confirmPassword.setError("Please fill this field");
+            allRequirement=false;
+        } else allRequirement=true;
+        if(newPassword.getText().toString().equals("")){
+            newPassword.setError("Please fill this field");
+            allRequirement=false;
+        }else allRequirement=true;
+        if(allRequirement){
+            save.setVisibility(View.GONE);
+            progressBar.setVisibility(View.VISIBLE);
+            ChangePassword_Model passwordModel = new ChangePassword_Model(oldPassword.getText().toString(),newPassword.getText().toString());
+            Call<Basic_Response> call = conn.getConnection().changepassword(token,passwordModel);
+            call.enqueue(new Callback<Basic_Response>() {
+                @Override
+                public void onResponse(Call<Basic_Response> call, Response<Basic_Response> response) {
+                    if(response.isSuccessful()){
+                        Toast.makeText(getActivity().getApplicationContext(),"Password updated!",Toast.LENGTH_SHORT);
+                    }else Toast.makeText(getActivity().getApplicationContext(),"Wrong password!",Toast.LENGTH_SHORT);
+                    save.setVisibility(View.VISIBLE);
+                    progressBar.setVisibility(View.GONE);
+                    getActivity().finish();
+                }
+
+                @Override
+                public void onFailure(Call<Basic_Response> call, Throwable t) {
+                    Toast.makeText(getActivity().getApplicationContext(),"Connection error",Toast.LENGTH_SHORT);
+                }
+            });
+
+        }
+    }
 }

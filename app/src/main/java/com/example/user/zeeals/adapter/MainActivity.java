@@ -201,13 +201,17 @@ public class MainActivity extends AppCompatActivity{
                 int position=0;
                 switch (item.getItemId()){
                     case R.id.home_nav:
-                        layout_inHome=true;
-                        fab.setImageResource(R.drawable.ic_add);
-                        fragment = new mainFragment();
-                        getSupportFragmentManager().beginTransaction()
-                                .replace(R.id.mainActivity_frag_container, fragment,"homeFrag")
-                                .commit();
-                        position=1;
+                        if(!menuShowed) {
+                            layout_inHome = true;
+                            fab.setImageResource(R.drawable.ic_add);
+                            fragment = new mainFragment();
+                            getSupportFragmentManager().beginTransaction()
+                                    .replace(R.id.mainActivity_frag_container, fragment, "homeFrag")
+                                    .commit();
+                            position = 1;
+                        }else{
+                            return false;
+                        }
                         break;
                     case R.id.account_nav:
                         fab.setImageResource(R.drawable.ic_check);

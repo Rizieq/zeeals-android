@@ -86,7 +86,6 @@ public class addLinkFragment extends Fragment {
 
         Button btnBack = addLinkView.findViewById(R.id.btnBackAddLink);
         btnAdd = addLinkView.findViewById(R.id.btnAddAddLink);
-        Button btnDelete = addLinkView.findViewById(R.id.btnDeleteAddLink);
         spinnerGroup = addLinkView.findViewById(R.id.spinnerAddLink);
         List<String> groupNames = new ArrayList<String>();
         for (int i=0;i<zLink.size();i++){
@@ -112,12 +111,6 @@ public class addLinkFragment extends Fragment {
             }
         });
 
-        btnDelete.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dialogDelete();
-            }
-        });
 
         btnAdd.setOnClickListener(new View.OnClickListener() {
             @Override

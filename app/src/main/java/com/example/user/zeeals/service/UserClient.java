@@ -16,14 +16,20 @@ import com.example.user.zeeals.model.zGroupList;
 import com.example.user.zeeals.model.zSource;
 import com.example.user.zeeals.ResponsesAndRequest.PostLinkResponse;
 
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.DELETE;
+import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
+import retrofit2.http.HTTP;
 import retrofit2.http.Header;
+import retrofit2.http.Multipart;
 import retrofit2.http.POST;
 import retrofit2.http.PUT;
+import retrofit2.http.Part;
 
 public interface UserClient {
 
@@ -87,6 +93,9 @@ public interface UserClient {
     @DELETE("api/v1/link/delete")
     Call<ResponseBody> deleteLink(@Header("Authorization") String token, @Body zSource zSource);
 
+    
+    @HTTP(method = "DELETE",path = "api/v1/link/delete", hasBody = true)
+    Call<ResponseBody> deleteLink2(@Header("Authorization") String token, @Body zSource zSource);
     /**
      * USER
      */
@@ -96,6 +105,12 @@ public interface UserClient {
     @PUT("api/v1/user/update")
     Call<Basic_Response> userUpdate(@Header("Authorization") String token, @Body updateUser_Model um);
 
+    @Multipart
+    @POST("api/v1/upload/avatar")
+    Call<ResponseBody> uploadProfile(@Header("Authorization")String token, @Part MultipartBody.Part data, @Part("name") RequestBody requestBody);
 
+    @Multipart
+    @POST("api/v1/upload/banner")
+    Call<ResponseBody> uploadBanner(@Header("Authorization")String token, @Part MultipartBody.Part data, @Part("name") RequestBody requestBody);
 
 }

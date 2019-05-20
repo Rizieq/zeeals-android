@@ -6,6 +6,7 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Canvas;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -81,7 +82,7 @@ public class mainFragment extends Fragment{
     public List<Zlink> zLink;
     public UserClient userClient;
 
-    public String token,name,desc;
+    public String token,name,desc,profImg,bannerImg;
     RetroConnection connection;
     ConstraintLayout dim;
     View thisView;
@@ -109,15 +110,16 @@ public class mainFragment extends Fragment{
         dim = view.findViewById(R.id.semi_white_bg);
         recyclerViewTes = view.findViewById(R.id.recycler_view);
         account_url = view.findViewById(R.id.account_url);
-//        fab = view.findViewById(R.id.fab);
-//        fab.setVisibility(View.VISIBLE);
         userClient = connection.getConnection();
+        profImg = getActivity().getSharedPreferences("PROFILE",MODE_PRIVATE).getString("PROFILE_URI",null);
+        bannerImg = getActivity().getSharedPreferences("PROFILE",MODE_PRIVATE).getString("BANNER_URI",null);
         initProfile(view);
         initListener();
         String userJSON = getActivity().getSharedPreferences("ACCOUNT", Context.MODE_PRIVATE).getString("USER",null);
         User user= new Gson().fromJson(userJSON, User.class);
         account_url.setText(String.format("zeeals.link/%s", user.getAccount().get(0).getMainUrl()));
         thisView=view;
+
         return view;
     }
 
@@ -127,6 +129,10 @@ public class mainFragment extends Fragment{
         profileDesc.setMovementMethod(new ScrollingMovementMethod());
         imgProfpic =  view.findViewById(R.id.profilePicture);
         imgBannerProfPic =  view.findViewById(R.id.profileBanner);
+        if(profImg != null) imgProfpic.setImageURI(Uri.parse(profImg));
+        if(bannerImg != null) imgBannerProfPic.setImageURI(Uri.parse(bannerImg));
+
+
         View topBar = view.findViewById(R.id.menu_appbar);
         topBar.bringToFront();
         btn_editProfile = topBar.findViewById(R.id.btnEditPofile);
@@ -232,20 +238,6 @@ public class mainFragment extends Fragment{
         }
     };
 
-    @SuppressLint("RestrictedApi")
-    @Override
-    public void onStop() {
-        super.onStop();
-//        fab.setVisibility(View.GONE);
-    }
 
-    @SuppressLint("RestrictedApi")
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-//        fab.setVisibility(View.VISIBLE);
-//        rotateFab();
-//        rotateFab();
-    }
 
 }

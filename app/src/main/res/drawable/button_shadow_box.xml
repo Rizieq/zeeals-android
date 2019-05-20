@@ -2,10 +2,10 @@
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
     <item>
         <layer-list>
-            <item android:right="5dp" android:top="5dp">
+            <item android:right="5dp" android:top="2dp">
                 <shape>
                     <corners android:radius="5dp" />
-                    <solid android:color="#F8F9FA" />
+                    <solid android:color="#FFFF" />
                 </shape>
             </item>
 

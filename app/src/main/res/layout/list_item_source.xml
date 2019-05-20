@@ -8,7 +8,7 @@
     android:layout_marginStart="35dp"
     android:layout_marginEnd="35dp"
     android:layout_marginBottom="13dp"
-    android:background="@drawable/shadow_box"
+    android:background="@drawable/button_shadow_box"
     android:clickable="true"
     android:elevation="3dp">
 
@@ -42,9 +42,13 @@
     <ImageView
         android:id="@+id/imageView3"
         android:layout_width="72dp"
-        android:layout_height="53dp"
+        android:layout_height="match_parent"
+        android:layout_marginTop="2dp"
         android:clickable="false"
+        android:outlineProvider="bounds"
+        android:elevation="3dp"
         android:scaleType="centerCrop"
+        android:background="@drawable/button_shadow_box"
         app:srcCompat="@drawable/proflephoto" />
 
 </FrameLayout>

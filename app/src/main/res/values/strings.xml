@@ -75,9 +75,12 @@
     <string name="old_password">Old Password</string>
     <string name="confirm_password">Confirm New Password</string>
     <string name="new_password">New Password</string>
-    <string name="type_your_old_password_here">Type your old password here</string>
-    <string name="type_your_new_password_here">Type your new password here</string>
+    <string name="type_your_old_password_here">Old password</string>
+    <string name="type_your_new_password_here">New password</string>
     <string name="change_password">Change Password</string>
+    <string name="paste_image_address_here">Paste image address here</string>
+    <string name="close">Close</string>
+    <string name="ok">ok</string>
 
     <string-array name="grid">
         <item> Horizontal </item>

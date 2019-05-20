@@ -147,9 +147,14 @@ public class UserFragment extends Fragment {
     }
 
     public void save(){
+        if(etName.getHint()== null) etName.setHint("");
+        if(etAddress.getHint() == null) etAddress.setHint("");
+        if(etPhone.getHint() == null) etPhone.setHint("");
+
         String fullname = etName.getHint().toString();
         String address = etAddress.getHint().toString();
         String phone = etPhone.getHint().toString();
+
 
         if(!etName.getText().toString().equals("")) fullname=etName.getText().toString();
         if(!etPhone.getText().toString().equals("")) phone=etPhone.getText().toString();

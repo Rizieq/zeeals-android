@@ -2,51 +2,52 @@
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="60dp"
-    android:paddingStart="20dp"
-    android:paddingTop="20dp"
-    android:paddingEnd="20dp">
+    android:layout_height="60dp">
 
     <RelativeLayout
         android:id="@+id/btnBack"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:scaleY="0.5"
+        android:scaleX="0.5"
         android:background="@drawable/round_white"
         android:clickable="true"
         android:focusable="true"
-        android:onClick="backDialog"
         android:visibility="visible"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent">
+        app:layout_constraintTop_toTopOf="parent">
 
         <ImageView
-            android:layout_width="20dp"
-            android:layout_height="20dp"
+            android:id="@+id/btnback_icon"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
             android:layout_centerInParent="true"
             android:clickable="true"
             android:focusable="true"
-            android:src="@drawable/ic_left_arrow_2" />
+            android:src="@drawable/ic_left_arrow" />
     </RelativeLayout>
 
     <RelativeLayout
         android:id="@+id/btnEditPofile"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
-        android:layout_marginEnd="16dp"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
         android:background="@drawable/round_white"
+        android:scaleY="0.5"
+        android:scaleX="0.5"
         android:clickable="true"
         android:focusable="true"
         android:onClick="openEditScreen"
         android:padding="8dp"
         android:visibility="visible"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
         <ImageView
             android:id="@+id/btnEditPofile_2"
-            android:layout_width="20dp"
-            android:layout_height="20dp"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
             android:layout_centerInParent="true"
             android:clickable="true"
             android:focusable="true"

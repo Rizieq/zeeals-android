@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.annotation.NonNull;
+import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -170,6 +171,7 @@ public class RecyclerAdapter_Main extends RecyclerView.Adapter<RecyclerView.View
         TextView sourceName;
         TextView sourceLink;
         FrameLayout layoutLink;
+        ConstraintLayout layoutLink2;
 
         ChildsViewHolder(View itemView) {
             super(itemView);
@@ -208,21 +210,18 @@ public class RecyclerAdapter_Main extends RecyclerView.Adapter<RecyclerView.View
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder viewHolder, @SuppressLint("RecyclerView") final int i) {
         if (viewHolder.getItemViewType()==CHILD){
             setFadeAnimation(viewHolder.itemView);
+            FrameLayout linkLayout = ((ChildsViewHolder)viewHolder).layoutLink;
             TextView sourceName = ((ChildsViewHolder)viewHolder).sourceName;
             TextView sourceLink= ((ChildsViewHolder)viewHolder).sourceLink;
-            FrameLayout linkLayout = ((ChildsViewHolder)viewHolder).layoutLink;
-            final zSource zSource = (zSource) general.get(i);
+            zSource zSource = (zSource) general.get(i);
             sourceLink.setText(zSource.getLinkKey());
             sourceName.setText(zSource.getTitle());
             linkLayout.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    int[] id = {zSource.getGroupLinkId(),zSource.getLinkId()};
-                    Log.d(TAG, "onClick: Child clicked");
-                    context.startActivity(new Intent(context, addGroupAndLinkFragmentHost.class).putExtra("menuType","editLink").putExtra("position",id));
+                    openEditLink(i);
                 }
             });
-
         }else{
             TextView groupName = ParentViewHolder.groupTitle;
             TextView iconGroup = ((ParentViewHolder)viewHolder).icon;
@@ -357,6 +356,12 @@ public class RecyclerAdapter_Main extends RecyclerView.Adapter<RecyclerView.View
             alertOut.show();
         }
 
+    }
+
+    void openEditLink(int i){
+        zSource zSource = (zSource) general.get(i);
+        int[] id = {zSource.getGroupLinkId(),zSource.getLinkId()};
+        context.startActivity(new Intent(context, addGroupAndLinkFragmentHost.class).putExtra("menuType","editLink").putExtra("position",id));
     }
 
     private void undoDelete() {

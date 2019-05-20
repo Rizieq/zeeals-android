@@ -2,8 +2,12 @@ package com.example.user.zeeals.util;
 
 import android.content.Context;
 import android.graphics.*;
+import android.os.Build;
+import android.support.annotation.RequiresApi;
 import android.support.design.widget.BottomNavigationView;
 import android.util.AttributeSet;
+import android.view.View;
+import android.view.ViewOutlineProvider;
 
 public class CurvedBottomNavigationView extends BottomNavigationView {
     private Path mPath;
@@ -56,8 +60,15 @@ public class CurvedBottomNavigationView extends BottomNavigationView {
     }
 
     @Override
+    public ViewOutlineProvider getOutlineProvider() {
+        return super.getOutlineProvider();
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+    @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
+
         // get width and height of navigation bar
         // Navigation bar bounds (width & height)
         mNavigationBarWidth = getWidth();
@@ -93,6 +104,7 @@ public class CurvedBottomNavigationView extends BottomNavigationView {
         mPath.lineTo(mNavigationBarWidth, 0);
         mPath.lineTo(mNavigationBarWidth, mNavigationBarHeight);
         mPath.lineTo(0, mNavigationBarHeight);
+
         mPath.close();
     }
 
@@ -101,4 +113,6 @@ public class CurvedBottomNavigationView extends BottomNavigationView {
         super.onDraw(canvas);
         canvas.drawPath(mPath, mPaint);
     }
+
+
 }

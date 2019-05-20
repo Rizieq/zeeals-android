@@ -13,21 +13,21 @@
         android:background="@color/grey"
         app:layout_constraintTop_toBottomOf="@id/btnBackAddLink" />
 
-    <Button
+    <ImageView
         android:id="@+id/btnBackAddLink"
         android:layout_width="50dp"
         android:layout_height="50dp"
-        android:scaleX="0.4"
-        android:scaleY="0.4"
+        android:scaleType="centerInside"
         android:layout_marginStart="30dp"
         android:layout_marginTop="15dp"
-        android:foreground="?attr/selectableItemBackgroundBorderless"
+        android:background="?attr/selectableItemBackgroundBorderless"
         android:clickable="true"
-        android:background="@drawable/ic_left_arrow_colour"
+        android:src="@drawable/ic_left_primary_brown_24dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
+        android:id="@+id/addLink_etTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="25dp"
@@ -37,20 +37,6 @@
         android:textColor="@color/colorPrimary"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <Button
-        android:id="@+id/btnDeleteAddLink"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:scaleY="0.4"
-        android:scaleX="0.4"
-        android:layout_marginTop="15dp"
-        android:layout_marginEnd="30dp"
-        android:background="@drawable/ic_delete_button"
-        android:clickable="true"
-        android:foreground="?attr/selectableItemBackgroundBorderless"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
 

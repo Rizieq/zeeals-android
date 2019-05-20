@@ -19,6 +19,7 @@ import com.example.user.zeeals.model.zSource;
 import com.example.user.zeeals.security.AesCipher;
 import com.example.user.zeeals.service.RetroConnection;
 import com.example.user.zeeals.service.UserClient;
+import com.eyalbira.loadingdots.LoadingDots;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
@@ -30,7 +31,8 @@ import retrofit2.Response;
 
 public class splashscreen extends AppCompatActivity {
     private ImageView logoZeeals;
-    private ProgressBar pb;
+//    private ProgressBar pb;
+    LoadingDots loadingDots;
     RetroConnection conn;
     UserClient userClient;
     List<Zlink> zlinks;
@@ -51,11 +53,11 @@ public class splashscreen extends AppCompatActivity {
         conn = new RetroConnection();
         userClient = conn.getConnection();
         logoZeeals = (ImageView) findViewById(R.id.splashLogo);
-        pb = (ProgressBar) findViewById(R.id.splashProgressBar);
+        loadingDots =findViewById(R.id.splashProgressBar);
 
         Animation splashanim = AnimationUtils.loadAnimation(this,R.anim.animation_splash);
         logoZeeals.startAnimation(splashanim);
-        pb.startAnimation(splashanim);
+        loadingDots.startAnimation(splashanim);
 
         // SET TIME SPLASH //
         Thread timer = new Thread(){

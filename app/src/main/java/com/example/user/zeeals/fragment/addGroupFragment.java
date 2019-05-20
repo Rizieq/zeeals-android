@@ -54,7 +54,7 @@ public class addGroupFragment extends Fragment {
     private EditText title;             //group title
     private Spinner spinner_grid;
     private char orientationData;//orientation :vertical horizontal
-    private ImageView btnBack, btnDelete;
+    private ImageView btnBack;
     @SuppressLint("StaticFieldLeak")
     static Context context;
     Dialog iconPicker_dialog;
@@ -109,7 +109,6 @@ public class addGroupFragment extends Fragment {
 //        btnBack2 = addGroupView.findViewById(R.id.addGroup_btn_back);
         btnBack = addGroupView.findViewById(R.id.addGroup_btn_back);
         btnAdd = addGroupView.findViewById(R.id.btnAddAddGroup);
-        btnDelete = addGroupView.findViewById(R.id.addGroup_btn_delete);
 
 
         spinner_grid = addGroupView.findViewById(R.id.spinnerAddGroup);
@@ -126,12 +125,6 @@ public class addGroupFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 getActivity().onBackPressed();
-            }
-        });
-        btnDelete.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dialogDelete();
             }
         });
 
