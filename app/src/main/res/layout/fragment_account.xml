@@ -331,9 +331,30 @@
         android:id="@+id/semi_white_bg"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#606E6E6E"
+        android:background="#6F6E6E6E"
         android:visibility="gone" >
+
+        <com.eyalbira.loadingdots.LoadingDots
+            android:id="@+id/splashProgressBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:LoadingDots_auto_play="true"
+            app:LoadingDots_dots_color="#F05E4352"
+            app:LoadingDots_dots_count="4"
+            app:LoadingDots_dots_size="20dp"
+            app:LoadingDots_dots_space="1dp"
+            app:LoadingDots_loop_duration="800"
+            app:LoadingDots_loop_start_delay="100"
+            app:LoadingDots_jump_duration="200"
+            app:LoadingDots_jump_height="4dp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+
+
     </android.support.constraint.ConstraintLayout>
+    <!--android:background="#606E6E6E"-->
 
     <LinearLayout
         android:id="@+id/fragment_menu_container"
@@ -342,11 +363,6 @@
         android:orientation="horizontal"
         app:layout_constraintBottom_toBottomOf="parent"/>
 
-    <android.support.constraint.ConstraintLayout
-        android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:background="@color/white"
-        app:layout_constraintBottom_toBottomOf="parent"/>
 
 
 

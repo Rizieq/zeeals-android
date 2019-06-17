@@ -1,27 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingBottom="40dp"
     tools:context=".editProfileScreen">
 
     <include
         android:id="@+id/menu_appbar"
-        layout="@layout/app_bar_main"/>
+        layout="@layout/app_bar_main" />
 
     <ImageView
         android:id="@+id/ivChangeBanner"
         android:layout_width="match_parent"
         android:layout_height="160dp"
         android:contentDescription="@string/change_banner"
-        android:scaleType="centerCrop"
+        android:scaleType="fitXY"
         android:src="@drawable/white"
         app:layout_constraintTop_toTopOf="parent"
         tools:srcCompat="@drawable/white" />
 
+    <com.eyalbira.loadingdots.LoadingDots
+        android:id="@+id/editProfile_banner_progress"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:LoadingDots_auto_play="true"
+        app:LoadingDots_dots_color="#F0B4B4B4"
+        app:LoadingDots_dots_count="4"
+        app:LoadingDots_dots_size="20dp"
+        app:LoadingDots_dots_space="1dp"
+        app:LoadingDots_jump_duration="200"
+        app:LoadingDots_jump_height="4dp"
+        app:LoadingDots_loop_duration="800"
+        app:LoadingDots_loop_start_delay="100"
+        app:layout_constraintBottom_toBottomOf="@id/ivChangeBanner"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 
     <View
@@ -41,10 +57,10 @@
         android:layout_marginTop="16dp"
         android:layout_marginEnd="8dp"
         android:fontFamily="@font/poppinsbold"
+        android:gravity="center"
         android:text="Brand Name"
         android:textColor="@color/colorPrimaryDark"
         android:textSize="16sp"
-        android:gravity="center"
         app:layout_constraintEnd_toStartOf="@+id/etName"
         app:layout_constraintHorizontal_bias="0.47"
         app:layout_constraintStart_toStartOf="parent"
@@ -62,11 +78,11 @@
         android:hint="Name"
         android:inputType="textPersonName"
         android:textColor="@color/colorPrimary"
-        android:textColorHint="@color/colorPrimary"
+        android:textColorHint="@color/grey"
         android:textSize="16sp"
-        app:layout_constraintStart_toEndOf="@id/textBrandName"
         app:layout_constraintBottom_toBottomOf="@+id/textBrandName"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/textBrandName"
         app:layout_constraintTop_toTopOf="@id/textBrandName" />
 
 
@@ -83,14 +99,14 @@
         android:id="@+id/textDescription"
         android:layout_width="wrap_content"
         android:layout_height="40dp"
-        android:layout_marginTop="16dp"
         android:layout_marginStart="8dp"
+        android:layout_marginTop="16dp"
         android:layout_marginEnd="8dp"
         android:fontFamily="@font/poppinsbold"
+        android:gravity="center"
         android:text="Description     "
         android:textColor="@color/colorPrimaryDark"
         android:textSize="16sp"
-        android:gravity="center"
         app:layout_constraintEnd_toStartOf="@+id/etDescription"
         app:layout_constraintHorizontal_bias="0.114"
         app:layout_constraintStart_toStartOf="parent"
@@ -108,12 +124,12 @@
         android:hint="Type your description here"
         android:inputType="textMultiLine"
         android:textColor="@color/colorPrimary"
-        android:textColorHint="@color/colorPrimary"
+        android:textColorHint="@color/grey"
         android:textSize="16sp"
-        app:layout_constraintStart_toEndOf="@id/textDescription"
+        app:layout_constraintBottom_toBottomOf="@id/textDescription"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@id/textDescription"
-        app:layout_constraintBottom_toBottomOf="@id/textDescription"/>
+        app:layout_constraintStart_toEndOf="@id/textDescription"
+        app:layout_constraintTop_toTopOf="@id/textDescription" />
 
     <View
         android:id="@+id/separator3"
@@ -130,14 +146,12 @@
         android:layout_height="45dp"
         android:layout_marginStart="20dp"
         android:layout_marginEnd="20dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginBottom="30dp"
+        android:layout_marginBottom="20dp"
+        android:background="@drawable/button_primary_color"
+        android:gravity="center"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintVertical_bias="1.0"
-        android:background="@drawable/button_primary_color"
-        android:gravity="center">
+        app:layout_constraintStart_toStartOf="parent">
 
         <Button
             android:id="@+id/editProfile_btn_save"
@@ -146,8 +160,7 @@
             android:background="@drawable/button_primary_color"
             android:text="@string/save"
             android:textColor="@android:color/white"
-            android:textSize="16dp"
-             />
+            android:textSize="16dp" />
 
         <ProgressBar
             android:id="@+id/editProfile_progress_bar"
@@ -155,21 +168,35 @@
             android:layout_height="match_parent"
             android:layout_centerInParent="true"
             android:indeterminateTint="#FFFBFC"
-            android:visibility="gone"/>
+            android:visibility="gone" />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:background="@drawable/round_white"
+        android:clickable="true"
+        android:focusable="true"
+        android:padding="8dp"
+        app:layout_constraintBottom_toBottomOf="@+id/ivChangeBanner"
+        app:layout_constraintEnd_toEndOf="@+id/ivChangeBanner"
+        app:layout_constraintStart_toStartOf="@+id/ivChangeBanner"
+        app:layout_constraintTop_toTopOf="@+id/ivChangeBanner"
+        >
+
+        <Button
+            android:id="@+id/btnChangeProfileBanner"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:background="@drawable/ic_camera"
+            android:onClick="showPopUpChangeProfileBanner"
+            android:layout_centerInParent="true"
+             />
 
     </RelativeLayout>
 
 
-    <Button
-        android:id="@+id/btnChangeProfileBanner"
-        android:layout_width="60dp"
-        android:layout_height="60dp"
-        android:background="@drawable/ic_add_a_photo_"
-        android:onClick="showPopUpChangeProfileBanner"
-        app:layout_constraintBottom_toBottomOf="@+id/ivChangeBanner"
-        app:layout_constraintEnd_toEndOf="@+id/ivChangeBanner"
-        app:layout_constraintStart_toStartOf="@+id/ivChangeBanner"
-        app:layout_constraintTop_toTopOf="@+id/ivChangeBanner" />
 
     <android.support.constraint.ConstraintLayout
         android:id="@+id/img_layout"
@@ -182,11 +209,12 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/ivChangeBanner">
 
+
         <android.support.v7.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            app:cardCornerRadius="3dp"
-            >
+            app:cardCornerRadius="3dp">
+
             <ImageView
                 android:id="@+id/ivChangePhoto"
                 android:layout_width="match_parent"
@@ -197,22 +225,51 @@
                 android:src="@drawable/white"
                 tools:srcCompat="@drawable/white" />
 
+            <com.eyalbira.loadingdots.LoadingDots
+                android:id="@+id/editProfile_profilePict_progress"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:visibility="gone"
+                app:LoadingDots_auto_play="true"
+                app:LoadingDots_dots_color="#F0B4B4B4"
+                app:LoadingDots_dots_count="4"
+                app:LoadingDots_dots_size="20dp"
+                app:LoadingDots_dots_space="1dp"
+                app:LoadingDots_jump_duration="200"
+                app:LoadingDots_jump_height="4dp"
+                app:LoadingDots_loop_duration="800"
+                app:LoadingDots_loop_start_delay="100" />
+
         </android.support.v7.widget.CardView>
 
     </android.support.constraint.ConstraintLayout>
 
-
-
-    <Button
-        android:id="@+id/btnChangeProfilePicture"
-        android:layout_width="60dp"
-        android:layout_height="60dp"
-        android:background="@drawable/ic_add_a_photo_"
-        android:onClick="showPopUpChangeProfilePicture"
+    <RelativeLayout
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:background="@drawable/round_white"
+        android:clickable="true"
+        android:focusable="true"
+        android:padding="8dp"
+        android:scaleX="0.7"
+        android:scaleY="0.7"
         app:layout_constraintBottom_toBottomOf="@+id/img_layout"
         app:layout_constraintEnd_toEndOf="@+id/img_layout"
         app:layout_constraintStart_toStartOf="@+id/img_layout"
-        app:layout_constraintTop_toTopOf="@+id/img_layout" />
+        app:layout_constraintTop_toTopOf="@+id/img_layout">
+
+        <Button
+            android:id="@+id/btnChangeProfilePicture"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_centerInParent="true"
+            android:background="@drawable/ic_camera"
+            android:onClick="showPopUpChangeProfilePicture"
+             />
+    </RelativeLayout>
+
+
 
 
 </android.support.constraint.ConstraintLayout>

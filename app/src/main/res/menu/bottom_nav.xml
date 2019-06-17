@@ -10,7 +10,7 @@
 
     <item
         android:id="@+id/gap"
-        android:enabled="true"
+        android:enabled="false"
         android:title=""
         app:showAsAction="ifRoom"/>
     <item

@@ -17,7 +17,6 @@ public class addGroupAndLinkFragmentHost extends AppCompatActivity{
     addLinkFragment addNewLinkFragment;
     com.example.user.zeeals.fragment.editGroupFragment editGroupFragment;
     editLinkFragment editLinkFragment;
-    RetroConnection conn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,7 +49,7 @@ public class addGroupAndLinkFragmentHost extends AppCompatActivity{
     }
 
     public void openAddGroupFragment() {
-        addNewGroupFragment = addNewGroupFragment.newInstance(addGroupAndLinkFragmentHost.this);
+        addNewGroupFragment = addGroupFragment.newInstance(addGroupAndLinkFragmentHost.this);
         getSupportFragmentManager().beginTransaction().replace(R.id.add_group_and_link_host_container,addNewGroupFragment,"Add Group Fragment").commit();
     }
 
@@ -65,7 +64,7 @@ public class addGroupAndLinkFragmentHost extends AppCompatActivity{
     }
 
     public void openEditLinkFragment(int[] position){
-        editLinkFragment = editLinkFragment.newInstance(position);
+        editLinkFragment = com.example.user.zeeals.fragment.editLinkFragment.newInstance(position);
         getSupportFragmentManager().beginTransaction().replace(R.id.add_group_and_link_host_container,editLinkFragment,"Edit Link Fragment").commit();
     }
 

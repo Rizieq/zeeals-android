@@ -21,6 +21,7 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
 //import android.widget.Switch;
+import android.widget.Switch;
 import android.widget.Toast;
 
 import com.example.user.zeeals.R;
@@ -54,6 +55,7 @@ public class editLinkFragment extends Fragment {
     private ConstraintLayout message_layout;
     private List<Zlink> zLink;
     private ProgressBar progressBar;
+    private Switch status;
 
     private static int groupId;
     private static int linkId;
@@ -104,6 +106,7 @@ public class editLinkFragment extends Fragment {
         title = view.findViewById(R.id.etTitleEditLink);
         message = view.findViewById(R.id.editLink_message);
         message_layout = view.findViewById(R.id.editLink_message_layout);
+        status = view.findViewById(R.id.editLink_show);
 
         /* initializing Hint*/
         initHint();
@@ -168,7 +171,10 @@ public class editLinkFragment extends Fragment {
         zSource zSource = zGroup.getChildLink().get(linkPosition);
         title.setHint(zSource.getTitle());
         url.setHint(zSource.getLinkKey());
-        urlImage.setHint(zSource.getUrl());
+        urlImage.setHint(zSource.getAvatar());
+        if(zSource.getStatus()==1)status.setChecked(true);
+        else status.setChecked(false);
+
         if(zSource.getMessage()!=null ){
             message_layout.setVisibility(View.VISIBLE);
             message.setHint(zSource.getMessage());
@@ -225,6 +231,10 @@ public class editLinkFragment extends Fragment {
         zSources.setLinkKey(link_key);
         zSources.setGroupLinkId(newGroup.getGroupLinkId());
         zSources.setMessage(confirmed_message);
+        if(status.isChecked()) zSources.setStatus(1);
+        else zSources.setStatus(0);
+
+
         newGroup.getChildLink().add(zSources);
         oldGroup.getChildLink().remove(linkPosition);
 

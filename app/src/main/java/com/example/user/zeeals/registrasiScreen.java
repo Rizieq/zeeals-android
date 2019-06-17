@@ -18,18 +18,15 @@ public class registrasiScreen extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.fragment_add_group_2);
-        CurvedBottomNavigationView curvedBottomNavigationView = findViewById(R.id.customBottomBar);
-        curvedBottomNavigationView.inflateMenu(R.menu.bottom_nav);
 
-//        setContentView(R.layout.activity_registrasi_screen);
-//        webView = findViewById(R.id.registrasi_webview);
-//        webView.setWebViewClient(new WebViewClient());
-//        webSettings = webView.getSettings();
-//        webSettings.setJavaScriptEnabled(true);
-//        webSettings.setDomStorageEnabled(true);
-//        webView.setWebChromeClient(new WebChromeClient());
-//        webView.loadUrl("https://app.zeeals.com/#/register");
+        setContentView(R.layout.activity_registrasi_screen);
+        webView = findViewById(R.id.registrasi_webview);
+        webView.setWebViewClient(new WebViewClient());
+        webSettings = webView.getSettings();
+        webSettings.setJavaScriptEnabled(true);
+        webSettings.setDomStorageEnabled(true);
+        webView.setWebChromeClient(new WebChromeClient());
+        webView.loadUrl("https://app.zeeals.com/#/register");
 
 
 

@@ -2,6 +2,7 @@ package com.example.user.zeeals.fragment;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -27,22 +28,20 @@ public class menuFragment extends Fragment {
     Button btn_add_link;
     ConstraintLayout btn_add_group2;
     ConstraintLayout btn_add_link2;
-    addMenuFragmentInteraction sendback;
 
 
-//    REQUES CODE
+//    REQUEST CODE
     int ADD_GROUP_REQUEST_CODE = 100;
 
     public menuFragment() {
     }
 
     public static menuFragment newInstance() {
-        menuFragment fragment = new menuFragment();
-        return fragment;
+        return new menuFragment();
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_menu, container, false);
@@ -75,7 +74,7 @@ public class menuFragment extends Fragment {
             public void onClick(View v) {
                 Intent i  = new Intent(getActivity(), addGroupAndLinkFragmentHost.class);
                 i.putExtra("menuType","addGroup");
-                startActivityForResult(i,ADD_GROUP_REQUEST_CODE);;
+                startActivityForResult(i,ADD_GROUP_REQUEST_CODE);
             }
         });
 
@@ -86,8 +85,6 @@ public class menuFragment extends Fragment {
                 i.putExtra("menuType","addLink");
                 startActivity(i);}
         });
-
-
         return view;
     }
 
@@ -97,8 +94,11 @@ public class menuFragment extends Fragment {
             if(requestCode==ADD_GROUP_REQUEST_CODE){
                 MainActivity act = (MainActivity)getActivity();
                 Bundle b = data.getExtras();
+                assert b != null;
                 String[] dataParcel = b.getStringArray("newGroup");
+                assert dataParcel != null;
                 zGroup newGroup = new zGroup(dataParcel[0].charAt(0),dataParcel[1],dataParcel[2], Integer.parseInt(dataParcel[3]),Integer.parseInt(dataParcel[4]));
+                assert act != null;
                 newGroup.setPosition(act.zLink.size());
                 act.zLink.add(newGroup);
                 act.adapterTest.notifyItemInserted(act.zLink.size()-1);
@@ -106,10 +106,5 @@ public class menuFragment extends Fragment {
             }
         }
     }
-
-    public interface addMenuFragmentInteraction{
-        void passDataFromMenutoAct(zGroup group);
-    }
-
 }
 

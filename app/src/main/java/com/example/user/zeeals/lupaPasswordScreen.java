@@ -3,6 +3,7 @@ package com.example.user.zeeals;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Editable;
@@ -34,7 +35,6 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class lupaPasswordScreen extends AppCompatActivity {
 
     private Button btnForgotPassword;
-    private TextView zeealsForgot, textMasuk;
     private ProgressBar pbForgot;
 
     private AutoCompleteTextView etEmail;
@@ -53,12 +53,12 @@ public class lupaPasswordScreen extends AppCompatActivity {
         setContentView(R.layout.activity_lupa_password_screen);
 
         /// THIS FOR SPAN "DAFTAR" WORD ///
-        textMasuk = (TextView) findViewById(R.id.textayomasukForgot);
+        TextView textMasuk = (TextView) findViewById(R.id.textayomasukForgot);
         String text = "Ayo masuk sekarang.";
         SpannableString daftar = new SpannableString(text);
         ClickableSpan clickableSpan = new ClickableSpan() {
             @Override
-            public void onClick(View widget) {
+            public void onClick(@NonNull View widget) {
                 startActivity(new Intent(lupaPasswordScreen.this, loginScreen.class));
             }
 
@@ -75,11 +75,11 @@ public class lupaPasswordScreen extends AppCompatActivity {
 
         /// CHANGE FONT TYPE ///
         Typeface poppinsBold = Typeface.createFromAsset(getAssets(),"fonts/Poppins-Bold.otf");
-        zeealsForgot = (TextView) findViewById(R.id.txtZealsForgot);
+        TextView zeealsForgot = findViewById(R.id.txtZealsForgot);
         zeealsForgot.setTypeface(poppinsBold);
 
         /// BTN FORGOT / RESET WORKS ///
-        btnForgotPassword = (Button) findViewById(R.id.btnForgot);
+        btnForgotPassword = findViewById(R.id.btnForgot);
         btnForgotPassword.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -88,8 +88,8 @@ public class lupaPasswordScreen extends AppCompatActivity {
         });
 
         /// ANOTHER INITIATIONS ///
-        etEmail = (AutoCompleteTextView) findViewById(R.id.ETemailForgotInput);
-        pbForgot = (ProgressBar) findViewById(R.id.forgot_progress);
+        etEmail = findViewById(R.id.ETemailForgotInput);
+        pbForgot = findViewById(R.id.forgot_progress);
         validateEmail();
 
     }
@@ -123,6 +123,7 @@ public class lupaPasswordScreen extends AppCompatActivity {
         });
     }
 
+
     private void forgotPasswordProcess(){
         pbForgot.setVisibility(View.VISIBLE);
         btnForgotPassword.setVisibility(View.GONE);
@@ -135,7 +136,7 @@ public class lupaPasswordScreen extends AppCompatActivity {
 
         call.enqueue(new Callback<String>() {
             @Override
-            public void onResponse(Call<String> call, Response<String> response) {
+            public void onResponse(@NonNull Call<String> call, @NonNull Response<String> response) {
                 if (response.isSuccessful()){
                     pbForgot.setVisibility(View.INVISIBLE);
                     btnForgotPassword.setVisibility(View.VISIBLE);
@@ -151,7 +152,7 @@ public class lupaPasswordScreen extends AppCompatActivity {
             }
 
             @Override
-            public void onFailure(Call<String> call, Throwable t) {
+            public void onFailure(@NonNull Call<String> call, @NonNull Throwable t) {
                 pbForgot.setVisibility(View.INVISIBLE);
                 btnForgotPassword.setVisibility(View.VISIBLE);
 

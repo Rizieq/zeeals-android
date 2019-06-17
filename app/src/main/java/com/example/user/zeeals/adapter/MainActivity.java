@@ -1,49 +1,36 @@
 package com.example.user.zeeals.adapter;
 
-import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
-import android.content.Context;
-import android.content.res.Resources;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewCompat;
-import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.DisplayMetrics;
 import android.util.Log;
-import android.util.TypedValue;
-import android.view.Display;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.view.animation.AccelerateDecelerateInterpolator;
+import android.view.animation.Animation;
+import android.view.animation.AnimationSet;
+import android.view.animation.DecelerateInterpolator;
 import android.view.animation.OvershootInterpolator;
-import android.widget.ImageButton;
-import android.widget.RelativeLayout;
+import android.view.animation.ScaleAnimation;
 import android.widget.Toast;
 
-//import com.example.user.zeeals.adapter.AddNewGroup;
 import com.example.user.zeeals.fragment.UserFragment;
 import com.example.user.zeeals.ResponsesAndRequest.IconList;
-import com.example.user.zeeals.fragment.menuFragment;
-import com.example.user.zeeals.listener.dimLayoutListener;
 import com.example.user.zeeals.service.RetroConnection;
 import com.example.user.zeeals.service.UserClient;
-import com.example.user.zeeals.util.CurvedBottomNavigationView;
-import com.github.jorgecastilloprz.FABProgressCircle;
-import com.github.jorgecastilloprz.listeners.FABProgressListener;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 import com.example.user.zeeals.R;
 import com.example.user.zeeals.model.Zlink;
@@ -59,20 +46,15 @@ public class MainActivity extends AppCompatActivity{
     public List<Zlink> zLink;
     private static final String TAG = "TESTING";
     int startingPosition=1;
-
-    TabLayout tabLayout;
-    TabAdapter tabAdapter;
-    ViewPager viewPager;
     RetroConnection conn;
     ConstraintLayout dim;
     FloatingActionButton fab;
-    FABProgressCircle fabProgressCircle;
 
-    dimLayoutListener dimLayoutListener;
     FragmentTransaction transaction;
     boolean menuShowed,layout_inHome;
     com.example.user.zeeals.fragment.menuFragment menuFragment;
-    CurvedBottomNavigationView curvedBottomNavigationView;
+    BottomNavigationView bottomNavigationView;
+
 
     @SuppressLint("ResourceAsColor")
     @Override
@@ -80,8 +62,8 @@ public class MainActivity extends AppCompatActivity{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
-        curvedBottomNavigationView = findViewById(R.id.customBottomBar);
-        curvedBottomNavigationView.inflateMenu(R.menu.bottom_nav);
+        bottomNavigationView = findViewById(R.id.bottomnav);
+//        bottomNavigationView.inflateMenu(R.menu.bottom_nav);
         initView();
         receiveIcon();
         onClickController();
@@ -91,18 +73,15 @@ public class MainActivity extends AppCompatActivity{
     void initView(){
         menuShowed=false;
         layout_inHome=true;
-        fabProgressCircle=findViewById(R.id.fabProgressCircle);
         loadFragment(new mainFragment());
     }
 
-    private boolean loadFragment(Fragment fragment) {
+    private void loadFragment(Fragment fragment) {
         if (fragment != null) {
             getSupportFragmentManager().beginTransaction()
                     .replace(R.id.mainActivity_frag_container, fragment,"homeFrag")
                     .commit();
-            return true;
         }
-        return false;
     }
 
     void fabController(){
@@ -116,18 +95,21 @@ public class MainActivity extends AppCompatActivity{
                     if (menuShowed){
                         hideMenu();
                         mainFragment mainFragment= (mainFragment) getSupportFragmentManager().findFragmentByTag("homeFrag");
+                        assert mainFragment != null;
                         mainFragment.dimLayout(false);
                         rotateFab();
                     }else{
                         mainFragment mainFragment= (mainFragment) getSupportFragmentManager().findFragmentByTag("homeFrag");
+                        assert mainFragment != null;
                         mainFragment.dimLayout(true);
                         openMenuFragment();
                         rotateFab();
                     }
                 }else{
-                    fab.setEnabled(false);
-                    fabProgressCircle.show();
+//                    fab.setEnabled(false);
+//                    fabProgressCircle.show();
                     UserFragment userFragment= (UserFragment)getSupportFragmentManager().findFragmentByTag("accountFrag");
+                    assert userFragment != null;
                     userFragment.save();
                 }
 
@@ -158,7 +140,7 @@ public class MainActivity extends AppCompatActivity{
     }
 
     public void openMenuFragment() {
-        menuFragment = menuFragment.newInstance();
+        menuFragment = com.example.user.zeeals.fragment.menuFragment.newInstance();
         FragmentManager fragmentManager = getSupportFragmentManager();
         transaction = fragmentManager.beginTransaction();
         transaction.setCustomAnimations(R.anim.enter_from_bottom,R.anim.enter_from_bottom);
@@ -173,8 +155,9 @@ public class MainActivity extends AppCompatActivity{
         Call<IconList> call = userClient.icon(token);
         call.enqueue(new Callback<IconList>() {
             @Override
-            public void onResponse(Call<IconList> call, Response<IconList> response) {
+            public void onResponse(@NonNull Call<IconList> call, @NonNull Response<IconList> response) {
                 if(response.isSuccessful()){
+                    assert response.body() != null;
                     ArrayList<String> x = response.body().getIconList();
                     Gson gson = new Gson();
                     String json = gson.toJson(x);
@@ -186,7 +169,7 @@ public class MainActivity extends AppCompatActivity{
             }
 
             @Override
-            public void onFailure(Call<IconList> call, Throwable t) {
+            public void onFailure(@NonNull Call<IconList> call, @NonNull Throwable t) {
                 Toast.makeText(MainActivity.this,"Failed to retrive icon list",Toast.LENGTH_SHORT).show();
                 Log.d(TAG, "onFailure: failed retrieve icon list");
             }
@@ -194,16 +177,16 @@ public class MainActivity extends AppCompatActivity{
     }
 
     void onClickController(){
-        curvedBottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
+        bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 Fragment fragment = null;
                 int position=0;
                 switch (item.getItemId()){
                     case R.id.home_nav:
+                        if(!layout_inHome)fab.setAnimation(shrink());
                         if(!menuShowed) {
                             layout_inHome = true;
-                            fab.setImageResource(R.drawable.ic_add);
                             fragment = new mainFragment();
                             getSupportFragmentManager().beginTransaction()
                                     .replace(R.id.mainActivity_frag_container, fragment, "homeFrag")
@@ -214,7 +197,7 @@ public class MainActivity extends AppCompatActivity{
                         }
                         break;
                     case R.id.account_nav:
-                        fab.setImageResource(R.drawable.ic_check);
+                        if(layout_inHome)fab.setAnimation(shrink());
                         fragment = new UserFragment();
                         layout_inHome=false;
                         if(menuShowed){
@@ -228,32 +211,14 @@ public class MainActivity extends AppCompatActivity{
                                 .commit();
                         position=2;
                         break;
-                    case R.id.gap:
-                        if(layout_inHome){
-                            if (menuShowed){
-                                hideMenu();
-                                mainFragment mainFragment= (mainFragment) getSupportFragmentManager().findFragmentByTag("homeFrag");
-                                mainFragment.dimLayout(false);
-                                rotateFab();
-                            }else{
-                                mainFragment mainFragment= (mainFragment) getSupportFragmentManager().findFragmentByTag("homeFrag");
-                                mainFragment.dimLayout(true);
-                                openMenuFragment();
-                                rotateFab();
-                            }
-                        }else{
-                            fabProgressCircle.show();
-                            fab.setEnabled(false);
-                            UserFragment userFragment= (UserFragment)getSupportFragmentManager().findFragmentByTag("accountFrag");
-                            userFragment.save();
-                        }
-                        return false;
                 }
                 return loadFragment(fragment,position);
             }
         });
     }
+
     private boolean loadFragment(Fragment fragment, int newPosition) {
+
         if(fragment != null) {
             if(startingPosition > newPosition) {
                 FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
@@ -268,6 +233,7 @@ public class MainActivity extends AppCompatActivity{
                 transaction.commit();
             }
             startingPosition = newPosition;
+
             return true;
         }
 
@@ -283,18 +249,56 @@ public class MainActivity extends AppCompatActivity{
         fab.setEnabled(true);
     }
 
-    public void fabProgressCancel(){
-        fabProgressCircle.hide();
-    }
-
-    public void fabProgressCircleEnd(){
-        fabProgressCircle.beginFinalAnimation();
-        fabProgressCircle.attachListener(new FABProgressListener() {
+    AnimationSet grow(){
+        final ScaleAnimation growAnim = new ScaleAnimation(0f, 1f, 0f, 1f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+        AnimationSet animationSet = new AnimationSet(true);
+        animationSet.setInterpolator(new DecelerateInterpolator());
+        animationSet.addAnimation(growAnim);
+        animationSet.setDuration(200);
+        animationSet.setAnimationListener(new Animation.AnimationListener() {
             @Override
-            public void onFABProgressAnimationEnd() {
-//                Toast.makeText(MainActivity.this,"Success",Toast.LENGTH_SHORT).show();
-                fabProgressCircle.hide();
+            public void onAnimationStart(Animation animation) {
+                if(layout_inHome) fab.setImageResource(R.drawable.ic_add);
+                else fab.setImageResource(R.drawable.ic_check);
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
             }
         });
+
+        return animationSet;
+    }
+
+    AnimationSet shrink(){
+        final ScaleAnimation shrinkAnim = new ScaleAnimation(1, 0f, 1f, 0f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+
+        AnimationSet animationSet = new AnimationSet(true);
+        animationSet.setInterpolator(new AccelerateDecelerateInterpolator());
+        animationSet.addAnimation(shrinkAnim);
+        animationSet.setDuration(200);
+        animationSet.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                fab.setAnimation(grow());
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+        });
+        return animationSet;
     }
 }

@@ -2,12 +2,12 @@ package com.example.user.zeeals;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.example.user.zeeals.adapter.MainActivity;
@@ -16,7 +16,6 @@ import com.example.user.zeeals.model.Zlink;
 import com.example.user.zeeals.model.zGroup;
 import com.example.user.zeeals.model.zGroupList;
 import com.example.user.zeeals.model.zSource;
-import com.example.user.zeeals.security.AesCipher;
 import com.example.user.zeeals.service.RetroConnection;
 import com.example.user.zeeals.service.UserClient;
 import com.eyalbira.loadingdots.LoadingDots;
@@ -25,20 +24,20 @@ import com.google.gson.Gson;
 import java.util.ArrayList;
 import java.util.List;
 
+
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+
+
 public class splashscreen extends AppCompatActivity {
-    private ImageView logoZeeals;
-//    private ProgressBar pb;
     LoadingDots loadingDots;
     RetroConnection conn;
     UserClient userClient;
     List<Zlink> zlinks;
-    AesCipher ch;
     private static final String TAG = "splashscreen";
-
+    private ArrayList<String> uriArrayList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,12 +46,12 @@ public class splashscreen extends AppCompatActivity {
 //        getSharedPreferences("TOKEN",MODE_PRIVATE).edit().clear().apply();
 
 
-
+        uriArrayList =new ArrayList<>();
         zlinks = new ArrayList<>();
         setContentView(R.layout.activity_splashscreen);
         conn = new RetroConnection();
         userClient = conn.getConnection();
-        logoZeeals = (ImageView) findViewById(R.id.splashLogo);
+        ImageView logoZeeals = (ImageView) findViewById(R.id.splashLogo);
         loadingDots =findViewById(R.id.splashProgressBar);
 
         Animation splashanim = AnimationUtils.loadAnimation(this,R.anim.animation_splash);
@@ -63,7 +62,7 @@ public class splashscreen extends AppCompatActivity {
         Thread timer = new Thread(){
             public void run(){
                 try{
-                    sleep(3000);
+                    sleep(1000);
                     SharedPreferences pref = getSharedPreferences("TOKEN",MODE_PRIVATE);
                     String tokenAccess = pref.getString("TOKEN",null);
                     if(tokenAccess==null){
@@ -74,9 +73,6 @@ public class splashscreen extends AppCompatActivity {
                     }
                 }catch (InterruptedException e){
                     e.printStackTrace();
-                }finally {
-
-
                 }
             }
         };
@@ -89,8 +85,9 @@ public class splashscreen extends AppCompatActivity {
         Call<zGroupList> call=  userClient.links(token,acid);
         call.enqueue(new Callback<zGroupList>() {
             @Override
-            public void onResponse(Call<zGroupList> call, Response<zGroupList> response) {
+            public void onResponse(@NonNull Call<zGroupList> call, @NonNull Response<zGroupList> response) {
                 if (response.isSuccessful()) {
+                    assert response.body() != null;
                     if (response.body().getServe() != null) {
                         List<zGroup> responseGroup = response.body().getServe();
                         for (zGroup g : responseGroup) {
@@ -106,11 +103,11 @@ public class splashscreen extends AppCompatActivity {
                         String json = gson.toJson(zlinks);
                         SharedPreferences.Editor pref = getSharedPreferences("TOKEN", MODE_PRIVATE).edit().putString("GROUPLIST", json);
                         pref.apply();
+                        Intent i = new Intent(splashscreen.this, MainActivity.class);
+                        i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        startActivity(i);
+                        finish();
                     }
-                    Intent i = new Intent(splashscreen.this, MainActivity.class);
-                    i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                    startActivity(i);
-                    finish();
                 } else {
                     Toast.makeText(splashscreen.this,"Login error",Toast.LENGTH_SHORT).show();
                     startActivity(new Intent(splashscreen.this,loginScreen.class));
@@ -119,9 +116,13 @@ public class splashscreen extends AppCompatActivity {
 
             }
             @Override
-            public void onFailure(Call<zGroupList> call, Throwable t) {
+            public void onFailure(@NonNull Call<zGroupList> call, @NonNull Throwable t) {
                 Toast.makeText(splashscreen.this,"Connection error",Toast.LENGTH_SHORT).show();
             }
         });
     }
+
+
+
+
 }

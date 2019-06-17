@@ -1,7 +1,6 @@
 package com.example.user.zeeals.fragment;
 
 import android.annotation.SuppressLint;
-import android.app.AlertDialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -18,6 +17,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.Toast;
@@ -52,11 +52,11 @@ public class addLinkFragment extends Fragment {
     private static final String TAG = "addLinkFragment";
     private Button btnAdd;
     private Spinner spinnerGroup;
-    private EditText url, urlImage, title;
+    private EditText url, title;
     private List<Zlink> zLink;
     private ProgressBar progressBar;
     private ConstraintLayout message_layout;
-    private EditText message;
+    private EditText message, image_url;
     private String confirmed_message;
 
 
@@ -84,9 +84,10 @@ public class addLinkFragment extends Fragment {
         progressBar = addLinkView.findViewById(R.id.progress_bar_add_link);
         progressBar.setVisibility(View.GONE);
 
-        Button btnBack = addLinkView.findViewById(R.id.btnBackAddLink);
+        ImageView btnBack = addLinkView.findViewById(R.id.btnBackAddLink);
         btnAdd = addLinkView.findViewById(R.id.btnAddAddLink);
         spinnerGroup = addLinkView.findViewById(R.id.spinnerAddLink);
+        image_url = addLinkView.findViewById(R.id.etImageAddressAddLink);
         List<String> groupNames = new ArrayList<String>();
         for (int i=0;i<zLink.size();i++){
             groupNames.add(((zGroup)zLink.get(i)).getTitle());
@@ -99,7 +100,6 @@ public class addLinkFragment extends Fragment {
 
 
         url = addLinkView.findViewById(R.id.etURLAddLink);
-        urlImage = addLinkView.findViewById(R.id.etImageAddressAddLink);
         title = addLinkView.findViewById(R.id.etTitleAddLink);
         message_layout = addLinkView.findViewById(R.id.addLink_message_layout);
         message=addLinkView.findViewById(R.id.addLink_message);
@@ -125,17 +125,6 @@ public class addLinkFragment extends Fragment {
 
 
         return addLinkView;
-    }
-
-
-    private void dialogDelete(){
-        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-        builder.setTitle("Hapus Link")
-                .setMessage("apakah anda ingin menghapus link ini ?")
-                .setPositiveButton("Ya",null)
-                .setNegativeButton("Tidak",null);
-        AlertDialog alertShow = builder.create();
-        alertShow.show();
     }
 
     @SuppressLint("SetTextI18n")
@@ -186,7 +175,7 @@ public class addLinkFragment extends Fragment {
                 }
             }
             int groupID = ((zGroup)zLink.get(spinnerPosition-1)).getGroupLinkId();
-            final zSource source = new zSource(1,groupID,link_key,url.getText().toString(),title.getText().toString(),0,"testing","v",1);
+            final zSource source = new zSource(1,groupID,link_key,url.getText().toString(),title.getText().toString(),0,image_url.getText().toString(),"v",1);
             source.setMessage(confirmed_message);
             source.setLinkKey(link_key);
             source.setUrl(mUrl);

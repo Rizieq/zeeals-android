@@ -1,12 +1,9 @@
 package com.example.user.zeeals.adapter;
 
 import android.content.Context;
-import android.graphics.Typeface;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.example.user.zeeals.R;
@@ -14,8 +11,8 @@ import com.example.user.zeeals.R;
 import java.util.ArrayList;
 
 public class IconAdapter extends BaseAdapter {
-    Context context;
-    ArrayList<String> icon;
+    private Context context;
+    private ArrayList<String> icon;
 
     public IconAdapter(Context c, ArrayList<String> i) {
         context=c;

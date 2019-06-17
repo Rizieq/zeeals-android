@@ -1,10 +1,13 @@
 package com.example.user.zeeals.model;
 
+import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
+
+import java.util.ArrayList;
 
 public class zSource extends Zlink {
     @SerializedName("link_id")
@@ -50,6 +53,8 @@ public class zSource extends Zlink {
     @Expose
     private String updatedAt;
 
+    private String link_avatar;
+
 
 
     public zSource(Integer accountId, Integer groupLinkId, String linkKey, String url, String title, Integer position, String avatar, String orientation, Integer status) {
@@ -63,6 +68,7 @@ public class zSource extends Zlink {
         this.orientation = orientation;
         this.status = status;
     }
+
 
     @Override
     public boolean isParent() {
@@ -84,6 +90,14 @@ public class zSource extends Zlink {
     public void setLinkId(Integer linkId) {
         this.linkId = linkId;
         this.Id = linkId;
+    }
+
+    public String getLink_avatar() {
+        return link_avatar;
+    }
+
+    public void setLink_avatar(String link_avatar) {
+        this.link_avatar = link_avatar;
     }
 
     public String getMessage() {

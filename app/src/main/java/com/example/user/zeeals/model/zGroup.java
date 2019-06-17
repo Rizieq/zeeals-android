@@ -48,6 +48,7 @@ public class zGroup extends Zlink {
 
 
 
+
     @Override
     public boolean isParent() {
         return true;
@@ -111,9 +112,8 @@ public class zGroup extends Zlink {
     public boolean isHasChild() {
         if(childLink==null){
             return false;
-        }else if(childLink.isEmpty()){
-            return false;
-        }else return true;
+        }else if(childLink.isEmpty()) return false;
+        else return true;
     }
 
 

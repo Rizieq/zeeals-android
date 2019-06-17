@@ -1,52 +1,29 @@
 package com.example.user.zeeals.adapter;
 
-import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.AlphaAnimation;
-import android.view.animation.Animation;
 import android.view.animation.RotateAnimation;
-import android.view.animation.ScaleAnimation;
-import android.view.animation.TranslateAnimation;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
+
+import com.bumptech.glide.Glide;
 import com.example.user.zeeals.R;
 import com.example.user.zeeals.activity.addGroupAndLinkFragmentHost;
 import com.example.user.zeeals.model.Zlink;
 import com.example.user.zeeals.model.zGroup;
 import com.example.user.zeeals.model.zSource;
-import com.example.user.zeeals.service.UserClient;
-import com.example.user.zeeals.util.ServerAPI;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
-import okhttp3.ResponseBody;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
-
-import static android.content.Context.MODE_PRIVATE;
-import static android.support.constraint.Constraints.TAG;
 import static android.view.animation.Animation.RELATIVE_TO_SELF;
 
 public class RecyclerAdapter_Main extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
@@ -54,13 +31,9 @@ public class RecyclerAdapter_Main extends RecyclerView.Adapter<RecyclerView.View
     private static final int PARENT = 1;
     @SuppressLint("StaticFieldLeak")
     private static RecyclerAdapter_Main recyclerAdapter;
-    public RecyclerView recyclerView;
+    RecyclerView recyclerView;
     private static List<Zlink> general;
-    private static List<Zlink> backup;
-    private Zlink mRecentlyDeletedItem;
-    private int mRecentlyDeletedItemPosition;
     public String token;
-    private UserClient userClient;
     private Context context;
 
     RecyclerAdapter_Main(RecyclerView recyclerView, List<Zlink> general, String token, Context context){
@@ -71,23 +44,15 @@ public class RecyclerAdapter_Main extends RecyclerView.Adapter<RecyclerView.View
         this.token = token;
         this.context = context;
 
-        Retrofit.Builder builder = new Retrofit.Builder()
-                .baseUrl(ServerAPI.zeealseRESTAPI)
-                .addConverterFactory(GsonConverterFactory.create());
-
-        Retrofit retrofit = builder.build();
-        userClient = retrofit.create(UserClient.class);
-
     }
-
-
 
     public static class ParentViewHolder extends RecyclerView.ViewHolder {
         @SuppressLint("StaticFieldLeak")
         static TextView groupTitle;
         @SuppressLint("StaticFieldLeak")
-        public ImageView arrow;
+        ImageView arrow;
         public TextView icon;
+
 
 
         ParentViewHolder(View itemView) {
@@ -166,19 +131,25 @@ public class RecyclerAdapter_Main extends RecyclerView.Adapter<RecyclerView.View
         }
     }
 
-
     public  static class ChildsViewHolder extends RecyclerView.ViewHolder {
         TextView sourceName;
         TextView sourceLink;
-        FrameLayout layoutLink;
-        ConstraintLayout layoutLink2;
+        ConstraintLayout layoutLink;
+        ImageView link_avatar,status_indicator;
+        Context mContext;
 
         ChildsViewHolder(View itemView) {
             super(itemView);
+            link_avatar = itemView.findViewById(R.id.link_avatar_image);
             layoutLink = itemView.findViewById(R.id.linkLayout);
             sourceName = itemView.findViewById(R.id.list_item_source_name);
-            sourceLink = itemView.findViewById(R.id.list_item_source_link);
+            status_indicator = itemView.findViewById(R.id.status_inidcator);
+//            sourceLink = itemView.findViewById(R.id.list_item_source_link);
+            mContext = itemView.getContext();
+        }
 
+        void setImage(String url){
+            Glide.with(mContext).load(url).into(link_avatar);
         }
 
     }
@@ -207,16 +178,37 @@ public class RecyclerAdapter_Main extends RecyclerView.Adapter<RecyclerView.View
     }
 
     @Override
-    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder viewHolder, @SuppressLint("RecyclerView") final int i) {
+    public void onBindViewHolder(@NonNull final RecyclerView.ViewHolder viewHolder, @SuppressLint("RecyclerView") final int i) {
         if (viewHolder.getItemViewType()==CHILD){
             setFadeAnimation(viewHolder.itemView);
-            FrameLayout linkLayout = ((ChildsViewHolder)viewHolder).layoutLink;
+            ConstraintLayout linkLayout = ((ChildsViewHolder)viewHolder).layoutLink;
             TextView sourceName = ((ChildsViewHolder)viewHolder).sourceName;
-            TextView sourceLink= ((ChildsViewHolder)viewHolder).sourceLink;
+//            TextView sourceLink= ((ChildsViewHolder)viewHolder).sourceLink;
             zSource zSource = (zSource) general.get(i);
-            sourceLink.setText(zSource.getLinkKey());
+//            sourceLink.setText(zSource.getLinkKey());
             sourceName.setText(zSource.getTitle());
-            linkLayout.setOnClickListener(new View.OnClickListener() {
+//            new DownloadImageTask(linkAvatar).execute(zSource.getAvatar());
+//            linkAvatar.setImageURI(Uri.parse(zSource.getLink_avatar()));
+            ((ChildsViewHolder) viewHolder).setImage(zSource.getAvatar());
+//            linkLayout.setOnClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View v) {
+//                    openEditLink(i);
+//                }
+//            });
+            if(zSource.getStatus()==0) {
+                linkLayout.setBackgroundResource(R.drawable.status_off);
+                ((ChildsViewHolder) viewHolder).link_avatar.setColorFilter(Color.parseColor("#5FD4D4D4"));
+                ((ChildsViewHolder) viewHolder).sourceName.setTextColor(Color.parseColor("#5F000000"));
+                ((ChildsViewHolder) viewHolder).status_indicator.setVisibility(View.INVISIBLE);
+            }
+            else {
+                linkLayout.setBackgroundResource(R.drawable.button_shadow_box);
+                ((ChildsViewHolder) viewHolder).link_avatar.setColorFilter(null);
+                ((ChildsViewHolder) viewHolder).sourceName.setTextColor(Color.parseColor("#FA000000"));
+                ((ChildsViewHolder) viewHolder).status_indicator.setVisibility(View.VISIBLE);
+            }
+            sourceName.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     openEditLink(i);
@@ -225,6 +217,8 @@ public class RecyclerAdapter_Main extends RecyclerView.Adapter<RecyclerView.View
         }else{
             TextView groupName = ParentViewHolder.groupTitle;
             TextView iconGroup = ((ParentViewHolder)viewHolder).icon;
+            final ImageView arrow = ((ParentViewHolder)viewHolder).arrow;
+
             zGroup zGroup = (zGroup)general.get(i);
             groupName.setText(zGroup.getTitle());
 
@@ -238,183 +232,34 @@ public class RecyclerAdapter_Main extends RecyclerView.Adapter<RecyclerView.View
                     context.startActivity(new Intent(context, addGroupAndLinkFragmentHost.class).putExtra("menuType","editGroup").putExtra("position",i));
                 }
             });
+
+
+//            if(i==general.size()-1){
+//                ((ParentViewHolder)viewHolder).expand_collapse(arrow);
+//            }
         }
     }
+
+
 
     @Override
     public int getItemCount() {
         return general.size();
     }
 
-    void deleteItem(final int position, final RecyclerView.ViewHolder viewHolder) {
 
-        if(viewHolder.getItemViewType()==PARENT){
-            zGroup zGroup = ((zGroup)general.get(position));
-            if(zGroup.isChildrenVisible()){
-                ((ParentViewHolder) viewHolder).expand_collapse(((ParentViewHolder) viewHolder).arrow);
-            }
-            AlertDialog.Builder builder = new AlertDialog.Builder(context);
-
-            builder.setTitle("Hapus Group")
-                    .setMessage("Apakah anda yakin menghapus group ini ? ")
-                    .setPositiveButton("Hapus", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-                            zGroup deletePosition = ((zGroup)general.get(position));
-                            Call<ResponseBody> call = userClient.delete(token,deletePosition);
-                            call.enqueue(new Callback<ResponseBody>() {
-                                @Override
-                                public void onResponse(@NonNull Call<ResponseBody> call, @NonNull Response<ResponseBody> response) {
-                                    if(response.isSuccessful()){
-                                        general.remove(position);
-                                        notifyItemRemoved(position);
-
-                                        Gson gson = new Gson();
-                                        String json = gson.toJson(general);
-                                        context.getSharedPreferences("TOKEN",MODE_PRIVATE).edit().putString("GROUPLIST",json).apply();
-                                    }else{
-                                        Toast.makeText(context,"Failed to delete group",Toast.LENGTH_SHORT).show();
-                                    }
-
-                                }
-
-                                @Override
-                                public void onFailure(@NonNull Call<ResponseBody> call, @NonNull Throwable t) {
-                                    Toast.makeText(context,"Failed to delete group",Toast.LENGTH_SHORT).show();
-                                }
-                            });
-                        }
-                    })
-                    .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            mRecentlyDeletedItem = general.get(position);
-                            mRecentlyDeletedItemPosition = position;
-                            undoDelete();
-                        }
-                    }).setCancelable(false);
-            AlertDialog alertOut = builder.create();
-            alertOut.show();
-
-        }else{
-
-            //TODO FIX THIS
-            final zSource zSource = (zSource) general.get(position);
-            final int[] groupLinkPosition= searchGroupPosition(zSource.getGroupLinkId(),zSource.getLinkId());
-
-            AlertDialog.Builder builder = new AlertDialog.Builder(context);
-
-            builder.setTitle("Hapus link")
-                    .setMessage("Apakah anda yakin menghapus link ini ? ")
-                    .setPositiveButton("Hapus", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-                            int deletePosition = zSource.getLinkId();
-                            Call<ResponseBody> call = userClient.deleteLink(token,zSource);
-                            call.enqueue(new Callback<ResponseBody>() {
-                                @Override
-                                public void onResponse(@NonNull Call<ResponseBody> call, @NonNull Response<ResponseBody> response) {
-                                    if(response.isSuccessful()){
-
-                                        String groupJSON = context.getSharedPreferences("TOKEN",MODE_PRIVATE).getString("GROUPLIST",null);
-                                        Type listType = new TypeToken<List<zGroup>>(){}.getType();
-                                        ArrayList<Zlink> zLink;
-                                        zLink = new Gson().fromJson(groupJSON,listType);
-                                        assert zLink != null;
-                                        zGroup zGroup = ((zGroup)zLink.get(groupLinkPosition[0]));
-                                        zGroup.getChildLink().remove(groupLinkPosition[1]);
-
-                                        zGroup zGroup2 = ((zGroup)general.get(groupLinkPosition[0]));
-                                        zGroup2.getChildLink().remove(groupLinkPosition[1]);
-                                        general.remove(position);
-                                        notifyItemRangeChanged(0,general.size());
-                                        Gson gson = new Gson();
-                                        String json = gson.toJson(zLink);
-                                        context.getSharedPreferences("TOKEN",MODE_PRIVATE).edit().putString("GROUPLIST",json).apply();
-                                    }else{
-                                        Toast.makeText(context,"Failed to delete group",Toast.LENGTH_SHORT).show();
-                                    }
-
-                                }
-
-                                @Override
-                                public void onFailure(@NonNull Call<ResponseBody> call, @NonNull Throwable t) {
-                                    Toast.makeText(context,"Failed to delete group",Toast.LENGTH_SHORT).show();
-                                }
-                            });
-                        }
-                    })
-                    .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            mRecentlyDeletedItem = general.get(position);
-                            mRecentlyDeletedItemPosition = position;
-                            undoDelete();
-                        }
-                    }).setCancelable(false);
-            AlertDialog alertOut = builder.create();
-            alertOut.show();
-        }
-
-    }
-
-    void openEditLink(int i){
+    private void openEditLink(int i){
         zSource zSource = (zSource) general.get(i);
         int[] id = {zSource.getGroupLinkId(),zSource.getLinkId()};
         context.startActivity(new Intent(context, addGroupAndLinkFragmentHost.class).putExtra("menuType","editLink").putExtra("position",id));
     }
 
-    private void undoDelete() {
-//        general.remove(mRecentlyDeletedItem);
-//        notifyItemRemoved(mRecentlyDeletedItemPosition);
-//        general.add(mRecentlyDeletedItemPosition,mRecentlyDeletedItem);
-//        notifyItemInserted(mRecentlyDeletedItemPosition);
-        notifyDataSetChanged();
-    }
-
-    private int[] searchGroupPosition(int groupId,int linkId){
-        int groupPosition = 1000;
-        int linkPosition= 1000;
-
-//        String groupJSON = context.getSharedPreferences("TOKEN",MODE_PRIVATE).getString("GROUPLIST",null);
-//
-//        Type listType = new TypeToken<List<zGroup>>(){}.getType();
-//        zLink = new ArrayList<>();
-//        zLink = new Gson().fromJson(groupJSON,listType);
-
-        for(int i = 0; i<general.size(); i++){
-            if(general.get(i) instanceof zGroup){
-                if(((zGroup)general.get(i)).getGroupLinkId()==groupId){
-                    groupPosition=i;
-                    break;
-                }
-            }
-        }
-        zGroup zGroup = ((zGroup)general.get(groupPosition));
-        for(int i =0;i<zGroup.getChildLink().size();i++){
-            if(zGroup.getChildLink().get(i).getLinkId()==linkId){
-                linkPosition=i;
-                break;
-            }
-        }
-
-        return new int[]{groupPosition,linkPosition};
-    }
-
 
     private void setFadeAnimation(View view) {
-//        AlphaAnimation anim = new AlphaAnimation(0.0f, 1.0f);
-//        anim.setDuration(230);
-//        view.startAnimation(anim);
         view.animate().x(50f).y(100f);
-//        ObjectAnimator animation = ObjectAnimator.ofFloat(view, "translationX", 100f);
-//        animation.setDuration(2000);
-//        TranslateAnimation animate =
-//        view.startAnimation(animation);
-
-//        ScaleAnimation anim = new ScaleAnimation(0.0f, 1.0f, 0.0f, 1.0f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
-//        anim.setDuration(250);
-//        view.startAnimation(anim);
     }
+
+
+
 
 }

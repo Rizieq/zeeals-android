@@ -1,11 +1,11 @@
 package com.example.user.zeeals.fragment;
 
 import android.annotation.SuppressLint;
-import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -28,13 +28,13 @@ import com.example.user.zeeals.ResponsesAndRequest.PostGroupResponse;
 import com.example.user.zeeals.model.Zlink;
 import com.example.user.zeeals.model.zGroup;
 import com.example.user.zeeals.service.RetroConnection;
-import com.example.user.zeeals.util.NothingSelectedSpinnerAdapter;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -85,8 +85,8 @@ public class addGroupFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        this.iconPicker_dialog = new Dialog(getContext());
-        String iconJSON= getActivity().getSharedPreferences("ICON",MODE_PRIVATE).getString("ICON",null);
+        this.iconPicker_dialog = new Dialog(Objects.requireNonNull(getContext()));
+        String iconJSON= Objects.requireNonNull(getActivity()).getSharedPreferences("ICON",MODE_PRIVATE).getString("ICON",null);
         iconList = new Gson().fromJson(iconJSON,ArrayList.class);
         conn = new RetroConnection();
         token = getActivity().getSharedPreferences("TOKEN", MODE_PRIVATE).getString("TOKEN",null);
@@ -98,7 +98,7 @@ public class addGroupFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View addGroupView = inflater.inflate(R.layout.fragment_add_group, container, false);
@@ -112,7 +112,7 @@ public class addGroupFragment extends Fragment {
 
 
         spinner_grid = addGroupView.findViewById(R.id.spinnerAddGroup);
-        ArrayAdapter<CharSequence> adapterGrid = ArrayAdapter.createFromResource(getContext(), R.array.grid, android.R.layout.simple_spinner_item);
+        ArrayAdapter<CharSequence> adapterGrid = ArrayAdapter.createFromResource(Objects.requireNonNull(getContext()), R.array.grid, android.R.layout.simple_spinner_item);
         adapterGrid.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
 
@@ -124,7 +124,7 @@ public class addGroupFragment extends Fragment {
         btnBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getActivity().onBackPressed();
+                Objects.requireNonNull(getActivity()).onBackPressed();
             }
         });
 
@@ -154,9 +154,6 @@ public class addGroupFragment extends Fragment {
 
 
                 }
-                String icon = new String (Character.toChars(Integer.parseInt(
-                        iconList.get(position), 16)));
-
                 rawIcon=iconList.get(position);
             }
         });
@@ -185,16 +182,6 @@ public class addGroupFragment extends Fragment {
         super.onDetach();
     }
 
-    private void dialogDelete(){
-        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-        builder.setTitle("Hapus Grup")
-                .setMessage("apakah anda ingin menghapus grup ini ?")
-                .setPositiveButton("Ya",null)
-                .setNegativeButton("Tidak",null);
-        AlertDialog alertShow = builder.create();
-        alertShow.show();
-    }
-
     private void saveGroup(){
         bar.setVisibility(View.VISIBLE);
         btnAdd.setVisibility(View.GONE);
@@ -209,10 +196,6 @@ public class addGroupFragment extends Fragment {
         }else{
             orientationData='v';
         }
-//                if(switchStatus.isChecked()){
-//                    status="1";
-//                }else status="0";
-
         
         final zGroup group = new zGroup();
         group.setTitle(titleData);
@@ -222,10 +205,10 @@ public class addGroupFragment extends Fragment {
         Call<PostGroupResponse> call = conn.getConnection().create(token,group);
         call.enqueue(new Callback<PostGroupResponse>() {
             @Override
-            public void onResponse(Call<PostGroupResponse> call, Response<PostGroupResponse> response) {
+            public void onResponse(@NonNull Call<PostGroupResponse> call, @NonNull Response<PostGroupResponse> response) {
                 if(response.isSuccessful()){
 //                            final String[] x = {String.valueOf(orientationData),titleData,iconData,status,Integer.toString(response.body().getGroupLinkId())};
-                    String groupJSON = getActivity().getSharedPreferences("TOKEN",MODE_PRIVATE).getString("GROUPLIST",null);
+                    String groupJSON = Objects.requireNonNull(getActivity()).getSharedPreferences("TOKEN",MODE_PRIVATE).getString("GROUPLIST",null);
                     List<Zlink> zLink;
                     assert response.body() != null;
                     group.setGroupLinkId(response.body().getGroupID());
@@ -244,12 +227,12 @@ public class addGroupFragment extends Fragment {
                     Log.d(TAG, "onResponse: Data added");
                 }else {
                     Log.d(TAG, "onResponse: FAILED");
-                    getActivity().finish();
+                    Objects.requireNonNull(getActivity()).finish();
                 }
             }
 
             @Override
-            public void onFailure(Call<PostGroupResponse> call, Throwable t) {
+            public void onFailure(@NonNull Call<PostGroupResponse> call, @NonNull Throwable t) {
                 t.printStackTrace();
             }
         });

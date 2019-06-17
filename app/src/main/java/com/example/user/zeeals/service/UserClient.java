@@ -105,12 +105,11 @@ public interface UserClient {
     @PUT("api/v1/user/update")
     Call<Basic_Response> userUpdate(@Header("Authorization") String token, @Body updateUser_Model um);
 
-    @Multipart
     @POST("api/v1/upload/avatar")
-    Call<ResponseBody> uploadProfile(@Header("Authorization")String token, @Part MultipartBody.Part data, @Part("name") RequestBody requestBody);
+    Call<ResponseBody> uploadProfile(@Header("Authorization")String token,
+                                     @Body RequestBody file);
 
-    @Multipart
     @POST("api/v1/upload/banner")
-    Call<ResponseBody> uploadBanner(@Header("Authorization")String token, @Part MultipartBody.Part data, @Part("name") RequestBody requestBody);
+    Call<ResponseBody> uploadBanner(@Header("Authorization")String token, @Body RequestBody file);
 
 }

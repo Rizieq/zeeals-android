@@ -1,177 +1,44 @@
-<?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/container"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/background"
-    tools:context=".adapter.MainActivity">
+    android:layout_height="match_parent">
+
 
     <FrameLayout
         android:id="@+id/mainActivity_frag_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
-    <!--<com.example.user.zeeals.util.CurvedBottomNavigationView-->
-        <!--android:id="@+id/customBottomBar"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="70dp"-->
-        <!--android:background="?attr/selectableItemBackground"-->
-        <!--app:elevation="15dp"-->
-        <!--app:itemBackground="@android:color/transparent"-->
-        <!--app:layout_constraintBottom_toBottomOf="parent"-->
-        <!--android:outlineAmbientShadowColor="@android:color/black"-->
-        <!--android:outlineSpotShadowColor="@android:color/black"/>-->
-
-
-        <android.support.constraint.ConstraintLayout
-            android:id="@+id/navigation_bar"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:background="@android:color/transparent"
-            android:outlineProvider="bounds"
-            android:elevation="5dp"
-            app:layout_constraintBottom_toBottomOf="parent">
-
-            <android.support.constraint.Guideline
-                android:id="@+id/guideline3"
-                android:layout_width="0.1dp"
-                android:layout_height="match_parent"
-                android:orientation="vertical"
-                app:layout_constraintGuide_percent="0.5"/>
-
-            <android.support.constraint.ConstraintLayout
-                android:id="@+id/gap_layout"
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:background="@android:color/transparent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@id/account_nav_layout"
-                app:layout_constraintStart_toEndOf="@id/home_nav_layout"
-                >
-
-            </android.support.constraint.ConstraintLayout>
-
-            <android.support.constraint.ConstraintLayout
-                android:id="@+id/home_nav_layout"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_marginEnd="30dp"
-                android:background="@drawable/border_menu"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toStartOf="@id/guideline3">
-
-                <android.support.constraint.Guideline
-                    android:id="@+id/guideline_left"
-                    android:layout_width="match_parent"
-                    android:layout_height="0.1dp"
-                    android:orientation="horizontal"
-                    app:layout_constraintGuide_percent="0.5"/>
-
-                <ImageView
-                    android:id="@+id/linkIcon"
-                    android:layout_width="17dp"
-                    android:layout_height="17dp"
-                    android:scaleX="0.8"
-                    android:scaleY="0.8"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintBottom_toTopOf="@id/guideline_left"
-                    android:src="@drawable/ic_link_1"
-                    android:scaleType="centerInside"/>
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    app:layout_constraintStart_toStartOf="@id/linkIcon"
-                    app:layout_constraintEnd_toEndOf="@id/linkIcon"
-                    app:layout_constraintTop_toBottomOf="@id/guideline_left"
-                    android:text="HOME"
-                    />
-
-            </android.support.constraint.ConstraintLayout>
-
-            <android.support.constraint.ConstraintLayout
-                android:id="@+id/account_nav_layout"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_marginStart="30dp"
-                android:background="@drawable/border_menu"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@id/guideline3">
-
-                <android.support.constraint.Guideline
-                    android:id="@+id/guideline_right"
-                    android:layout_width="match_parent"
-                    android:layout_height="0.1dp"
-                    android:orientation="horizontal"
-                    app:layout_constraintGuide_percent="0.5"/>
-
-                <ImageView
-                    android:id="@+id/accountIcon"
-                    android:layout_width="17dp"
-                    android:layout_height="17dp"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintBottom_toTopOf="@id/guideline_right"
-                    android:src="@drawable/ic_person"
-                    android:scaleType="centerInside"/>
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    app:layout_constraintStart_toStartOf="@id/accountIcon"
-                    app:layout_constraintEnd_toEndOf="@id/accountIcon"
-                    app:layout_constraintTop_toBottomOf="@id/guideline_right"
-                    android:text="ACCOUNT"
-                    />
-
-
-        </android.support.constraint.ConstraintLayout>
-    </android.support.constraint.ConstraintLayout>
-
-    <com.github.jorgecastilloprz.FABProgressCircle
-        android:id="@+id/fabProgressCircle"
-        android:layout_width="65dp"
-        android:layout_height="65dp"
-        app:finalIcon="@drawable/ic_done"
-        app:arcColor="#A46085"
-        app:arcWidth="2.5dp"
-        android:background="@android:color/transparent"
-        app:layout_constraintBottom_toTopOf="@id/navigation_bar"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@id/navigation_bar"
-        android:layout_marginBottom="25dp"
-        app:reusable="true"
-        android:outlineAmbientShadowColor="@color/background"
-        android:outlineSpotShadowColor="@color/background"
-        >
-        <android.support.design.widget.FloatingActionButton
-            android:id="@+id/fab"
-            android:src="@drawable/ic_add"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:elevation="0dp"
-
-             />
-    </com.github.jorgecastilloprz.FABProgressCircle>
-
-
     <LinearLayout
         android:id="@+id/fragment_menu_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintBottom_toBottomOf="parent">
+        android:layout_gravity="bottom"
+        android:orientation="horizontal" />
 
-    </LinearLayout>
+    <android.support.design.widget.BottomNavigationView
+        android:id="@+id/bottomnav"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:layout_gravity="bottom"
+        android:layout_weight="1"
+        android:background="@color/white"
+        app:itemIconTint="@color/colorPrimary"
+        app:itemTextColor="@color/colorPrimary"
+        app:menu="@menu/bottom_nav" />
 
-    <android.support.constraint.Guideline
-        android:id="@+id/guideline"
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintGuide_end="245dp" />
+        android:layout_above="@id/bottomnav"
+        android:layout_gravity="bottom|center"
+        android:layout_margin="30dp"
+        android:src="@drawable/ic_add"
+        app:borderWidth="0dp"
+        app:elevation="12dp"
+        app:fabSize="normal" />
 
-
-</android.support.constraint.ConstraintLayout>
+</android.support.design.widget.CoordinatorLayout>

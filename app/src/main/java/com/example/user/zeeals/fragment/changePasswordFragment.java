@@ -5,7 +5,6 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.Fragment;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -39,7 +38,6 @@ public class changePasswordFragment extends Fragment {
     ProgressBar progressBar;
     Button save;
     ImageView back;
-    ConstraintLayout back_2;
 
     boolean allRequirement=false;
     String token;
@@ -72,7 +70,6 @@ public class changePasswordFragment extends Fragment {
         progressBar = view.findViewById(R.id.progress_bar_change_password);
         save = view.findViewById(R.id.changePassword_btn_save);
         back = view.findViewById(R.id.changePassword_btn_back);
-        back_2 = view.findViewById(R.id.changePassword_btn_back_2);
         progressBar.setVisibility(View.GONE);
         passwordWatcher();
         setButtonClick();
@@ -135,12 +132,6 @@ public class changePasswordFragment extends Fragment {
                 Objects.requireNonNull(getActivity()).finish();
             }
         });
-        back_2.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Objects.requireNonNull(getActivity()).finish();
-            }
-        });
     }
 
     /** Clicking method Area **/
@@ -159,19 +150,21 @@ public class changePasswordFragment extends Fragment {
             ChangePassword_Model passwordModel = new ChangePassword_Model(oldPassword.getText().toString(),newPassword.getText().toString());
             Call<Basic_Response> call = conn.getConnection().changepassword(token,passwordModel);
             call.enqueue(new Callback<Basic_Response>() {
+                @SuppressLint("ShowToast")
                 @Override
-                public void onResponse(Call<Basic_Response> call, Response<Basic_Response> response) {
+                public void onResponse(@NonNull Call<Basic_Response> call, @NonNull Response<Basic_Response> response) {
                     if(response.isSuccessful()){
-                        Toast.makeText(getActivity().getApplicationContext(),"Password updated!",Toast.LENGTH_SHORT);
-                    }else Toast.makeText(getActivity().getApplicationContext(),"Wrong password!",Toast.LENGTH_SHORT);
+                        Toast.makeText(Objects.requireNonNull(getActivity()).getApplicationContext(),"Password updated!",Toast.LENGTH_SHORT);
+                    }else Toast.makeText(Objects.requireNonNull(getActivity()).getApplicationContext(),"Wrong password!",Toast.LENGTH_SHORT);
                     save.setVisibility(View.VISIBLE);
                     progressBar.setVisibility(View.GONE);
                     getActivity().finish();
                 }
 
+                @SuppressLint("ShowToast")
                 @Override
-                public void onFailure(Call<Basic_Response> call, Throwable t) {
-                    Toast.makeText(getActivity().getApplicationContext(),"Connection error",Toast.LENGTH_SHORT);
+                public void onFailure(@NonNull Call<Basic_Response> call, @NonNull Throwable t) {
+                    Toast.makeText(Objects.requireNonNull(getActivity()).getApplicationContext(),"Connection error",Toast.LENGTH_SHORT);
                 }
             });
 

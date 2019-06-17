@@ -1,43 +1,28 @@
 package com.example.user.zeeals.adapter;
 
-import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Canvas;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.helper.ItemTouchHelper;
 import android.text.method.ScrollingMovementMethod;
-import android.transition.Transition;
-import android.transition.TransitionSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
-import android.view.animation.AlphaAnimation;
-import android.view.animation.Animation;
-import android.view.animation.OvershootInterpolator;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.example.user.zeeals.R;
 import com.example.user.zeeals.editProfileScreen;
-import com.example.user.zeeals.fragment.editLinkFragment;
-import com.example.user.zeeals.fragment.menuFragment;
-import com.example.user.zeeals.listener.dimLayoutListener;
 import com.example.user.zeeals.model.User;
 import com.example.user.zeeals.model.Zlink;
 import com.example.user.zeeals.model.zGroup;
@@ -45,12 +30,11 @@ import com.example.user.zeeals.service.RetroConnection;
 import com.example.user.zeeals.service.UserClient;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
-import retrofit2.Retrofit;
 
 import static android.content.Context.MODE_PRIVATE;
 
@@ -58,14 +42,9 @@ public class mainFragment extends Fragment{
     private TextView profileName, profileDesc;
     Dialog picChangePopUp, editGroupNamePopup;
     private ImageView imgProfpic,imgBannerProfPic;
-
-    private static final int PICK_IMAGE_PROF_PIC = 100;
-    private static final int PICK_IMAGE_PROF_BANNER =101;
     private static final int EDIT_PROFILE =102;
-    String imgType="";
 
     boolean menuShowed;
-//    FloatingActionButton fab;
     RecyclerView recyclerViewTes;
     FragmentTransaction transaction;
     RelativeLayout btn_editProfile;
@@ -73,9 +52,6 @@ public class mainFragment extends Fragment{
     TextView account_url;
 
     com.example.user.zeeals.fragment.menuFragment menuFragment;
-
-
-
 
     //shared ke menu fragment
     public RecyclerAdapter_Main adapterTest;
@@ -86,14 +62,14 @@ public class mainFragment extends Fragment{
     RetroConnection connection;
     ConstraintLayout dim;
     View thisView;
+    ArrayList<Uri> listLinkUri;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        name = getActivity().getSharedPreferences("PROFILE",MODE_PRIVATE).getString("PROFILE_NAME","Set Your Name");
+        name = Objects.requireNonNull(getActivity()).getSharedPreferences("PROFILE",MODE_PRIVATE).getString("PROFILE_NAME","Set Your Name");
         desc = getActivity().getSharedPreferences("PROFILE",MODE_PRIVATE).getString("PROFILE_DESC","Set your description here");
-
 
         //Connection
         connection = new RetroConnection();
@@ -111,11 +87,11 @@ public class mainFragment extends Fragment{
         recyclerViewTes = view.findViewById(R.id.recycler_view);
         account_url = view.findViewById(R.id.account_url);
         userClient = connection.getConnection();
-        profImg = getActivity().getSharedPreferences("PROFILE",MODE_PRIVATE).getString("PROFILE_URI",null);
-        bannerImg = getActivity().getSharedPreferences("PROFILE",MODE_PRIVATE).getString("BANNER_URI",null);
+        listLinkUri = new ArrayList<>();
+
         initProfile(view);
         initListener();
-        String userJSON = getActivity().getSharedPreferences("ACCOUNT", Context.MODE_PRIVATE).getString("USER",null);
+        String userJSON = Objects.requireNonNull(getActivity()).getSharedPreferences("ACCOUNT", Context.MODE_PRIVATE).getString("USER",null);
         User user= new Gson().fromJson(userJSON, User.class);
         account_url.setText(String.format("zeeals.link/%s", user.getAccount().get(0).getMainUrl()));
         thisView=view;
@@ -144,7 +120,6 @@ public class mainFragment extends Fragment{
         picChangePopUp = new Dialog(view.getContext());
         editGroupNamePopup = new Dialog(view.getContext());
         RelativeLayout btnBack = topBar.findViewById(R.id.btnBack);
-        RelativeLayout btnEdit =  topBar.findViewById(R.id.btnEditPofile);
         btnBack.setVisibility(View.GONE);
 
         btn_editProfile.setOnClickListener(openEditProfile);
@@ -154,7 +129,7 @@ public class mainFragment extends Fragment{
         dim.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ((MainActivity)getActivity()).rotateFab();
+                ((MainActivity) Objects.requireNonNull(getActivity())).rotateFab();
                 ((MainActivity)getActivity()).hideMenu();
 
                 dim.setVisibility(View.GONE);
@@ -170,11 +145,14 @@ public class mainFragment extends Fragment{
     }
 
 
-    @SuppressLint("RestrictedApi")
     @Override
     public void onStart() {
         super.onStart();
-        String groupJSON = getActivity().getSharedPreferences("TOKEN",MODE_PRIVATE).getString("GROUPLIST",null);
+        String groupJSON = Objects.requireNonNull(getActivity()).getSharedPreferences("TOKEN",MODE_PRIVATE).getString("GROUPLIST",null);
+        profImg = getActivity().getSharedPreferences("PROFILE",MODE_PRIVATE).getString("PROFILE_URI",null);
+        bannerImg = getActivity().getSharedPreferences("PROFILE",MODE_PRIVATE).getString("BANNER_URI",null);
+        if(profImg != null) imgProfpic.setImageURI(Uri.parse(profImg));
+        if(bannerImg != null) imgBannerProfPic.setImageURI(Uri.parse(bannerImg));
 //        fab.setVisibility(View.VISIBLE);
         if(groupJSON!=null){
             Type listType = new TypeToken<List<zGroup>>(){}.getType();
@@ -195,6 +173,7 @@ public class mainFragment extends Fragment{
 
     private void setupRecycler(){
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
+
         adapterTest = new RecyclerAdapter_Main(recyclerViewTes,zLink,token,getContext());
         recyclerViewTes.setAdapter(adapterTest);
         recyclerViewTes.setLayoutManager(layoutManager);
@@ -221,6 +200,7 @@ public class mainFragment extends Fragment{
 
 //            ItemTouchHelper itemTouchHelper = new ItemTouchHelper(new SwipeToDeleteCallback(adapterTest,getContext()));
 //            itemTouchHelper.attachToRecyclerView(recyclerViewTes);
+
             adapterTest.notifyDataSetChanged();
     }
 
@@ -237,7 +217,5 @@ public class mainFragment extends Fragment{
             openEditScreen();
         }
     };
-
-
 
 }

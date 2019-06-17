@@ -1,7 +1,6 @@
 package com.example.user.zeeals.fragment;
 
-import android.app.Dialog;
-import android.content.Context;
+import android.annotation.SuppressLint;
 import android.content.DialogInterface;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -12,9 +11,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
-import android.view.animation.GridLayoutAnimationController;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -42,6 +38,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -49,30 +46,12 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 import static android.content.Context.MODE_PRIVATE;
-import static android.support.constraint.Constraints.TAG;
 
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link FragmentEditGroupInteraction} interface
- * to handle interaction events.
- * Use the {@link editGroupFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class editGroupFragment extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String GROUPNAME= "name";
     private static final String TAG = "editGroupFragment";
-
-    // TODO: Rename and change types of parameters
-    private String mGroupName;
-
-    private FragmentEditGroupInteraction mListener;
 
     private EditText group_title;
     private Button  btn_save_group;
-    private GridView icon;
     private Spinner orientationSpinner;
     private Switch show;
     static int position;
@@ -81,7 +60,7 @@ public class editGroupFragment extends Fragment {
     ProgressBar bar;
     Button delete;
     Button back;
-    String token;
+    String token = Objects.requireNonNull(getActivity()).getSharedPreferences("TOKEN",MODE_PRIVATE).getString("TOKEN",null);
 
     RetroConnection conn;
     ArrayList<String> iconList;
@@ -109,12 +88,13 @@ public class editGroupFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        String groupJSON = getActivity().getSharedPreferences("TOKEN",MODE_PRIVATE).getString("GROUPLIST",null);
+        String groupJSON = Objects.requireNonNull(getActivity()).getSharedPreferences("TOKEN",MODE_PRIVATE).getString("GROUPLIST",null);
         token = getActivity().getSharedPreferences("TOKEN",MODE_PRIVATE).getString("TOKEN",null);
 
         Type listType = new TypeToken<List<zGroup>>(){}.getType();
         zlinks = new ArrayList<>();
         zlinks = new Gson().fromJson(groupJSON,listType);
+        assert zlinks != null;
         zGroup=(zGroup) zlinks.get(position);
 
         conn = new RetroConnection();
@@ -125,7 +105,7 @@ public class editGroupFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_edit_group, container, false);
@@ -133,7 +113,7 @@ public class editGroupFragment extends Fragment {
         btn_save_group=view.findViewById(R.id.editGroup_save_btn);
         orientationSpinner=view.findViewById(R.id.editGroup_orientation);
         show=view.findViewById(R.id.editGroup_show);
-        icon=view.findViewById(R.id.editGroup_icon);
+        GridView icon = view.findViewById(R.id.editGroup_icon);
         bar =view.findViewById(R.id.progress_bar_edit_group);
         bar.setVisibility(View.GONE);
         delete=view.findViewById(R.id.editGroup_delete_btn);
@@ -144,7 +124,7 @@ public class editGroupFragment extends Fragment {
 
 
 
-        ArrayAdapter<CharSequence> adapterGrid = ArrayAdapter.createFromResource(getContext(), R.array.grid, android.R.layout.simple_spinner_item);
+        ArrayAdapter<CharSequence> adapterGrid = ArrayAdapter.createFromResource(Objects.requireNonNull(getContext()), R.array.grid, android.R.layout.simple_spinner_item);
         adapterGrid.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
         orientationSpinner.setPrompt("Select your Grid");
@@ -183,9 +163,6 @@ public class editGroupFragment extends Fragment {
 
 
                 }
-                String icon = new String (Character.toChars(Integer.parseInt(
-                        iconList.get(position), 16)));
-
                 rawIcon=iconList.get(position);
             }
         });
@@ -200,7 +177,7 @@ public class editGroupFragment extends Fragment {
                 final char orientation;
                 final int mShow;
                 final String updated_at;
-                token = getActivity().getSharedPreferences("TOKEN",MODE_PRIVATE).getString("TOKEN",null);
+                token = Objects.requireNonNull(getActivity()).getSharedPreferences("TOKEN",MODE_PRIVATE).getString("TOKEN",null);
 
                 if(group_title.getText().toString().equals("")){
                     title=group_title.getHint().toString();
@@ -218,7 +195,7 @@ public class editGroupFragment extends Fragment {
                 }else mShow=0;
                 newGroup.setStatus(mShow);
 
-                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                @SuppressLint("SimpleDateFormat") SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                 Date currentTime = Calendar.getInstance().getTime();
                 updated_at= sdf.format(currentTime);
                 newGroup.setUpdatedAt(updated_at);
@@ -235,7 +212,7 @@ public class editGroupFragment extends Fragment {
                 Call<ResponseBody> call = conn.getConnection().update(token,newGroup);
                 call.enqueue(new Callback<ResponseBody>() {
                     @Override
-                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                    public void onResponse(@NonNull Call<ResponseBody> call, @NonNull Response<ResponseBody> response) {
 //                        String[] group = {title,String.valueOf(orientation),rawIcon,Integer.toString(mShow),updated_at};
                         if(response.isSuccessful()){
                             Gson gson = new Gson();
@@ -244,6 +221,7 @@ public class editGroupFragment extends Fragment {
                             getActivity().finish();
                         }else{
                             try {
+                                assert response.body() != null;
                                 Toast.makeText(getContext(),response.body().string(),Toast.LENGTH_SHORT).show();
                             } catch (IOException e) {
                                 e.printStackTrace();
@@ -253,7 +231,7 @@ public class editGroupFragment extends Fragment {
                     }
 
                     @Override
-                    public void onFailure(Call<ResponseBody> call, Throwable t) {
+                    public void onFailure(@NonNull Call<ResponseBody> call, @NonNull Throwable t) {
                         t.printStackTrace();
                     }
                 });
@@ -277,7 +255,7 @@ public class editGroupFragment extends Fragment {
         back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getActivity().finish();
+                Objects.requireNonNull(getActivity()).finish();
             }
         });
 
@@ -286,48 +264,9 @@ public class editGroupFragment extends Fragment {
     }
 
 
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mListener = null;
-    }
-    public interface FragmentEditGroupInteraction {
-        // TODO: Update argument type and name
-        void onFragmentEditGroupInteraction(String[] group);
-    }
-
-    public void openIconPicker(){
-        final Dialog iconPicker_dialog = new Dialog(getContext());
-        iconPicker_dialog.setContentView(R.layout.popup_icon_picker);
-        GridView gridView;
-        gridView = iconPicker_dialog.findViewById(R.id.iconGrid);
-        IconAdapter iconAdapter = new IconAdapter(iconPicker_dialog.getContext(),iconList);
-        gridView.setAdapter(iconAdapter);
-
-        iconPicker_dialog.show();
-
-        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                String mIcon = new String (Character.toChars(Integer.parseInt(
-                        iconList.get(position), 16)));
-
-                rawIcon=iconList.get(position);
-                iconPicker_dialog.dismiss();
-            }
-        });
-
-    }
-
     public void deleteItem(){
         Log.d(TAG, "deleteItem: clicked");
-        final AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        final AlertDialog.Builder builder = new AlertDialog.Builder(Objects.requireNonNull(getContext()));
 
         builder.setTitle("Hapus Group")
                 .setMessage("Apakah anda yakin menghapus group ini ? ")
@@ -341,27 +280,28 @@ public class editGroupFragment extends Fragment {
                         zGroup deletePosition = ((zGroup)zlinks.get(position));
                         Call<ResponseBody> call = conn.getConnection().delete(token,deletePosition);
                         call.enqueue(new Callback<ResponseBody>() {
+                            @SuppressLint("ShowToast")
                             @Override
-                            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                            public void onResponse(@NonNull Call<ResponseBody> call, @NonNull Response<ResponseBody> response) {
                                 if(response.isSuccessful()){
                                     Log.d(TAG, "onResponse: DELETED_EDIT "+token);
                                     zlinks.remove(position);
 
                                     String json = new Gson().toJson(zlinks);
-                                    getActivity().getSharedPreferences("TOKEN",MODE_PRIVATE).edit().putString("GROUPLIST",json).apply();
+                                    Objects.requireNonNull(getActivity()).getSharedPreferences("TOKEN",MODE_PRIVATE).edit().putString("GROUPLIST",json).apply();
 
 
                                 }else{
                                     Toast.makeText(getContext(),"Connection error",Toast.LENGTH_SHORT);
                                 }
-                                getActivity().finish();
+                                Objects.requireNonNull(getActivity()).finish();
 
                             }
 
                             @Override
-                            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                            public void onFailure(@NonNull Call<ResponseBody> call, @NonNull Throwable t) {
                                 Toast.makeText(getContext(),"Connection error",Toast.LENGTH_SHORT).show();
-                                getActivity().finish();
+                                Objects.requireNonNull(getActivity()).finish();
                             }
                         });
                     }
