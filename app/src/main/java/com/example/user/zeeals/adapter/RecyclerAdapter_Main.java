@@ -162,6 +162,7 @@ public class RecyclerAdapter_Main extends RecyclerView.Adapter<RecyclerView.View
         }else return CHILD;
     }
 
+
     @NonNull
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int viewType) {

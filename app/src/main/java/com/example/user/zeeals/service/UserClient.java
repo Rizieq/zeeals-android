@@ -106,8 +106,7 @@ public interface UserClient {
     Call<Basic_Response> userUpdate(@Header("Authorization") String token, @Body updateUser_Model um);
 
     @POST("api/v1/upload/avatar")
-    Call<ResponseBody> uploadProfile(@Header("Authorization")String token,
-                                     @Body RequestBody file);
+    Call<ResponseBody> uploadProfile(@Header("Authorization")String token, @Body RequestBody file);
 
     @POST("api/v1/upload/banner")
     Call<ResponseBody> uploadBanner(@Header("Authorization")String token, @Body RequestBody file);

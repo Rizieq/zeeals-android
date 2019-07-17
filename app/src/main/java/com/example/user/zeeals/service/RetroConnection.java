@@ -24,7 +24,11 @@ public class RetroConnection {
 //        httpClient.readTimeout(100,TimeUnit.SECONDS);
 //        httpClient.writeTimeout(100, TimeUnit.SECONDS);
 //        httpClient.addInterceptor(logging);
-        this.retrofit = new Retrofit.Builder().baseUrl(ServerAPI.zeealseRESTAPI).addConverterFactory(GsonConverterFactory.create()).client(httpClient).build();
+
+        this.retrofit = new Retrofit.Builder().
+                baseUrl(ServerAPI.zeealseRESTAPI)
+                .addConverterFactory(GsonConverterFactory.create())
+                .client(httpClient).build();
     }
 
     public UserClient getConnection(){

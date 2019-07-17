@@ -26,7 +26,7 @@ public class registrasiScreen extends AppCompatActivity {
         webSettings.setJavaScriptEnabled(true);
         webSettings.setDomStorageEnabled(true);
         webView.setWebChromeClient(new WebChromeClient());
-        webView.loadUrl("https://app.zeeals.com/#/register");
+        webView.loadUrl("http://192.168.1.21:8080/#/register");
 
 
 

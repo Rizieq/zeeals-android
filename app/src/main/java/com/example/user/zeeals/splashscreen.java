@@ -43,7 +43,7 @@ public class splashscreen extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-//        getSharedPreferences("TOKEN",MODE_PRIVATE).edit().clear().apply();
+        getSharedPreferences("TOKEN",MODE_PRIVATE).edit().clear().apply();
 
 
         uriArrayList =new ArrayList<>();
@@ -81,7 +81,9 @@ public class splashscreen extends AppCompatActivity {
 
     public void retreiveList(String token){
         /*ACCOUNT ID HERE's STILL HARCODED SHIT */
-        Account_id acid = new Account_id("1");
+
+        String mobile = "$2y$10$s6ZYEuThB8IkZ0sl1ucOOeJFYf/4DmGNbeIyB6j4l9lPpwdu41n5K";
+        Account_id acid = new Account_id("3",mobile);
         Call<zGroupList> call=  userClient.links(token,acid);
         call.enqueue(new Callback<zGroupList>() {
             @Override

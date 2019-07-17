@@ -183,6 +183,7 @@ public class editProfileScreen extends AppCompatActivity {
     private void uploadToServer(@Nullable final String filePath, @Nullable File fileFromURL) {
         RetroConnection conn = new RetroConnection();
         UserClient userClient = conn.getConnection();
+
         Uri path = null;
 
         MultipartBody.Builder builder = new MultipartBody.Builder().setType(MultipartBody.FORM);
@@ -199,6 +200,8 @@ public class editProfileScreen extends AppCompatActivity {
                 builder.addFormDataPart("data",fileFromURL.getName(),RequestBody.create(MultipartBody.FORM,fileFromURL));
             }
         }
+
+        // this method POST Multi Part
 
         RequestBody requestBody = builder.build();
         Call<ResponseBody> call=userClient.uploadProfile(token,requestBody);

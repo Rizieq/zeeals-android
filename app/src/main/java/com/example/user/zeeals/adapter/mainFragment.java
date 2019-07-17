@@ -179,27 +179,7 @@ public class mainFragment extends Fragment{
         recyclerViewTes.setLayoutManager(layoutManager);
 
 
-        /*this show delete after swipe*/
-//        final SwipeController swipeController = new SwipeController(new SwipeControllerActions() {
-//            @Override
-//            public void onLeftClicked(int position) {
-//                zLink.remove(position);
-//                adapterTest.notifyItemRemoved(position);
-//                adapterTest.notifyItemRangeChanged(position,adapterTest.getItemCount());
-//            }
-//        });
-//        ItemTouchHelper itemTouchhelper = new ItemTouchHelper(swipeController);
-//        itemTouchhelper.attachToRecyclerView(recyclerViewTes);
-//
-//        recyclerViewTes.addItemDecoration(new RecyclerView.ItemDecoration() {
-//            @Override
-//            public void onDraw(@NonNull Canvas c, @NonNull RecyclerView parent, @NonNull RecyclerView.State state) {
-//                swipeController.onDraw(c);
-//            }
-//        });
 
-//            ItemTouchHelper itemTouchHelper = new ItemTouchHelper(new SwipeToDeleteCallback(adapterTest,getContext()));
-//            itemTouchHelper.attachToRecyclerView(recyclerViewTes);
 
             adapterTest.notifyDataSetChanged();
     }

@@ -113,7 +113,7 @@ public class loginScreen extends AppCompatActivity {
             pbLogin = findViewById(R.id.login_progress);
 
             /* THIS CODE FOR SPAN "DAFTAR" */
-        TextView textdaftar = findViewById(R.id.textayoDaftar);
+            TextView textdaftar = findViewById(R.id.textayoDaftar);
             String text = "Ayo daftar sekarang.";
             SpannableString daftar = new SpannableString(text);
             ClickableSpan clickableSpan = new ClickableSpan() {
@@ -137,7 +137,7 @@ public class loginScreen extends AppCompatActivity {
 
 
             /* THIS IS FOR SPAN LUPA PASSWORD */
-        TextView lupaPassword = findViewById(R.id.textLupaPassword);
+            TextView lupaPassword = findViewById(R.id.textLupaPassword);
             String textLupa = "Lupa password?";
             SpannableString lupapass = new SpannableString(textLupa);
             ClickableSpan clickableSpan1 = new ClickableSpan() {
@@ -160,6 +160,7 @@ public class loginScreen extends AppCompatActivity {
 
             /* THIS IS CODE FOR BUTTON SIGN IN */
             btnMasuk =  findViewById(R.id.btnMasuk);
+
             validateEmailPassword(); //FOR VALIDATING EMAIL AND PASSWORD
             btnMasuk.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -318,6 +319,7 @@ public class loginScreen extends AppCompatActivity {
 
         String email = ETemail.getText().toString().trim();
         String password = ETPassword.getText().toString().trim();
+        /*String mobile = "$2y$10$s6ZYEuThB8IkZ0sl1ucOOeJFYf/4DmGNbeIyB6j4l9lPpwdu41n5K";*/
 
         final Login login = new Login(email,password);
 
@@ -372,7 +374,8 @@ public class loginScreen extends AppCompatActivity {
     }
 
     public void retreiveList(String token, String id){
-        Account_id acid = new Account_id(id);
+        String mobile = "mobile"+"$2y$10$s6ZYEuThB8IkZ0sl1ucOOeJFYf/4DmGNbeIyB6j4l9lPpwdu41n5K";
+        Account_id acid = new Account_id(id, mobile);
         Call<zGroupList> call=  userClient.links(token,acid);
         call.enqueue(new Callback<zGroupList>() {
             @SuppressLint("ShowToast")
